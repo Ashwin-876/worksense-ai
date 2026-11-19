@@ -289,6 +289,10 @@
           <span class="nav-icon">⚙️</span>
           <span class="nav-label">Settings</span>
         </a>
+        <a href="#logout" class="nav-item nav-item-logout" id="nav-logout-btn" data-view="logout" title="Log out of current session">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Logout</span>
+        </a>
       </nav>
 
       <div class="sidebar-footer">
@@ -299,8 +303,9 @@
             <option value="EMPLOYEE_AKASH">Akash A (Employee)</option>
             <option value="EMPLOYEE_KANISHKA">Kanishka Sri S (Employee)</option>
             <option value="EMPLOYEE_KARTIK">Kartik Raja N (Employee)</option>
+            <option value="LOGOUT">🚪 Logout / Sign Out</option>
           </select>
-          <button id="sidebar-logout-btn" class="btn btn-outline btn-sm logout-nav-btn" style="width: 100%; margin-top: 0.6rem;">🚪 Sign Out</button>
+          <button id="sidebar-logout-btn" class="btn btn-outline btn-sm logout-nav-btn" style="width: 100%; margin-top: 0.6rem; color: var(--color-danger); border-color: var(--color-danger); font-weight: 600;" title="Log out to Login Screen">🚪 Logout</button>
         </div>
       </div>
     </aside>
@@ -316,11 +321,14 @@
           <span id="system-status-pill" class="status-pill status-ready">System Ready</span>
           <span id="current-role-badge" class="badge-role role-super_admin">SUPER ADMIN</span>
           <button id="theme-toggle-btn" class="btn btn-secondary" aria-label="Toggle Dark/Light theme">🌓 Theme</button>
-          <div class="user-pill">
+          <div id="user-pill-container" class="user-pill" title="Current session user (Click to Logout)" style="cursor: pointer;">
             <span class="user-avatar">👤</span>
             <span id="user-display-name">Anandhi C (Super Admin)</span>
           </div>
-          <button id="logout-btn" class="btn btn-secondary btn-sm logout-nav-btn" title="Sign out to Login Screen">🚪 Sign Out</button>
+          <button id="logout-btn" class="logout-topbar-btn" title="Log out of current session">
+            <span>🚪</span>
+            <span>Logout</span>
+          </button>
         </div>
       </header>
 

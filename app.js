@@ -51,6 +51,21 @@ function showDashboard() {
   renderCurrentView();
 }
 
+function handleLogout() {
+  if (window.aiEngine && window.aiEngine.isRunning) {
+    try {
+      window.aiEngine.stop();
+    } catch (e) {
+      console.warn("Error stopping AI engine on logout:", e);
+    }
+  }
+  if (window.authManager) {
+    window.authManager.logout();
+  }
+  showLoginScreen("You have been logged out successfully. Choose an account below or sign in to continue.");
+}
+window.handleLogout = handleLogout;
+
 function setupAuthUI() {
   const loginForm = document.getElementById('login-form');
   const usernameInput = document.getElementById('login-username');
@@ -125,19 +140,19 @@ function setupAuthUI() {
     });
   });
 
-  // Logout Handlers
-  const handleLogout = () => {
-    if (window.aiEngine && window.aiEngine.isRunning) {
-      window.aiEngine.stop();
-    }
-    window.authManager.logout();
-    showLoginScreen("You have signed out safely. Select any staff account below to log back in.");
-  };
-
+  // Logout Handlers (Topbar, Sidebar nav item, Sidebar footer, User pill)
   const logoutBtn = document.getElementById('logout-btn');
   const sidebarLogoutBtn = document.getElementById('sidebar-logout-btn');
+  const navLogoutBtn = document.getElementById('nav-logout-btn');
+  const userPill = document.getElementById('user-pill-container');
+
   if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
   if (sidebarLogoutBtn) sidebarLogoutBtn.addEventListener('click', handleLogout);
+  if (navLogoutBtn) navLogoutBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    handleLogout();
+  });
+  if (userPill) userPill.addEventListener('click', handleLogout);
 }
 
 function initApp() {
@@ -147,7 +162,13 @@ function initApp() {
     item.addEventListener('click', (e) => {
       e.preventDefault();
       const targetView = item.getAttribute('data-view');
-      navigateToView(targetView);
+      if (targetView === 'logout' || item.id === 'nav-logout-btn') {
+        handleLogout();
+        return;
+      }
+      if (targetView) {
+        navigateToView(targetView);
+      }
     });
   });
 
@@ -156,6 +177,10 @@ function initApp() {
   if (roleSelect) {
     roleSelect.value = (window.appState && window.appState.currentRoleKey) ? window.appState.currentRoleKey : window.authManager.getCurrentRole();
     roleSelect.addEventListener('change', (e) => {
+      if (e.target.value === 'LOGOUT') {
+        handleLogout();
+        return;
+      }
       window.authManager.switchRole(e.target.value);
       applyRolePermissions();
       renderCurrentView();
