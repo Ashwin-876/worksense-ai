@@ -6,163 +6,616 @@
   <meta name="color-scheme" content="light dark">
   <title>WorkSense AI – Employee Monitoring System</title>
   <link rel="stylesheet" href="style.css">
+
   <!-- MediaPipe CDN scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+
+  <!-- Modular Platform Scripts -->
+  <script src="js/state.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ai-engine.js"></script>
+  <script src="js/camera-manager.js"></script>
+  <script src="js/alerts.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/privacy.js"></script>
 </head>
 <body>
-  <header class="app-header">
-    <div class="header-left">
-      <div class="logo-icon">👁️</div>
-      <div>
-        <h1>WorkSense AI</h1>
-        <p class="subtitle">AI-Powered Employee Monitoring System</p>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-brand">
+        <div class="brand-logo">👁️</div>
+        <div class="brand-text">
+          <h2>WorkSense AI</h2>
+          <span>Enterprise Monitor</span>
+        </div>
       </div>
+
+      <nav class="sidebar-nav">
+        <a href="#overview" class="nav-item active" data-view="overview" data-perm="view_overview">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Overview</span>
+        </a>
+        <a href="#monitoring" class="nav-item" data-view="monitoring" data-perm="view_monitoring">
+          <span class="nav-icon">👁️</span>
+          <span class="nav-label">Live Monitoring</span>
+        </a>
+        <a href="#cameras" class="nav-item" data-view="cameras" data-perm="view_cameras">
+          <span class="nav-icon">📹</span>
+          <span class="nav-label">Camera Grid</span>
+        </a>
+        <a href="#employees" class="nav-item" data-view="employees" data-perm="view_employees">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Employees</span>
+        </a>
+        <a href="#attendance" class="nav-item" data-view="attendance" data-perm="view_attendance">
+          <span class="nav-icon">⏱️</span>
+          <span class="nav-label">Attendance</span>
+        </a>
+        <a href="#alerts" class="nav-item" data-view="alerts" data-perm="view_alerts">
+          <span class="nav-icon">🔔</span>
+          <span class="nav-label">Alert Center</span>
+          <span id="sidebar-alert-badge" class="badge-count" style="display: none;">0</span>
+        </a>
+        <a href="#analytics" class="nav-item" data-view="analytics" data-perm="view_analytics">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Activity Analytics</span>
+        </a>
+        <a href="#reports" class="nav-item" data-view="reports" data-perm="export_reports">
+          <span class="nav-icon">📑</span>
+          <span class="nav-label">Reports & Exports</span>
+        </a>
+        <a href="#privacy" class="nav-item" data-view="privacy" data-perm="view_privacy">
+          <span class="nav-icon">🛡️</span>
+          <span class="nav-label">Privacy & Audit</span>
+        </a>
+        <a href="#settings" class="nav-item" data-view="settings" data-perm="manage_settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-role-box">
+          <span class="role-caption">Active Role:</span>
+          <select id="role-selector" class="role-select" aria-label="Select Demo Role">
+            <option value="ADMIN">Admin (Full Control)</option>
+            <option value="MANAGER">Manager (Team View)</option>
+            <option value="HR">HR (Attendance & Staff)</option>
+            <option value="EMPLOYEE">Employee (Self-View)</option>
+          </select>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- Topbar -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <h1 id="page-title">Executive Dashboard & Overview</h1>
+        </div>
+        <div class="topbar-right">
+          <span id="system-status-pill" class="status-pill status-ready">System Ready</span>
+          <span id="current-role-badge" class="badge-role role-admin">ADMIN</span>
+          <button id="theme-toggle-btn" class="btn btn-secondary" aria-label="Toggle Dark/Light theme">🌓 Theme</button>
+          <div class="user-pill">
+            <span class="user-avatar">👤</span>
+            <span id="user-display-name">Ashwin S (Admin)</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- View Containers -->
+      <main class="content-body">
+        
+        <!-- ============================================== -->
+        <!-- VIEW 1: OVERVIEW DASHBOARD                     -->
+        <!-- ============================================== -->
+        <section id="view-overview" class="view-panel">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <span class="kpi-label">Active Staff</span>
+              <span id="kpi-total-staff" class="kpi-value">6</span>
+              <span class="kpi-sub">Across 5 departments</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Today's Attendance</span>
+              <span id="kpi-attendance-rate" class="kpi-value">83%</span>
+              <span class="kpi-sub">5 of 6 clocked in</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Unacknowledged Alerts</span>
+              <span id="kpi-alerts-count" class="kpi-value text-warning">2</span>
+              <span class="kpi-sub">Requiring supervisor review</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Average Productivity</span>
+              <span id="kpi-avg-score" class="kpi-value text-success">85%</span>
+              <span class="kpi-sub">Calculated across all pods</span>
+            </div>
+          </div>
+
+          <div class="overview-dual-grid">
+            <!-- Left: Live Preview Quickcard -->
+            <div class="card">
+              <div class="card-header">
+                <h2>Live Monitoring Quick-Look</h2>
+                <button class="btn btn-sm btn-primary" onclick="navigateToView('monitoring')">Open Full Stream</button>
+              </div>
+              <div class="overview-preview-body">
+                <div class="preview-info-box">
+                  <p><strong>Primary Camera:</strong> CAM-01 (Workstation 1)</p>
+                  <p><strong>Assigned:</strong> Ashwin S (Lead AI Engineer)</p>
+                  <p><strong>AI Engines:</strong> FaceMesh • EAR • MAR • Yawning • Head-Pose • Posture</p>
+                  <div class="preview-actions">
+                    <button class="btn btn-secondary" onclick="navigateToView('monitoring')">Launch Camera Telemetry</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Department Performance -->
+            <div class="card">
+              <div class="card-header">
+                <h2>Department Productivity Index</h2>
+              </div>
+              <div id="overview-department-list" class="dept-list-container">
+                <!-- Injected by app.js -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: Recent Smart Alerts -->
+          <div class="card mt-4">
+            <div class="card-header">
+              <h2>Recent Incident Alerts</h2>
+              <button class="btn btn-sm btn-secondary" onclick="navigateToView('alerts')">View Alert Center</button>
+            </div>
+            <div id="overview-recent-alerts" class="recent-alerts-grid">
+              <!-- Injected by app.js -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 2: LIVE MONITORING (WEBCAM & TELEMETRY)   -->
+        <!-- ============================================== -->
+        <section id="view-monitoring" class="view-panel hidden">
+          <div class="monitoring-layout">
+            <!-- Left: Video Viewport -->
+            <div class="card monitoring-video-card">
+              <div class="card-header">
+                <div class="camera-select-row">
+                  <label for="monitoring-camera-select">Video Input:</label>
+                  <select id="monitoring-camera-select" class="form-select"></select>
+                </div>
+                <div class="camera-actions">
+                  <button id="start-btn" class="btn btn-primary">▶ Start Monitoring</button>
+                  <button id="stop-btn" class="btn btn-danger" disabled>⏹ Stop Monitoring</button>
+                </div>
+              </div>
+
+              <div class="video-wrapper">
+                <video id="webcam" playsinline muted></video>
+                <canvas id="output-canvas"></canvas>
+
+                <div id="camera-placeholder" class="placeholder-overlay">
+                  <div class="placeholder-content">
+                    <span class="camera-icon">📷</span>
+                    <p>Click <strong>Start Monitoring</strong> to launch the computer vision engine and stream telemetry.</p>
+                  </div>
+                </div>
+
+                <!-- In-video HUD Overlay -->
+                <div id="hud-overlay" class="hud-overlay hidden">
+                  <div class="hud-item" id="hud-presence">Presence: Absent</div>
+                  <div class="hud-item" id="hud-eye">Eye: Unknown</div>
+                  <div class="hud-item" id="hud-mouth">Mouth: Not Talking</div>
+                  <div class="hud-item" id="hud-talk-events">Talk Events: 0/4</div>
+                  <div class="hud-item hud-status" id="hud-status">Status: Working</div>
+                  <div class="hud-timer hidden" id="hud-eye-timer">Eyes Closed: 0s / 300s</div>
+                  <div class="hud-timer hidden" id="hud-absence-timer">Absent: 0s / 120s</div>
+                </div>
+              </div>
+
+              <div class="video-toolbar">
+                <label class="toolbar-checkbox">
+                  <input type="checkbox" id="check-privacy-blur">
+                  <span>Privacy Blur Mode (Blur pixels, retain landmark analysis)</span>
+                </label>
+                <label class="toolbar-checkbox">
+                  <input type="checkbox" id="check-draw-mesh" checked>
+                  <span>Draw Face Mesh & 3D Pose</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Right: Live Telemetry Gauges -->
+            <div class="card telemetry-panel-card">
+              <div class="card-header">
+                <h2>Real-Time AI Telemetry</h2>
+                <span id="fps-counter" class="badge">0 FPS</span>
+              </div>
+
+              <div class="telemetry-grid">
+                <div class="telemetry-box">
+                  <span class="t-label">Presence</span>
+                  <span id="metric-presence" class="metric-value badge-absent">Absent</span>
+                </div>
+                <div class="telemetry-box">
+                  <span class="t-label">Eye State</span>
+                  <span id="metric-eye" class="metric-value badge-neutral">Unknown</span>
+                  <span id="metric-ear" class="t-sub">EAR: 0.00</span>
+                </div>
+                <div class="telemetry-box">
+                  <span class="t-label">Mouth State</span>
+                  <span id="metric-mouth" class="metric-value badge-neutral">Not Talking</span>
+                  <span id="metric-mar" class="t-sub">MAR: 0.000</span>
+                </div>
+                <div class="telemetry-box">
+                  <span class="t-label">Yawning Detection</span>
+                  <span id="metric-yawn" class="metric-value">0</span>
+                  <span class="t-sub">Threshold: MAR > 0.08</span>
+                </div>
+                <div class="telemetry-box">
+                  <span class="t-label">Head-Pose (Pitch/Yaw/Roll)</span>
+                  <span id="metric-head-pose" class="metric-value">P: 0° | Y: 0° | R: 0°</span>
+                </div>
+                <div class="telemetry-box">
+                  <span class="t-label">Posture Analysis</span>
+                  <span id="metric-posture" class="metric-value badge-working">Good Posture</span>
+                </div>
+                <div class="telemetry-box">
+                  <span class="t-label">Talk Events (1m)</span>
+                  <span id="metric-talk-events" class="metric-value">0 / 4</span>
+                </div>
+                <div class="telemetry-box">
+                  <span class="t-label">Working Status</span>
+                  <span id="metric-working-status" class="metric-value badge-working">Working</span>
+                </div>
+              </div>
+
+              <!-- Explainable AI (XAI) Diagnostic Box -->
+              <div class="xai-diagnostic-card">
+                <div class="xai-header">
+                  <span>🧠 Explainable AI (XAI) Live Diagnostic</span>
+                </div>
+                <div id="metric-xai-summary" class="xai-content">
+                  System awaiting active face detection stream...
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Session Log Table -->
+          <div class="card mt-4">
+            <div class="card-header">
+              <h2>Session Activity Transition Log</h2>
+              <button id="download-csv-btn" class="btn btn-secondary" onclick="window.reportManager.exportCSV(liveSessionLogs, 'worksense_live_sessions')">📥 Download CSV</button>
+            </div>
+            <div tabindex="0" role="region" aria-labelledby="session-table-caption" class="table-wrapper">
+              <table>
+                <caption id="session-table-caption">Presence and Activity Logs</caption>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                    <th>Explainable AI Reasoning</th>
+                  </tr>
+                </thead>
+                <tbody id="session-log-body">
+                  <tr class="empty-row">
+                    <td colspan="6">No live sessions recorded yet. Start camera monitoring to begin recording activity transitions.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 3: MULTI-CAMERA MONITORING GRID           -->
+        <!-- ============================================== -->
+        <section id="view-cameras" class="view-panel hidden">
+          <div class="card mb-4">
+            <div class="card-header">
+              <div>
+                <h2>Workstation Camera Grid</h2>
+                <p class="subtitle">Multi-angle hardware webcams and simulated RTSP camera endpoints</p>
+              </div>
+              <button class="btn btn-primary" onclick="alert('To add an IP camera, enter RTSP/HTTP URL in settings.')">+ Add Camera</button>
+            </div>
+            <div id="camera-grid-container" class="camera-cards-grid">
+              <!-- Injected by app.js -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 4: EMPLOYEE MANAGEMENT                    -->
+        <!-- ============================================== -->
+        <section id="view-employees" class="view-panel hidden">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2>Employee Directory & Workstations</h2>
+                <p class="subtitle">Registered personnel, workstation mapping, and monitoring profiles</p>
+              </div>
+              <div class="table-actions">
+                <select id="employee-dept-filter" class="form-select" onchange="renderEmployeesView()">
+                  <option value="All">All Departments</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Product Design">Product Design</option>
+                  <option value="Customer Support">Customer Support</option>
+                  <option value="Operations">Operations</option>
+                  <option value="Human Resources">Human Resources</option>
+                </select>
+                <button id="add-employee-btn" class="btn btn-primary">+ Add Employee</button>
+              </div>
+            </div>
+            <div id="employee-list-container" class="employees-grid">
+              <!-- Injected by app.js -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 5: ATTENDANCE MANAGEMENT                  -->
+        <!-- ============================================== -->
+        <section id="view-attendance" class="view-panel hidden">
+          <!-- Self Service Action Card -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <div>
+                <h2>Daily Attendance & Timecard</h2>
+                <p class="subtitle">Automated presence check-in, shift duration, and break tracking</p>
+              </div>
+              <div class="attendance-actions">
+                <button id="self-checkin-btn" class="btn btn-primary">⏱ Clock In</button>
+                <button id="self-checkout-btn" class="btn btn-secondary">🛑 Clock Out</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Today's Attendance Register</h2>
+            </div>
+            <div tabindex="0" role="region" aria-labelledby="att-table-caption" class="table-wrapper">
+              <table>
+                <caption id="att-table-caption">Daily Employee Timecard Log</caption>
+                <thead>
+                  <tr>
+                    <th>Emp ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Date</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
+                    <th>Duration</th>
+                    <th>Break Time</th>
+                    <th>Late Arrival</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="attendance-table-body">
+                  <!-- Injected by app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 6: SMART ALERT CENTER                     -->
+        <!-- ============================================== -->
+        <section id="view-alerts" class="view-panel hidden">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2>Smart Alert Center</h2>
+                <p class="subtitle">Real-time incident notifications, fatigue alerts, and supervisor acknowledgements</p>
+              </div>
+              <div class="table-actions">
+                <select id="alert-severity-filter" class="form-select" onchange="renderAlertsView()">
+                  <option value="All">All Severities</option>
+                  <option value="Critical">Critical</option>
+                  <option value="Warning">Warning</option>
+                  <option value="Info">Info</option>
+                </select>
+              </div>
+            </div>
+            <div id="alerts-container" class="alerts-feed">
+              <!-- Injected by app.js -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 7: ACTIVITY ANALYTICS                     -->
+        <!-- ============================================== -->
+        <section id="view-analytics" class="view-panel hidden">
+          <div class="analytics-layout-grid">
+            <!-- Daily Timeline -->
+            <div class="card">
+              <div class="card-header">
+                <h2>Daily Activity Timeline (09:00 - 17:00)</h2>
+                <div class="legend-row">
+                  <span class="legend-tag active">● Working</span>
+                  <span class="legend-tag inactive">● Inactive/Meeting</span>
+                  <span class="legend-tag break">● Break/Away</span>
+                </div>
+              </div>
+              <div id="daily-timeline-blocks" class="timeline-blocks-wrapper">
+                <!-- Injected by app.js -->
+              </div>
+            </div>
+
+            <!-- Weekly Productivity Trend -->
+            <div class="card">
+              <div class="card-header">
+                <h2>Weekly Productivity Trend</h2>
+              </div>
+              <div id="weekly-chart-svg" class="chart-wrapper">
+                <!-- Injected by app.js -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 8: REPORTS & DATA EXPORTS                 -->
+        <!-- ============================================== -->
+        <section id="view-reports" class="view-panel hidden">
+          <div class="card mb-4">
+            <div class="card-header">
+              <div>
+                <h2>Compliance Reports & Data Exports</h2>
+                <p class="subtitle">Generate certified PDF summaries and CSV/Excel exports</p>
+              </div>
+              <div class="report-filter-bar">
+                <select id="report-type-select" class="form-select">
+                  <option value="employee">Employee-Wise Summary</option>
+                  <option value="attendance">Daily Attendance Log</option>
+                  <option value="drowsiness">Drowsiness & Fatigue Report</option>
+                  <option value="inactivity">Inactivity & Distraction Report</option>
+                </select>
+                <select id="report-dept-select" class="form-select">
+                  <option value="All">All Departments</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Product Design">Product Design</option>
+                  <option value="Customer Support">Customer Support</option>
+                  <option value="Operations">Operations</option>
+                  <option value="Human Resources">Human Resources</option>
+                </select>
+                <button id="export-pdf-btn" class="btn btn-primary">📄 Export PDF</button>
+                <button id="export-csv-btn" class="btn btn-secondary">📊 Export Excel/CSV</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Report Data Preview</h2>
+            </div>
+            <div tabindex="0" role="region" aria-labelledby="report-table-caption" class="table-wrapper">
+              <table>
+                <caption id="report-table-caption">Generated Audit Report Table</caption>
+                <thead id="report-preview-head"></thead>
+                <tbody id="report-preview-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 9: PRIVACY & AUDIT LOGS                   -->
+        <!-- ============================================== -->
+        <section id="view-privacy" class="view-panel hidden">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h2>Privacy, Consent & Transparency Declaration</h2>
+            </div>
+            <div class="privacy-notice-box">
+              <p><strong>Transparent Employee Monitoring Notice:</strong> WorkSense AI operates on an on-device computer vision paradigm. The system processes normalized facial landmarks in memory solely for computing presence, Eye Aspect Ratio (EAR), and Mouth Aspect Ratio (MAR). Raw camera video frames are never stored, transmitted to cloud databases, or used for biometric facial recognition.</p>
+              <div class="privacy-actions mt-3">
+                <button id="download-my-data-btn" class="btn btn-secondary">📥 Download My Monitoring Data (GDPR Portability)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Immutable System Audit Trail</h2>
+              <span class="badge-tag">ISO 27001 Compliant</span>
+            </div>
+            <div tabindex="0" role="region" aria-labelledby="audit-table-caption" class="table-wrapper">
+              <table>
+                <caption id="audit-table-caption">System Security and Access Audit Log</caption>
+                <thead>
+                  <tr>
+                    <th>Log ID</th>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody id="audit-log-body">
+                  <!-- Injected by app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 10: SETTINGS & CONFIGURATION              -->
+        <!-- ============================================== -->
+        <section id="view-settings" class="view-panel hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2>System Settings & AI Thresholds</h2>
+            </div>
+            <div class="settings-form-grid">
+              <div class="setting-group">
+                <h3>Detection Thresholds</h3>
+                <div class="form-row">
+                  <label for="cfg-eye-threshold">Eye Closure Threshold (seconds):</label>
+                  <input type="number" id="cfg-eye-threshold" class="form-input">
+                </div>
+                <div class="form-row">
+                  <label for="cfg-absence-threshold">Absence Threshold (seconds):</label>
+                  <input type="number" id="cfg-absence-threshold" class="form-input">
+                </div>
+                <div class="form-row">
+                  <label for="cfg-talk-threshold">Talking Frequency Threshold (events/min):</label>
+                  <input type="number" id="cfg-talk-threshold" class="form-input">
+                </div>
+                <div class="form-row">
+                  <label for="cfg-yawn-threshold">Yawn MAR Threshold:</label>
+                  <input type="number" id="cfg-yawn-threshold" step="0.01" class="form-input">
+                </div>
+              </div>
+
+              <div class="setting-group">
+                <h3>Alerts & Notifications</h3>
+                <div class="form-row checkbox-row">
+                  <label>
+                    <input type="checkbox" id="cfg-sound-alerts">
+                    <span>Enable Audio Chime for Critical Alerts</span>
+                  </label>
+                </div>
+                <div class="form-row checkbox-row">
+                  <label>
+                    <input type="checkbox" id="cfg-email-alerts">
+                    <span>Enable Outbound Email Alerts</span>
+                  </label>
+                </div>
+                <div class="form-row">
+                  <label for="cfg-notification-email">Supervisor Alert Email:</label>
+                  <input type="email" id="cfg-notification-email" class="form-input">
+                </div>
+              </div>
+            </div>
+            <div class="card-footer mt-4">
+              <button id="save-settings-btn" class="btn btn-primary">💾 Save Settings</button>
+            </div>
+          </div>
+        </section>
+
+      </main>
     </div>
-    <div class="header-right">
-      <span id="system-status-pill" class="status-pill status-ready">System Ready</span>
-      <button id="theme-toggle" class="btn btn-secondary" aria-label="Toggle theme">🌓 Theme</button>
-    </div>
-  </header>
-
-  <main class="dashboard-container">
-    <!-- Camera Viewport Card -->
-    <section class="card camera-card" aria-labelledby="camera-heading">
-      <div class="card-header">
-        <h2 id="camera-heading">Live Camera Feed</h2>
-        <div class="camera-actions">
-          <button id="start-btn" class="btn btn-primary">▶ Start Monitoring</button>
-          <button id="stop-btn" class="btn btn-danger" disabled>⏹ Stop Monitoring</button>
-        </div>
-      </div>
-
-      <div class="video-wrapper">
-        <video id="webcam" playsinline muted></video>
-        <canvas id="output-canvas"></canvas>
-
-        <div id="camera-placeholder" class="placeholder-overlay">
-          <div class="placeholder-content">
-            <span class="camera-icon">📷</span>
-            <p>Click <strong>Start Monitoring</strong> to grant webcam access and begin real-time activity tracking.</p>
-          </div>
-        </div>
-
-        <!-- In-video Heads-Up Display -->
-        <div id="hud-overlay" class="hud-overlay hidden">
-          <div class="hud-item" id="hud-presence">Presence: Absent</div>
-          <div class="hud-item" id="hud-eye">Eye: Unknown</div>
-          <div class="hud-item" id="hud-mouth">Mouth: Not Talking</div>
-          <div class="hud-item" id="hud-talk-events">Talk Events: 0/4</div>
-          <div class="hud-item hud-status" id="hud-status">Status: Working</div>
-          <div class="hud-timer hidden" id="hud-eye-timer">Eyes Closed: 0s / 300s</div>
-          <div class="hud-timer hidden" id="hud-absence-timer">Absent: 0s / 120s</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Metrics Panel -->
-    <section class="card metrics-card" aria-labelledby="metrics-heading">
-      <div class="card-header">
-        <h2 id="metrics-heading">Live Telemetry</h2>
-        <span id="fps-counter" class="badge">0 FPS</span>
-      </div>
-
-      <div class="metrics-grid">
-        <div class="metric-box">
-          <span class="metric-label">Presence</span>
-          <span id="metric-presence" class="metric-value badge-absent">Absent</span>
-          <span id="metric-absence-time" class="metric-sub">Absence timer: 0s</span>
-        </div>
-
-        <div class="metric-box">
-          <span class="metric-label">Eye State</span>
-          <span id="metric-eye" class="metric-value badge-neutral">Unknown</span>
-          <span id="metric-ear" class="metric-sub">EAR: 0.00</span>
-        </div>
-
-        <div class="metric-box">
-          <span class="metric-label">Mouth State</span>
-          <span id="metric-mouth" class="metric-value badge-neutral">Not Talking</span>
-          <span id="metric-mar" class="metric-sub">MAR: 0.000</span>
-        </div>
-
-        <div class="metric-box">
-          <span class="metric-label">Talk Events (1m)</span>
-          <span id="metric-talk-events" class="metric-value badge-neutral">0 / 4</span>
-          <span class="metric-sub">Rolling 60s window</span>
-        </div>
-
-        <div class="metric-box metric-full">
-          <span class="metric-label">Working Evaluation</span>
-          <span id="metric-working-status" class="metric-value badge-working">Working</span>
-          <span id="metric-session-duration" class="metric-sub">Session time: 0s</span>
-        </div>
-      </div>
-
-      <!-- Settings Accordion -->
-      <details class="settings-accordion">
-        <summary>⚙️ Monitoring Thresholds</summary>
-        <div class="settings-content">
-          <div class="setting-item">
-            <label for="input-eye-thresh">Eye Closure Threshold (seconds):</label>
-            <input type="number" id="input-eye-thresh" value="300" min="1" max="1800">
-          </div>
-          <div class="setting-item">
-            <label for="input-absence-thresh">Absence Threshold (seconds):</label>
-            <input type="number" id="input-absence-thresh" value="120" min="1" max="1800">
-          </div>
-          <div class="setting-item">
-            <label for="input-talk-thresh">Talking Frequency Threshold (events/min):</label>
-            <input type="number" id="input-talk-thresh" value="4" min="1" max="60">
-          </div>
-          <div class="setting-item checkbox-item">
-            <label>
-              <input type="checkbox" id="check-draw-mesh" checked>
-              Draw Face Mesh & Boxes
-            </label>
-          </div>
-        </div>
-      </details>
-    </section>
-
-    <!-- Session Log Table Section -->
-    <section class="card log-card" aria-labelledby="logs-heading">
-      <div class="card-header">
-        <h2 id="logs-heading">Activity & Presence Session Logs</h2>
-        <div class="log-actions">
-          <button id="download-csv-btn" class="btn btn-secondary">📥 Download CSV</button>
-          <button id="clear-logs-btn" class="btn btn-outline">🗑 Clear</button>
-        </div>
-      </div>
-
-      <div tabindex="0" role="region" aria-labelledby="employee-table-caption" class="table-wrapper">
-        <table id="session-table">
-          <caption id="employee-table-caption">Session Status Transition Log</caption>
-          <thead>
-            <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Start Time</th>
-              <th scope="col">End Time</th>
-              <th scope="col">Duration (s)</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody id="session-log-body">
-            <tr class="empty-row">
-              <td colspan="5">No sessions logged yet. Start monitoring to begin recording activity transitions.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </main>
-
-  <footer class="app-footer">
-    <p>WorkSense AI • AI-Powered Employee Monitoring System</p>
-  </footer>
+  </div>
 
   <script src="app.js"></script>
 </body>
 </html>
-

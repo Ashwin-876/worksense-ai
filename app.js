@@ -1,506 +1,895 @@
-// WorkSense AI – Employee Monitoring System
+// WorkSense AI - Main Application Controller & View Orchestrator
 
-// Constants matching main.py
-const LEFT_EYE = [33, 160, 158, 133, 153, 144];
-const RIGHT_EYE = [362, 385, 387, 263, 373, 380];
-const LIP_POINTS = [13, 14, 78, 308];
-const EAR_THRESHOLD = 0.25;
-const MAR_THRESHOLD = 0.04;
-const MAR_WINDOW_SIZE = 5;
-const TALKING_TIMEOUT = 1.5; // seconds
-const MONITORING_WINDOW = 60; // 1 minute
+document.addEventListener('DOMContentLoaded', () => {
+  initApp();
+});
 
-// State Tracking
-let isMonitoring = false;
-let camera = null;
-let faceMesh = null;
-let lastPresenceTime = Date.now() / 1000;
-let present = false;
-let sessionStartTime = null;
-let eyeClosureStart = 0;
-let continuousEyeClosed = false;
-let talkingStateChanges = [];
-let lastStatus = null;
-let lastLogTime = 0;
-let lastTalkingTime = 0;
-let isTalking = false;
-let prevIsTalking = false;
-let lipDistances = [];
-let sessionLogs = [];
+let currentView = 'overview';
+let liveTelemetry = null;
+let liveSessionLogs = [];
+let fpsCounterValue = 0;
+let lastFpsCheck = performance.now();
+let framesThisSecond = 0;
 
-// Frame Rate Tracking
-let frameCount = 0;
-let lastFpsTime = performance.now();
-let currentFps = 0;
-
-// DOM Elements
-const videoElement = document.getElementById('webcam');
-const canvasElement = document.getElementById('output-canvas');
-const canvasCtx = canvasElement.getContext('2d');
-const startBtn = document.getElementById('start-btn');
-const stopBtn = document.getElementById('stop-btn');
-const placeholderOverlay = document.getElementById('camera-placeholder');
-const hudOverlay = document.getElementById('hud-overlay');
-const themeToggleBtn = document.getElementById('theme-toggle');
-const downloadCsvBtn = document.getElementById('download-csv-btn');
-const clearLogsBtn = document.getElementById('clear-logs-btn');
-const systemStatusPill = document.getElementById('system-status-pill');
-
-// HUD Elements
-const hudPresence = document.getElementById('hud-presence');
-const hudEye = document.getElementById('hud-eye');
-const hudMouth = document.getElementById('hud-mouth');
-const hudTalkEvents = document.getElementById('hud-talk-events');
-const hudStatus = document.getElementById('hud-status');
-const hudEyeTimer = document.getElementById('hud-eye-timer');
-const hudAbsenceTimer = document.getElementById('hud-absence-timer');
-
-// Metric Elements
-const metricPresence = document.getElementById('metric-presence');
-const metricAbsenceTime = document.getElementById('metric-absence-time');
-const metricEye = document.getElementById('metric-eye');
-const metricEar = document.getElementById('metric-ear');
-const metricMouth = document.getElementById('metric-mouth');
-const metricMar = document.getElementById('metric-mar');
-const metricTalkEvents = document.getElementById('metric-talk-events');
-const metricWorkingStatus = document.getElementById('metric-working-status');
-const metricSessionDuration = document.getElementById('metric-session-duration');
-const fpsCounter = document.getElementById('fps-counter');
-const sessionLogBody = document.getElementById('session-log-body');
-
-// Input Thresholds
-const inputEyeThresh = document.getElementById('input-eye-thresh');
-const inputAbsenceThresh = document.getElementById('input-absence-thresh');
-const inputTalkThresh = document.getElementById('input-talk-thresh');
-const checkDrawMesh = document.getElementById('check-draw-mesh');
-
-// Helper math functions matching metric_utils.py
-function calculateEAR(eyeIndices, landmarks, w, h) {
-  const points = eyeIndices.map(i => ({ x: landmarks[i].x * w, y: landmarks[i].y * h }));
-  const dist = (p1, p2) => Math.hypot(p1.x - p2.x, p1.y - p2.y);
-  const vertical1 = dist(points[1], points[5]);
-  const vertical2 = dist(points[2], points[4]);
-  const horizontal = dist(points[0], points[3]);
-  return (vertical1 + vertical2) / (2.0 * horizontal);
-}
-
-function calculateMAR(lipIndices, landmarks, w, h) {
-  const top = { x: landmarks[lipIndices[0]].x * w, y: landmarks[lipIndices[0]].y * h };
-  const bottom = { x: landmarks[lipIndices[1]].x * w, y: landmarks[lipIndices[1]].y * h };
-  const left = { x: landmarks[lipIndices[2]].x * w, y: landmarks[lipIndices[2]].y * h };
-  const right = { x: landmarks[lipIndices[3]].x * w, y: landmarks[lipIndices[3]].y * h };
-  const vertical = Math.hypot(top.x - bottom.x, top.y - bottom.y);
-  const horizontal = Math.hypot(left.x - right.x, left.y - right.y);
-  return vertical / horizontal;
-}
-
-function calculateStdDev(arr) {
-  if (arr.length === 0) return 0;
-  const mean = arr.reduce((acc, val) => acc + val, 0) / arr.length;
-  const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / arr.length;
-  return Math.sqrt(variance);
-}
-
-function formatTime(timestampSec) {
-  const d = new Date(timestampSec * 1000);
-  return d.toTimeString().split(' ')[0];
-}
-
-function formatDate(timestampSec) {
-  const d = new Date(timestampSec * 1000);
-  return d.toISOString().split('T')[0];
-}
-
-// MediaPipe FaceMesh Initialization
-function initFaceMesh() {
-  faceMesh = new FaceMesh({
-    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+function initApp() {
+  // Bind navigation
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetView = item.getAttribute('data-view');
+      navigateToView(targetView);
+    });
   });
 
-  faceMesh.setOptions({
-    maxNumFaces: 1,
-    refineLandmarks: true,
-    minDetectionConfidence: 0.5,
-    minTrackingConfidence: 0.5
-  });
-
-  faceMesh.onResults(onResults);
-}
-
-// Frame Processing Callback
-function onResults(results) {
-  if (!isMonitoring) return;
-
-  const currentTime = Date.now() / 1000;
-  const w = canvasElement.width;
-  const h = canvasElement.height;
-
-  // Track FPS
-  frameCount++;
-  const now = performance.now();
-  if (now - lastFpsTime >= 1000) {
-    currentFps = Math.round((frameCount * 1000) / (now - lastFpsTime));
-    fpsCounter.textContent = `${currentFps} FPS`;
-    frameCount = 0;
-    lastFpsTime = now;
-  }
-
-  // Draw incoming video frame onto canvas
-  canvasCtx.save();
-  canvasCtx.clearRect(0, 0, w, h);
-  canvasCtx.drawImage(results.image, 0, 0, w, h);
-
-  const eyeClosureThreshold = parseFloat(inputEyeThresh.value) || 300;
-  const absenceThreshold = parseFloat(inputAbsenceThresh.value) || 120;
-  const talkFrequencyThreshold = parseInt(inputTalkThresh.value) || 4;
-
-  const hasFace = Boolean(results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0);
-  let eyeStatus = "Unknown";
-  let avgEar = 0;
-  let mouthStatus = "Not Talking";
-  let mar = 0;
-  let stateChange = false;
-
-  if (hasFace) {
-    const landmarks = results.multiFaceLandmarks[0];
-
-    // Presence detection
-    if (!present) {
-      present = true;
-      sessionStartTime = currentTime;
-    }
-    lastPresenceTime = currentTime;
-
-    // Eye Tracking (EAR)
-    const leftEar = calculateEAR(LEFT_EYE, landmarks, w, h);
-    const rightEar = calculateEAR(RIGHT_EYE, landmarks, w, h);
-    avgEar = (leftEar + rightEar) / 2.0;
-    eyeStatus = avgEar < EAR_THRESHOLD ? "Eyes Closed" : "Eyes Open";
-
-    // Mouth / Talking Tracking (MAR)
-    mar = calculateMAR(LIP_POINTS, landmarks, w, h);
-    lipDistances.push(mar);
-    if (lipDistances.length > MAR_WINDOW_SIZE) {
-      lipDistances.shift();
-    }
-
-    if (lipDistances.length === MAR_WINDOW_SIZE) {
-      const stdDev = calculateStdDev(lipDistances);
-      if (stdDev > MAR_THRESHOLD) {
-        lastTalkingTime = currentTime;
-        if (!isTalking) {
-          stateChange = true;
-        }
-        isTalking = true;
-      } else if (currentTime - lastTalkingTime > TALKING_TIMEOUT) {
-        isTalking = false;
-      }
-
-      if (!prevIsTalking && isTalking) {
-        stateChange = true;
-      }
-      prevIsTalking = isTalking;
-    }
-    mouthStatus = isTalking ? "Talking" : "Not Talking";
-
-    // Draw Face Annotations
-    if (checkDrawMesh.checked) {
-      drawFaceAnnotations(canvasCtx, landmarks, w, h);
-    }
-  } else {
-    present = false;
-  }
-
-  // Record Talking state change
-  if (stateChange) {
-    talkingStateChanges.push(currentTime);
-  }
-  talkingStateChanges = talkingStateChanges.filter(t => currentTime - t <= MONITORING_WINDOW);
-  const talkingFrequency = talkingStateChanges.length;
-
-  // Eye Closure Tracking
-  let eyeClosureDuration = 0;
-  if (eyeStatus === "Eyes Closed") {
-    if (!continuousEyeClosed) {
-      eyeClosureStart = currentTime;
-      continuousEyeClosed = true;
-    }
-    eyeClosureDuration = currentTime - eyeClosureStart;
-  } else {
-    continuousEyeClosed = false;
-  }
-
-  // Absence Duration
-  const absenceDuration = !present ? (currentTime - lastPresenceTime) : 0;
-
-  // Working Status Evaluation
-  const eyeIssue = eyeClosureDuration > eyeClosureThreshold;
-  const talkingIssue = talkingFrequency > talkFrequencyThreshold;
-  const absenceIssue = !present && (currentTime - lastPresenceTime > absenceThreshold);
-  const workingStatus = (eyeIssue || talkingIssue || absenceIssue) ? "Not Working" : "Working";
-
-  // Log on status change (with 5-second debounce)
-  if (workingStatus !== lastStatus && (currentTime - lastLogTime > 5)) {
-    if (sessionStartTime) {
-      const duration = Math.round(currentTime - sessionStartTime);
-      logSession(sessionStartTime, currentTime, duration, workingStatus);
-      lastLogTime = currentTime;
-    }
-    lastStatus = workingStatus;
-    sessionStartTime = currentTime;
-  }
-
-  canvasCtx.restore();
-
-  // Update UI Elements
-  updateHUDAndMetrics({
-    present,
-    absenceDuration,
-    absenceThreshold,
-    eyeStatus,
-    avgEar,
-    eyeClosureDuration,
-    eyeClosureThreshold,
-    continuousEyeClosed,
-    mouthStatus,
-    mar,
-    talkingFrequency,
-    talkFrequencyThreshold,
-    workingStatus,
-    sessionStartTime,
-    currentTime
-  });
-}
-
-// Drawing Utilities
-function drawFaceAnnotations(ctx, landmarks, w, h) {
-  // Draw FaceMesh Tesselation
-  if (window.drawConnectors && window.FACEMESH_TESSELATION) {
-    window.drawConnectors(ctx, landmarks, window.FACEMESH_TESSELATION, {
-      color: '#C0C0C070',
-      lineWidth: 1
+  // Bind Role Switcher
+  const roleSelect = document.getElementById('role-selector');
+  if (roleSelect) {
+    roleSelect.value = window.authManager.getCurrentRole();
+    roleSelect.addEventListener('change', (e) => {
+      window.authManager.switchRole(e.target.value);
+      applyRolePermissions();
+      renderCurrentView();
     });
   }
 
-  // Draw Eye and Lip bounding boxes
-  function drawBox(indices, strokeStyle) {
-    const pts = indices.map(i => ({ x: landmarks[i].x * w, y: landmarks[i].y * h }));
-    if (pts.length > 0) {
-      const xs = pts.map(p => p.x);
-      const ys = pts.map(p => p.y);
-      const minX = Math.min(...xs);
-      const maxX = Math.max(...xs);
-      const minY = Math.min(...ys);
-      const maxY = Math.max(...ys);
-      ctx.strokeStyle = strokeStyle;
-      ctx.lineWidth = 2;
-      ctx.strokeRect(minX, minY, maxX - minX, maxY - minY);
+  // Bind Theme Toggle
+  const themeToggle = document.getElementById('theme-toggle-btn');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('worksense_theme', next);
+    });
+    const saved = localStorage.getItem('worksense_theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+  }
+
+  // Hook AI Engine Callbacks
+  if (window.aiEngine) {
+    window.aiEngine.onTelemetryUpdate = handleTelemetryUpdate;
+    window.aiEngine.onAlertTriggered = handleAlertTriggered;
+    window.aiEngine.onStatusChanged = handleStatusChanged;
+  }
+
+  // Hook Camera Manager Callbacks
+  if (window.cameraManager) {
+    window.cameraManager.onCameraDisconnected = (deviceId) => {
+      if (window.alertManager) {
+        window.alertManager.dispatchAlert({
+          type: 'CAMERA_OFFLINE',
+          severity: 'Critical',
+          employeeId: 'SYS',
+          employeeName: 'System Monitor',
+          camera: 'CAM-01',
+          description: 'Primary camera connection lost or device unplugged.',
+          xaiSummary: 'Hardware video capture stream abruptly terminated without software shutdown.'
+        });
+      }
+      renderAlertsBadge();
+    };
+  }
+
+  // Initialize Camera Hardware Selection
+  populateCameraDevices();
+
+  // Apply RBAC permissions to navigation
+  applyRolePermissions();
+
+  // Initial View Render
+  navigateToView('overview');
+  renderAlertsBadge();
+}
+
+function applyRolePermissions() {
+  const role = window.authManager.getCurrentRole();
+  const roleBadge = document.getElementById('current-role-badge');
+  if (roleBadge) {
+    roleBadge.textContent = role;
+    roleBadge.className = `badge-role role-${role.toLowerCase()}`;
+  }
+
+  // Filter sidebar items according to permissions
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    const perm = item.getAttribute('data-perm');
+    if (perm && !window.authManager.hasPermission(perm)) {
+      item.style.display = 'none';
+    } else {
+      item.style.display = 'flex';
+    }
+  });
+
+  const userDisplayName = document.getElementById('user-display-name');
+  if (userDisplayName && window.appState) {
+    userDisplayName.textContent = window.appState.currentUser.name;
+  }
+}
+
+function navigateToView(viewName) {
+  currentView = viewName;
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    if (item.getAttribute('data-view') === viewName) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+
+  const viewPanels = document.querySelectorAll('.view-panel');
+  viewPanels.forEach(panel => {
+    if (panel.id === `view-${viewName}`) {
+      panel.classList.remove('hidden');
+    } else {
+      panel.classList.add('hidden');
+    }
+  });
+
+  const pageTitle = document.getElementById('page-title');
+  if (pageTitle) {
+    const titles = {
+      overview: 'Executive Dashboard & Overview',
+      monitoring: 'Live Computer Vision Monitoring',
+      cameras: 'Multi-Camera Monitoring Grid',
+      employees: 'Employee Management & Directory',
+      attendance: 'Attendance & Timecard Hub',
+      alerts: 'Smart Alert Center',
+      analytics: 'Activity Analytics & Workstation Ergonomics',
+      reports: 'Compliance Reports & Data Exports',
+      privacy: 'Privacy, Consent & Audit Trail',
+      settings: 'System Configuration & Thresholds'
+    };
+    pageTitle.textContent = titles[viewName] || 'Dashboard';
+  }
+
+  renderCurrentView();
+}
+
+function renderCurrentView() {
+  switch (currentView) {
+    case 'overview': renderOverviewView(); break;
+    case 'monitoring': renderMonitoringView(); break;
+    case 'cameras': renderCamerasView(); break;
+    case 'employees': renderEmployeesView(); break;
+    case 'attendance': renderAttendanceView(); break;
+    case 'alerts': renderAlertsView(); break;
+    case 'analytics': renderAnalyticsView(); break;
+    case 'reports': renderReportsView(); break;
+    case 'privacy': renderPrivacyView(); break;
+    case 'settings': renderSettingsView(); break;
+  }
+}
+
+function renderAlertsBadge() {
+  const badge = document.getElementById('sidebar-alert-badge');
+  if (!badge) return;
+  const count = window.alertManager ? window.alertManager.getUnacknowledgedCount() : 0;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// -------------------------------------------------------------
+// View 1: Overview Dashboard
+// -------------------------------------------------------------
+function renderOverviewView() {
+  const kpis = window.analyticsEngine.getOverviewKPIs();
+  
+  const totalStaffEl = document.getElementById('kpi-total-staff');
+  const attendanceRateEl = document.getElementById('kpi-attendance-rate');
+  const alertsCountEl = document.getElementById('kpi-alerts-count');
+  const avgScoreEl = document.getElementById('kpi-avg-score');
+
+  if (totalStaffEl) totalStaffEl.textContent = kpis.totalStaff;
+  if (attendanceRateEl) attendanceRateEl.textContent = `${kpis.attendanceRate}%`;
+  if (alertsCountEl) alertsCountEl.textContent = kpis.unackAlerts;
+  if (avgScoreEl) avgScoreEl.textContent = `${kpis.avgScore}%`;
+
+  // Render recent alerts preview
+  const alertsList = document.getElementById('overview-recent-alerts');
+  if (alertsList && window.appState) {
+    const recent = window.appState.alerts.slice(0, 4);
+    if (recent.length === 0) {
+      alertsList.innerHTML = `<p class="empty-text">No active alerts. All systems operational.</p>`;
+    } else {
+      alertsList.innerHTML = recent.map(a => `
+        <div class="alert-mini-card ${a.severity.toLowerCase()}">
+          <div class="alert-mini-top">
+            <span class="badge-tag ${a.severity.toLowerCase()}">${a.severity}</span>
+            <span class="time-ago">${new Date(a.timestamp).toLocaleTimeString()}</span>
+          </div>
+          <div class="alert-mini-body">
+            <strong>${a.employeeName}</strong>: ${a.description}
+          </div>
+        </div>
+      `).join('');
     }
   }
 
-  drawBox(LEFT_EYE, '#FFFF00');  // Left Eye (Yellow)
-  drawBox(RIGHT_EYE, '#FFFF00'); // Right Eye (Yellow)
-  drawBox(LIP_POINTS, '#FF00FF'); // Lips (Magenta)
+  // Render department breakdown
+  const deptList = document.getElementById('overview-department-list');
+  if (deptList) {
+    const stats = window.analyticsEngine.departmentStats;
+    deptList.innerHTML = Object.entries(stats).map(([dept, data]) => `
+      <div class="dept-stat-row">
+        <div class="dept-name">
+          <span>${dept}</span>
+          <strong>${data.score}%</strong>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" style="width: ${data.score}%"></div>
+        </div>
+      </div>
+    `).join('');
+  }
 }
 
-// Update HUD & Metrics UI
-function updateHUDAndMetrics(data) {
-  // HUD
-  hudPresence.textContent = `Presence: ${data.present ? "Present" : "Absent"}`;
-  hudPresence.style.color = data.present ? "#00ff00" : "#ff4444";
+// -------------------------------------------------------------
+// View 2: Live Monitoring (Webcam & Advanced AI)
+// -------------------------------------------------------------
+function renderMonitoringView() {
+  const startBtn = document.getElementById('start-btn');
+  const stopBtn = document.getElementById('stop-btn');
+  const placeholder = document.getElementById('camera-placeholder');
+  const hud = document.getElementById('hud-overlay');
 
-  hudEye.textContent = `Eye: ${data.eyeStatus}`;
-  hudMouth.textContent = `Mouth: ${data.mouthStatus}`;
-  hudTalkEvents.textContent = `Talk Events: ${data.talkingFrequency}/${data.talkFrequencyThreshold}`;
-  hudStatus.textContent = `Status: ${data.workingStatus}`;
-  hudStatus.style.color = data.workingStatus === "Working" ? "#00ffff" : "#ff4444";
+  if (startBtn && stopBtn) {
+    startBtn.onclick = async () => {
+      try {
+        startBtn.disabled = true;
+        startBtn.textContent = 'Starting...';
+        const camSelect = document.getElementById('monitoring-camera-select');
+        const deviceId = camSelect ? camSelect.value : null;
 
-  if (data.continuousEyeClosed) {
-    hudEyeTimer.classList.remove('hidden');
-    hudEyeTimer.textContent = `Eyes Closed: ${Math.round(data.eyeClosureDuration)}s / ${data.eyeClosureThreshold}s`;
-  } else {
-    hudEyeTimer.classList.add('hidden');
+        await window.aiEngine.start(document.getElementById('webcam'), deviceId);
+
+        startBtn.disabled = true;
+        startBtn.textContent = '▶ Monitoring Live';
+        stopBtn.disabled = false;
+        if (placeholder) placeholder.classList.add('hidden');
+        if (hud) hud.classList.remove('hidden');
+
+        const pill = document.getElementById('system-status-pill');
+        if (pill) {
+          pill.textContent = 'Live Feed Active';
+          pill.className = 'status-pill status-live';
+        }
+      } catch (err) {
+        alert("Camera start error: " + err.message);
+        startBtn.disabled = false;
+        startBtn.textContent = '▶ Start Monitoring';
+      }
+    };
+
+    stopBtn.onclick = () => {
+      window.aiEngine.stop();
+      startBtn.disabled = false;
+      startBtn.textContent = '▶ Start Monitoring';
+      stopBtn.disabled = true;
+      if (placeholder) placeholder.classList.remove('hidden');
+      if (hud) hud.classList.add('hidden');
+
+      const pill = document.getElementById('system-status-pill');
+      if (pill) {
+        pill.textContent = 'System Ready';
+        pill.className = 'status-pill status-ready';
+      }
+    };
   }
 
-  if (!data.present) {
-    hudAbsenceTimer.classList.remove('hidden');
-    hudAbsenceTimer.textContent = `Absent: ${Math.round(data.absenceDuration)}s / ${data.absenceThreshold}s`;
-  } else {
-    hudAbsenceTimer.classList.add('hidden');
+  // Privacy Blur Mode
+  const blurCheck = document.getElementById('check-privacy-blur');
+  if (blurCheck && window.appState) {
+    blurCheck.checked = window.appState.settings.privacyBlurMode;
+    blurCheck.onchange = (e) => {
+      window.privacyManager.togglePrivacyBlur(e.target.checked);
+    };
   }
 
-  // Metrics Cards
-  metricPresence.textContent = data.present ? "Present" : "Absent";
-  metricPresence.className = `metric-value ${data.present ? "badge-present" : "badge-absent"}`;
-  metricAbsenceTime.textContent = !data.present ? `Absence timer: ${Math.round(data.absenceDuration)}s` : "Actively present";
+  // Draw face mesh toggle
+  const meshCheck = document.getElementById('check-draw-mesh');
+  if (meshCheck && window.appState) {
+    meshCheck.checked = window.appState.settings.drawFaceMesh;
+    meshCheck.onchange = (e) => {
+      window.appState.updateSettings({ drawFaceMesh: e.target.checked });
+    };
+  }
 
-  metricEye.textContent = data.eyeStatus;
-  metricEar.textContent = `EAR: ${data.avgEar.toFixed(2)}`;
-
-  metricMouth.textContent = data.mouthStatus;
-  metricMar.textContent = `MAR: ${data.mar.toFixed(3)}`;
-
-  metricTalkEvents.textContent = `${data.talkingFrequency} / ${data.talkFrequencyThreshold}`;
-
-  metricWorkingStatus.textContent = data.workingStatus;
-  metricWorkingStatus.className = `metric-value ${data.workingStatus === "Working" ? "badge-working" : "badge-not-working"}`;
-
-  const currentDuration = data.sessionStartTime ? Math.round(data.currentTime - data.sessionStartTime) : 0;
-  metricSessionDuration.textContent = `Current status duration: ${currentDuration}s`;
+  renderLiveSessionLogs();
 }
 
-// Session Logging
-function logSession(startSec, endSec, duration, status) {
+function handleTelemetryUpdate(data) {
+  liveTelemetry = data;
+
+  // FPS calculation
+  framesThisSecond++;
+  const now = performance.now();
+  if (now - lastFpsCheck >= 1000) {
+    fpsCounterValue = Math.round((framesThisSecond * 1000) / (now - lastFpsCheck));
+    framesThisSecond = 0;
+    lastFpsCheck = now;
+    const fpsBadge = document.getElementById('fps-counter');
+    if (fpsBadge) fpsBadge.textContent = `${fpsCounterValue} FPS`;
+  }
+
+  // Update In-Video HUD
+  const hudPresence = document.getElementById('hud-presence');
+  const hudEye = document.getElementById('hud-eye');
+  const hudMouth = document.getElementById('hud-mouth');
+  const hudTalk = document.getElementById('hud-talk-events');
+  const hudStatus = document.getElementById('hud-status');
+  const hudEyeTimer = document.getElementById('hud-eye-timer');
+  const hudAbsenceTimer = document.getElementById('hud-absence-timer');
+
+  if (hudPresence) {
+    hudPresence.textContent = `Presence: ${data.present ? "Present" : "Absent"}`;
+    hudPresence.style.color = data.present ? "#00ff00" : "#ff4444";
+  }
+  if (hudEye) hudEye.textContent = `Eye: ${data.eyeStatus} (EAR: ${data.ear.toFixed(2)})`;
+  if (hudMouth) hudMouth.textContent = `Mouth: ${data.mouthStatus} (MAR: ${data.mar.toFixed(3)})`;
+  if (hudTalk) hudTalk.textContent = `Talk Events: ${data.talkingFrequency}/${data.talkFrequencyThreshold}`;
+  if (hudStatus) {
+    hudStatus.textContent = `Status: ${data.workingStatus}`;
+    hudStatus.style.color = data.workingStatus === "Working" ? "#00ffff" : "#ff4444";
+  }
+
+  if (hudEyeTimer) {
+    if (data.continuousEyeClosed) {
+      hudEyeTimer.classList.remove('hidden');
+      hudEyeTimer.textContent = `Eyes Closed: ${Math.round(data.eyeClosureDuration)}s / ${data.eyeClosureThreshold}s`;
+    } else {
+      hudEyeTimer.classList.add('hidden');
+    }
+  }
+
+  if (hudAbsenceTimer) {
+    if (!data.present) {
+      hudAbsenceTimer.classList.remove('hidden');
+      hudAbsenceTimer.textContent = `Absent: ${Math.round(data.absenceDuration)}s / ${data.absenceThreshold}s`;
+    } else {
+      hudAbsenceTimer.classList.add('hidden');
+    }
+  }
+
+  // Update Telemetry Cards
+  const valPresence = document.getElementById('metric-presence');
+  const valEye = document.getElementById('metric-eye');
+  const valEar = document.getElementById('metric-ear');
+  const valMouth = document.getElementById('metric-mouth');
+  const valMar = document.getElementById('metric-mar');
+  const valYawn = document.getElementById('metric-yawn');
+  const valPose = document.getElementById('metric-head-pose');
+  const valPosture = document.getElementById('metric-posture');
+  const valTalkEvents = document.getElementById('metric-talk-events');
+  const valWorking = document.getElementById('metric-working-status');
+  const valXAI = document.getElementById('metric-xai-summary');
+
+  if (valPresence) {
+    valPresence.textContent = data.present ? "Present" : "Absent";
+    valPresence.className = `metric-value ${data.present ? 'badge-present' : 'badge-absent'}`;
+  }
+  if (valEye) valEye.textContent = data.eyeStatus;
+  if (valEar) valEar.textContent = `EAR: ${data.ear.toFixed(2)}`;
+  if (valMouth) valMouth.textContent = data.mouthStatus;
+  if (valMar) valMar.textContent = `MAR: ${data.mar.toFixed(3)}`;
+  if (valYawn) {
+    valYawn.textContent = `${data.yawnCount}${data.isYawning ? ' (YAWNING)' : ''}`;
+    valYawn.style.color = data.isYawning ? 'var(--color-danger)' : 'inherit';
+  }
+  if (valPose) {
+    valPose.textContent = `P: ${data.headPose.pitch}° | Y: ${data.headPose.yaw}° | R: ${data.headPose.roll}°`;
+  }
+  if (valPosture) {
+    valPosture.textContent = data.posture.status;
+    valPosture.className = `metric-value ${data.posture.status === 'Good Posture' ? 'badge-working' : 'badge-absent'}`;
+  }
+  if (valTalkEvents) valTalkEvents.textContent = `${data.talkingFrequency} / ${data.talkFrequencyThreshold}`;
+  if (valWorking) {
+    valWorking.textContent = data.workingStatus;
+    valWorking.className = `metric-value ${data.workingStatus === "Working" ? 'badge-working' : 'badge-not-working'}`;
+  }
+  if (valXAI) valXAI.textContent = data.xaiSummary;
+}
+
+function handleAlertTriggered(alertData) {
+  if (window.alertManager) {
+    window.alertManager.dispatchAlert({
+      employeeId: 'EMP-1001',
+      employeeName: 'Ashwin S',
+      camera: 'CAM-01',
+      ...alertData
+    });
+  }
+  renderAlertsBadge();
+}
+
+function handleStatusChanged(sessionData) {
   const logItem = {
-    date: formatDate(startSec),
-    startTime: formatTime(startSec),
-    endTime: formatTime(endSec),
-    duration: duration,
-    status: status
+    date: new Date(sessionData.startTime * 1000).toISOString().split('T')[0],
+    startTime: new Date(sessionData.startTime * 1000).toTimeString().split(' ')[0],
+    endTime: new Date(sessionData.endTime * 1000).toTimeString().split(' ')[0],
+    duration: sessionData.duration,
+    status: sessionData.status,
+    xaiSummary: sessionData.xaiSummary
   };
-
-  sessionLogs.unshift(logItem); // Add to beginning
-  renderSessionLogs();
+  liveSessionLogs.unshift(logItem);
+  renderLiveSessionLogs();
 }
 
-function renderSessionLogs() {
-  if (sessionLogs.length === 0) {
-    sessionLogBody.innerHTML = `
+function renderLiveSessionLogs() {
+  const tbody = document.getElementById('session-log-body');
+  if (!tbody) return;
+
+  if (liveSessionLogs.length === 0) {
+    tbody.innerHTML = `
       <tr class="empty-row">
-        <td colspan="5">No sessions logged yet. Start monitoring to begin recording activity transitions.</td>
+        <td colspan="6">No live sessions recorded yet. Start camera monitoring to capture status transitions.</td>
       </tr>
     `;
     return;
   }
 
-  sessionLogBody.innerHTML = sessionLogs.map(log => `
+  tbody.innerHTML = liveSessionLogs.map(l => `
     <tr>
-      <td>${log.date}</td>
-      <td>${log.startTime}</td>
-      <td>${log.endTime}</td>
-      <td>${log.duration}</td>
+      <td>${l.date}</td>
+      <td>${l.startTime}</td>
+      <td>${l.endTime}</td>
+      <td>${l.duration}s</td>
       <td>
-        <span class="status-badge ${log.status.trim() === "Working" ? "status-badge-working" : "status-badge-not-working"}">
-          ${log.status}
+        <span class="status-badge ${l.status.trim() === 'Working' ? 'status-badge-working' : 'status-badge-not-working'}">
+          ${l.status}
         </span>
       </td>
+      <td class="xai-cell" title="${l.xaiSummary}">${l.xaiSummary || 'Normal'}</td>
     </tr>
   `).join('');
 }
 
-// Download CSV
-function downloadCSV() {
-  if (sessionLogs.length === 0) {
-    alert("No session logs recorded yet to export.");
+async function populateCameraDevices() {
+  const select = document.getElementById('monitoring-camera-select');
+  if (!select || !window.cameraManager) return;
+
+  const devices = await window.cameraManager.getAvailableDevices();
+  select.innerHTML = '';
+  
+  if (devices.length === 0) {
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = 'Default System Camera';
+    select.appendChild(opt);
+  } else {
+    devices.forEach((d, idx) => {
+      const opt = document.createElement('option');
+      opt.value = d.deviceId;
+      opt.textContent = d.label || `Camera ${idx + 1}`;
+      select.appendChild(opt);
+    });
+  }
+}
+
+// -------------------------------------------------------------
+// View 3: Multi-Camera Grid
+// -------------------------------------------------------------
+function renderCamerasView() {
+  const grid = document.getElementById('camera-grid-container');
+  if (!grid || !window.appState) return;
+
+  const cameras = window.appState.cameras;
+  const employees = window.appState.employees;
+
+  grid.innerHTML = cameras.map(cam => {
+    const assignedEmp = employees.find(e => e.id === cam.assignedEmployeeId);
+    return `
+      <div class="camera-grid-card">
+        <div class="camera-card-top">
+          <div class="camera-meta">
+            <strong>${cam.name}</strong>
+            <span class="camera-loc">${cam.location}</span>
+          </div>
+          <span class="badge-tag ${cam.status.toLowerCase()}">${cam.status}</span>
+        </div>
+        <div class="camera-preview-box">
+          ${cam.isHardware ? `
+            <div class="live-hardware-tag">🔴 LIVE HARDWARE CAM</div>
+            <div class="simulated-feed">Active Video Device Connected</div>
+          ` : `
+            <div class="rtsp-tag">RTSP STREAM</div>
+            <div class="simulated-feed">Simulated IP Stream • ${cam.resolution}</div>
+          `}
+        </div>
+        <div class="camera-footer">
+          <div class="camera-assigned">
+            <span>Assigned:</span>
+            <strong>${assignedEmp ? assignedEmp.name : 'Unassigned'}</strong>
+          </div>
+          <button class="btn btn-sm btn-secondary" onclick="openAssignModal('${cam.id}')">Assign</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.openAssignModal = function(cameraId) {
+  const empId = prompt("Enter Employee ID to assign (e.g. EMP-1002):");
+  if (empId && window.cameraManager) {
+    window.cameraManager.assignEmployeeToCamera(cameraId, empId.trim());
+    renderCamerasView();
+  }
+};
+
+// -------------------------------------------------------------
+// View 4: Employee Management
+// -------------------------------------------------------------
+function renderEmployeesView() {
+  const container = document.getElementById('employee-list-container');
+  if (!container || !window.appState) return;
+
+  const employees = window.appState.employees;
+  const filterDept = document.getElementById('employee-dept-filter');
+  const selectedDept = filterDept ? filterDept.value : 'All';
+
+  const filtered = selectedDept === 'All' ? employees : employees.filter(e => e.department === selectedDept);
+
+  container.innerHTML = filtered.map(emp => `
+    <div class="employee-card">
+      <div class="emp-card-header">
+        <div class="emp-avatar">${emp.avatar}</div>
+        <div class="emp-info">
+          <h3>${emp.name}</h3>
+          <span class="emp-desig">${emp.designation}</span>
+        </div>
+        <span class="status-badge ${emp.status === 'Active' ? 'status-badge-working' : 'status-badge-not-working'}">
+          ${emp.status}
+        </span>
+      </div>
+      <div class="emp-details-grid">
+        <div class="emp-detail-item"><span>ID:</span> <strong>${emp.id}</strong></div>
+        <div class="emp-detail-item"><span>Department:</span> <strong>${emp.department}</strong></div>
+        <div class="emp-detail-item"><span>Workstation:</span> <strong>${emp.workstation}</strong></div>
+        <div class="emp-detail-item"><span>Camera:</span> <strong>${emp.cameraAssigned}</strong></div>
+        <div class="emp-detail-item"><span>Email:</span> <strong>${emp.email}</strong></div>
+        <div class="emp-detail-item"><span>Phone:</span> <strong>${emp.phone || 'N/A'}</strong></div>
+      </div>
+      <div class="emp-card-actions">
+        <button class="btn btn-sm btn-secondary" onclick="viewEmployeeHistory('${emp.id}')">View History</button>
+        ${window.authManager.hasPermission('manage_employees') ? `
+          <button class="btn btn-sm btn-outline" onclick="deleteEmployeeRecord('${emp.id}')">Delete</button>
+        ` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  const addBtn = document.getElementById('add-employee-btn');
+  if (addBtn) {
+    addBtn.style.display = window.authManager.hasPermission('manage_employees') ? 'inline-flex' : 'none';
+    addBtn.onclick = () => {
+      const name = prompt("Enter Full Name:");
+      if (!name) return;
+      const dept = prompt("Enter Department (Engineering, Product Design, Customer Support, Operations, Human Resources):", "Engineering");
+      const desig = prompt("Enter Designation:", "Software Engineer");
+      const ws = prompt("Enter Workstation ID:", "WS-07");
+      const email = prompt("Enter Work Email:", `${name.toLowerCase().replace(/\s+/g, '.')}@worksense.ai`);
+
+      window.appState.addEmployee({
+        name,
+        department: dept || 'Engineering',
+        designation: desig || 'Staff',
+        workstation: ws || 'WS-01',
+        email: email || 'user@worksense.ai',
+        cameraAssigned: 'None',
+        status: 'Active'
+      });
+      renderEmployeesView();
+    };
+  }
+}
+
+window.deleteEmployeeRecord = function(id) {
+  if (confirm(`Are you sure you want to delete employee record ${id}?`)) {
+    window.appState.deleteEmployee(id);
+    renderEmployeesView();
+  }
+};
+
+window.viewEmployeeHistory = function(id) {
+  const emp = window.appState.employees.find(e => e.id === id);
+  const att = window.appState.attendance.find(a => a.employeeId === id);
+  const alerts = window.appState.alerts.filter(a => a.employeeId === id);
+  
+  alert(`Employee History: ${emp.name} (${emp.id})\n` +
+        `Department: ${emp.department}\n` +
+        `Attendance: ${att ? att.status : 'N/A'} (Check-in: ${att ? att.checkIn : 'None'})\n` +
+        `Total Incident Alerts: ${alerts.length}\n` +
+        `Consent Signed: ${emp.consentSigned ? 'YES' : 'NO'}`);
+};
+
+// -------------------------------------------------------------
+// View 5: Attendance Hub
+// -------------------------------------------------------------
+function renderAttendanceView() {
+  const tbody = document.getElementById('attendance-table-body');
+  if (!tbody || !window.appState) return;
+
+  const records = window.appState.attendance;
+  tbody.innerHTML = records.map(att => `
+    <tr>
+      <td><strong>${att.employeeId}</strong></td>
+      <td>${att.name}</td>
+      <td>${att.department}</td>
+      <td>${att.date}</td>
+      <td>${att.checkIn || '—'}</td>
+      <td>${att.checkOut || 'Active'}</td>
+      <td>${Math.round(att.durationSeconds / 3600 * 10) / 10} hrs</td>
+      <td>${Math.round(att.breakSeconds / 60)} mins</td>
+      <td>
+        <span class="badge-tag ${att.isLate ? 'warning' : 'online'}">
+          ${att.isLate ? 'LATE' : 'ON TIME'}
+        </span>
+      </td>
+      <td>
+        <span class="status-badge ${att.status === 'Present' ? 'status-badge-working' : 'status-badge-not-working'}">
+          ${att.status}
+        </span>
+      </td>
+    </tr>
+  `).join('');
+
+  // Self Check-in / Check-out button
+  const checkInBtn = document.getElementById('self-checkin-btn');
+  const checkOutBtn = document.getElementById('self-checkout-btn');
+  
+  if (checkInBtn) {
+    checkInBtn.onclick = () => {
+      window.appState.recordCheckIn(window.appState.currentUser.id || 'EMP-1001');
+      renderAttendanceView();
+      alert("Check-in time recorded successfully!");
+    };
+  }
+
+  if (checkOutBtn) {
+    checkOutBtn.onclick = () => {
+      window.appState.recordCheckOut(window.appState.currentUser.id || 'EMP-1001');
+      renderAttendanceView();
+      alert("Check-out time recorded successfully!");
+    };
+  }
+}
+
+// -------------------------------------------------------------
+// View 6: Smart Alert Center
+// -------------------------------------------------------------
+function renderAlertsView() {
+  const container = document.getElementById('alerts-container');
+  if (!container || !window.appState) return;
+
+  const alerts = window.appState.alerts;
+  const filterSeverity = document.getElementById('alert-severity-filter');
+  const selected = filterSeverity ? filterSeverity.value : 'All';
+
+  const filtered = selected === 'All' ? alerts : alerts.filter(a => a.severity === selected);
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty-text">No alerts matching filter "${selected}".</div>`;
     return;
   }
 
-  const headers = ['Date', 'Start Time', 'End Time', 'Duration (seconds)', 'Status'];
-  const rows = sessionLogs.map(log => [
-    log.date,
-    log.startTime,
-    log.endTime,
-    log.duration,
-    `"${log.status}"`
-  ]);
-
-  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `presence_log_${new Date().toISOString().slice(0, 10)}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  container.innerHTML = filtered.map(a => `
+    <div class="alert-card ${a.severity.toLowerCase()} ${a.status === 'Acknowledged' ? 'acked' : ''}">
+      <div class="alert-card-header">
+        <div class="alert-title-group">
+          <span class="badge-tag ${a.severity.toLowerCase()}">${a.severity}</span>
+          <span class="badge-tag">${a.type}</span>
+          <strong>${a.employeeName} (${a.employeeId})</strong>
+          <span class="alert-camera-tag">${a.camera}</span>
+        </div>
+        <span class="alert-time">${new Date(a.timestamp).toLocaleString()}</span>
+      </div>
+      <div class="alert-description">
+        ${a.description}
+      </div>
+      <div class="alert-xai-box">
+        <strong>Explainable AI Diagnosis:</strong> ${a.xaiSummary}
+      </div>
+      <div class="alert-footer">
+        <div class="ack-status">
+          ${a.status === 'Acknowledged' ? `
+            <span class="text-success">✓ Acknowledged by ${a.acknowledgedBy} at ${new Date(a.acknowledgedAt).toLocaleTimeString()}</span>
+          ` : `
+            <span class="text-warning">● Pending Review</span>
+          `}
+        </div>
+        <div class="alert-buttons">
+          ${a.status === 'Unacknowledged' ? `
+            <button class="btn btn-sm btn-primary" onclick="acknowledgeAlertItem('${a.id}')">Acknowledge</button>
+          ` : ''}
+          <button class="btn btn-sm btn-outline" onclick="dismissAlertItem('${a.id}')">Dismiss</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
 }
 
-// Start Monitoring
-async function startMonitoring() {
-  try {
-    startBtn.disabled = true;
-    startBtn.textContent = "Starting...";
+window.acknowledgeAlertItem = function(id) {
+  window.appState.acknowledgeAlert(id);
+  renderAlertsView();
+  renderAlertsBadge();
+};
 
-    if (!faceMesh) {
-      initFaceMesh();
+window.dismissAlertItem = function(id) {
+  window.appState.dismissAlert(id);
+  renderAlertsView();
+  renderAlertsBadge();
+};
+
+// -------------------------------------------------------------
+// View 7: Activity Analytics
+// -------------------------------------------------------------
+function renderAnalyticsView() {
+  const timelineContainer = document.getElementById('daily-timeline-blocks');
+  if (timelineContainer && window.analyticsEngine) {
+    const slots = window.analyticsEngine.generateTimelineBlocks();
+    timelineContainer.innerHTML = slots.map(s => `
+      <div class="timeline-slot ${s.type}" title="${s.time}: ${s.label}">
+        <span class="slot-time">${s.time}</span>
+      </div>
+    `).join('');
+  }
+
+  // Weekly Trend Chart (Interactive SVG)
+  const chartContainer = document.getElementById('weekly-chart-svg');
+  if (chartContainer && window.analyticsEngine) {
+    const data = window.analyticsEngine.weeklyTrend;
+    const maxScore = 100;
+    const svgWidth = 460;
+    const svgHeight = 180;
+    const barWidth = 48;
+    const gap = (svgWidth - (barWidth * data.length)) / (data.length + 1);
+
+    const bars = data.map((d, i) => {
+      const h = (d.score / maxScore) * 120;
+      const x = gap + i * (barWidth + gap);
+      const y = 140 - h;
+      return `
+        <rect x="${x}" y="${y}" width="${barWidth}" height="${h}" rx="4" fill="var(--color-primary)" opacity="0.9"></rect>
+        <text x="${x + barWidth / 2}" y="${y - 8}" text-anchor="middle" fill="var(--text-main)" font-size="12" font-weight="600">${d.score}%</text>
+        <text x="${x + barWidth / 2}" y="160" text-anchor="middle" fill="var(--text-muted)" font-size="12">${d.day}</text>
+      `;
+    }).join('');
+
+    chartContainer.innerHTML = `
+      <svg width="100%" height="100%" viewBox="0 0 ${svgWidth} ${svgHeight}">
+        ${bars}
+      </svg>
+    `;
+  }
+}
+
+// -------------------------------------------------------------
+// View 8: Reports & Exports
+// -------------------------------------------------------------
+function renderReportsView() {
+  const typeSelect = document.getElementById('report-type-select');
+  const deptSelect = document.getElementById('report-dept-select');
+  const previewTbody = document.getElementById('report-preview-body');
+  const previewThead = document.getElementById('report-preview-head');
+
+  function updatePreview() {
+    if (!window.reportManager) return;
+    const type = typeSelect ? typeSelect.value : 'employee';
+    const dept = deptSelect ? deptSelect.value : 'All';
+    const data = window.reportManager.generateReportData(type, dept, 'all');
+
+    if (data.length === 0) {
+      if (previewThead) previewThead.innerHTML = '';
+      if (previewTbody) previewTbody.innerHTML = `<tr><td colspan="5">No report data found.</td></tr>`;
+      return;
     }
 
-    camera = new Camera(videoElement, {
-      onFrame: async () => {
-        if (isMonitoring && videoElement.readyState >= 2) {
-          canvasElement.width = videoElement.videoWidth || 640;
-          canvasElement.height = videoElement.videoHeight || 480;
-          await faceMesh.send({ image: videoElement });
-        }
-      },
-      width: 640,
-      height: 480
-    });
+    const headers = Object.keys(data[0]);
+    if (previewThead) {
+      previewThead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+    }
+    if (previewTbody) {
+      previewTbody.innerHTML = data.map(row => `
+        <tr>${headers.map(h => `<td>${row[h]}</td>`).join('')}</tr>
+      `).join('');
+    }
+  }
 
-    await camera.start();
-    isMonitoring = true;
-    startBtn.textContent = "▶ Start Monitoring";
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-    placeholderOverlay.classList.add('hidden');
-    hudOverlay.classList.remove('hidden');
+  if (typeSelect) typeSelect.onchange = updatePreview;
+  if (deptSelect) deptSelect.onchange = updatePreview;
 
-    systemStatusPill.textContent = "Monitoring Live";
-    systemStatusPill.className = "status-pill status-live";
-    lastPresenceTime = Date.now() / 1000;
-  } catch (err) {
-    console.error("Camera access error:", err);
-    alert(`Could not start camera: ${err.message}. Please check browser webcam permissions.`);
-    startBtn.disabled = false;
-    startBtn.textContent = "▶ Start Monitoring";
+  const exportCsvBtn = document.getElementById('export-csv-btn');
+  if (exportCsvBtn) {
+    exportCsvBtn.onclick = () => {
+      const type = typeSelect ? typeSelect.value : 'employee';
+      const dept = deptSelect ? deptSelect.value : 'All';
+      const data = window.reportManager.generateReportData(type, dept, 'all');
+      window.reportManager.exportCSV(data, `worksense_report_${type}`);
+    };
+  }
+
+  const exportPdfBtn = document.getElementById('export-pdf-btn');
+  if (exportPdfBtn) {
+    exportPdfBtn.onclick = () => {
+      const type = typeSelect ? typeSelect.value : 'employee';
+      const dept = deptSelect ? deptSelect.value : 'All';
+      const data = window.reportManager.generateReportData(type, dept, 'all');
+      window.reportManager.exportPDF(type, data);
+    };
+  }
+
+  updatePreview();
+}
+
+// -------------------------------------------------------------
+// View 9: Privacy & Audit Logs
+// -------------------------------------------------------------
+function renderPrivacyView() {
+  const auditBody = document.getElementById('audit-log-body');
+  if (auditBody && window.appState) {
+    const logs = window.appState.auditLogs;
+    auditBody.innerHTML = logs.map(l => `
+      <tr>
+        <td><strong>${l.id}</strong></td>
+        <td>${new Date(l.timestamp).toLocaleString()}</td>
+        <td>${l.user}</td>
+        <td><span class="badge-tag">${l.role}</span></td>
+        <td><strong>${l.action}</strong></td>
+        <td>${l.details}</td>
+      </tr>
+    `).join('');
+  }
+
+  const downloadMyDataBtn = document.getElementById('download-my-data-btn');
+  if (downloadMyDataBtn) {
+    downloadMyDataBtn.onclick = () => {
+      window.privacyManager.exportPersonalData(window.appState.currentUser.id || 'EMP-1001');
+    };
   }
 }
 
-// Stop Monitoring
-function stopMonitoring() {
-  if (camera) {
-    camera.stop();
+// -------------------------------------------------------------
+// View 10: Settings
+// -------------------------------------------------------------
+function renderSettingsView() {
+  if (!window.appState) return;
+  const s = window.appState.settings;
+
+  const inputEye = document.getElementById('cfg-eye-threshold');
+  const inputAbsence = document.getElementById('cfg-absence-threshold');
+  const inputTalk = document.getElementById('cfg-talk-threshold');
+  const inputYawn = document.getElementById('cfg-yawn-threshold');
+  const checkSound = document.getElementById('cfg-sound-alerts');
+  const checkEmail = document.getElementById('cfg-email-alerts');
+  const inputEmail = document.getElementById('cfg-notification-email');
+  const saveBtn = document.getElementById('save-settings-btn');
+
+  if (inputEye) inputEye.value = s.eyeClosureThreshold;
+  if (inputAbsence) inputAbsence.value = s.absenceThreshold;
+  if (inputTalk) inputTalk.value = s.talkFrequencyThreshold;
+  if (inputYawn) inputYawn.value = s.yawnThreshold;
+  if (checkSound) checkSound.checked = s.soundAlerts;
+  if (checkEmail) checkEmail.checked = s.emailNotifications;
+  if (inputEmail) inputEmail.value = s.notificationEmail;
+
+  if (saveBtn) {
+    saveBtn.onclick = () => {
+      window.appState.updateSettings({
+        eyeClosureThreshold: parseFloat(inputEye.value) || 300,
+        absenceThreshold: parseFloat(inputAbsence.value) || 120,
+        talkFrequencyThreshold: parseInt(inputTalk.value) || 4,
+        yawnThreshold: parseFloat(inputYawn.value) || 0.08,
+        soundAlerts: checkSound.checked,
+        emailNotifications: checkEmail.checked,
+        notificationEmail: inputEmail.value.trim()
+      });
+      alert("Settings saved successfully and applied across all monitoring modules!");
+    };
   }
-  isMonitoring = false;
-  startBtn.disabled = false;
-  stopBtn.disabled = true;
-  placeholderOverlay.classList.remove('hidden');
-  hudOverlay.classList.add('hidden');
-  systemStatusPill.textContent = "System Ready";
-  systemStatusPill.className = "status-pill status-ready";
-  fpsCounter.textContent = "0 FPS";
-
-  // Final log if session active
-  const currentTime = Date.now() / 1000;
-  if (sessionStartTime && lastStatus) {
-    const duration = Math.round(currentTime - sessionStartTime);
-    logSession(sessionStartTime, currentTime, duration, lastStatus);
-    sessionStartTime = null;
-  }
 }
-
-// Theme Toggle
-function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
-
-// Event Listeners
-startBtn.addEventListener('click', startMonitoring);
-stopBtn.addEventListener('click', stopMonitoring);
-themeToggleBtn.addEventListener('click', toggleTheme);
-downloadCsvBtn.addEventListener('click', downloadCSV);
-clearLogsBtn.addEventListener('click', () => {
-  sessionLogs = [];
-  renderSessionLogs();
-});
-
-// Restore Theme
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-  document.documentElement.setAttribute('data-theme', savedTheme);
-}
-

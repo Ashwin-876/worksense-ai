@@ -5,6 +5,7 @@ from trackers.presence_tracker import PresenceTracker
 from trackers.eye_tracker import EyeTracker
 from trackers.lip_movement import LipMovementDetector
 from trackers.face_landmarker_wrapper import SharedFaceLandmarker
+from trackers.advanced_ai_tracker import AdvancedAITracker
 from utils.logging_utils import setup_logger, log_session
 from utils.drawing_utils import draw_face_annotations
 
@@ -23,6 +24,7 @@ def main():
     eye_tracker = EyeTracker()
     lip_tracker = LipMovementDetector()
     shared_landmarker = SharedFaceLandmarker.get_instance()
+    advanced_ai = AdvancedAITracker()
 
     # Start webcam
     cap = cv2.VideoCapture(0)
@@ -66,6 +68,17 @@ def main():
         present_now = presence_tracker.detect_presence(frame, landmarks=landmarks)
         eye_status, ear = eye_tracker.detect_eye_state(frame, landmarks=landmarks)
         mouth_status, mar, state_change = lip_tracker.detect_talking(frame, landmarks=landmarks)  # Get state change flag
+        
+        # Advanced AI: Head-Pose, Yawning, Posture Analysis
+        pitch, yaw, roll = 0.0, 0.0, 0.0
+        posture_status = "Unknown"
+        is_yawning, yawn_count, yawn_event = False, 0, False
+        if landmarks is not None:
+            pitch, yaw, roll = advanced_ai.estimate_head_pose(landmarks, frame.shape[1], frame.shape[0])
+            is_yawning, yawn_count, yawn_event = advanced_ai.detect_yawn(mar, current_time)
+            posture_status, posture_desc = advanced_ai.analyze_posture(pitch, yaw, roll, landmarks)
+            if yawn_event:
+                print(f"Yawn event registered at {time.strftime('%H:%M:%S', time.localtime(current_time))} (Total: {yawn_count})")
         
         # Record state changes (not talking -> talking)
         if state_change:
@@ -138,16 +151,22 @@ def main():
         cv2.putText(frame, f"Status: {working_status}", (30, 185), 
                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 255), 2)
         
+        # Display Head-Pose & Posture
+        cv2.putText(frame, f"Pose: P:{pitch:.0f} Y:{yaw:.0f} R:{roll:.0f} | {posture_status}", (30, 215), 
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 180, 50), 2)
+        cv2.putText(frame, f"Yawns: {yawn_count}{' (YAWNING)' if is_yawning else ''}", (30, 245),
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 100, 255) if is_yawning else (200, 200, 200), 2)
+        
         # Display eye closure timer if eyes are closed
         if continuous_eye_closed:
             cv2.putText(frame, f"Eyes Closed: {int(eye_closure_duration)}s/{EYE_CLOSURE_THRESHOLD}s", 
-                       (30, 220), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                       (30, 275), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
         
         # Display absence timer if absent
         if not present_now and present:
             absence_time = current_time - last_presence_time
             cv2.putText(frame, f"Absent: {int(absence_time)}s/{ABSENCE_THRESHOLD}s", 
-                       (30, 250), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                       (30, 305), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
         # Show frame
         cv2.imshow("WorkSense AI - Employee Monitor", frame)
