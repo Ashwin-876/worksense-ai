@@ -23,7 +23,220 @@
   <script src="js/privacy.js"></script>
 </head>
 <body>
-  <div class="app-layout">
+  <!-- ============================================== -->
+  <!-- LOGIN & ROLE AUTHENTICATION SCREEN             -->
+  <!-- ============================================== -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-container">
+      
+      <!-- Top Brand Bar -->
+      <header class="login-header">
+        <div class="login-brand-wrapper">
+          <div class="login-brand-logo">👁️</div>
+          <div class="login-brand-titles">
+            <h1>WorkSense AI</h1>
+            <p>AI-Powered Employee Monitoring System • Role Portal</p>
+          </div>
+        </div>
+        <div class="login-header-actions">
+          <span class="login-status-badge">System Ready</span>
+          <button id="login-theme-toggle" class="btn btn-secondary btn-sm" aria-label="Toggle Theme">🌓 Theme</button>
+        </div>
+      </header>
+
+      <!-- Main Dual Login Layout -->
+      <div class="login-grid">
+        
+        <!-- Left: Form Authentication -->
+        <section class="login-card-manual" aria-label="Direct Credentials Login">
+          <div>
+            <div class="login-card-header">
+              <h2>🔐 Direct Sign In</h2>
+              <p>Enter your corporate credentials or employee ID below</p>
+            </div>
+
+            <form id="login-form" class="login-form" onsubmit="return false;">
+              <div id="login-alert-box" class="login-alert" role="alert"></div>
+
+              <div class="login-input-group">
+                <label for="login-username">Corporate Email or Employee ID</label>
+                <div class="login-input-wrapper">
+                  <span class="login-input-icon">👤</span>
+                  <input 
+                    type="text" 
+                    id="login-username" 
+                    class="login-input" 
+                    placeholder="e.g. anandhi@worksense.ai or EMP-1001" 
+                    autocomplete="username" 
+                    required
+                  >
+                </div>
+              </div>
+
+              <div class="login-input-group">
+                <label for="login-password">Password</label>
+                <div class="login-input-wrapper">
+                  <span class="login-input-icon">🔒</span>
+                  <input 
+                    type="password" 
+                    id="login-password" 
+                    class="login-input" 
+                    placeholder="Enter your password" 
+                    autocomplete="current-password" 
+                    required
+                  >
+                  <button type="button" id="login-password-toggle" class="login-password-toggle" aria-label="Toggle Password Visibility">👁️</button>
+                </div>
+              </div>
+
+              <div class="login-form-options">
+                <label>
+                  <input type="checkbox" id="login-remember" checked>
+                  Remember this device
+                </label>
+                <span style="color: var(--text-muted); font-size: 0.78rem;">Edge On-Device AI</span>
+              </div>
+
+              <button type="submit" id="login-submit-btn" class="login-btn-submit">
+                <span>Sign In to WorkSense</span>
+                <span>➜</span>
+              </button>
+            </form>
+          </div>
+
+          <div style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 0.85rem;">
+            💡 <strong>Quick Access:</strong> Select any staff role on the right for instant 1-click login with pre-filled credentials.
+          </div>
+        </section>
+
+        <!-- Right: ⚡ One-Click Role Access (All Roles & Credentials) -->
+        <section class="login-card-quick" aria-label="One-Click Role Selection">
+          <div class="login-card-header">
+            <h2>⚡ Instant Role Login (One-Click)</h2>
+            <p>Select any staff account below to log in immediately with pre-configured credentials:</p>
+          </div>
+
+          <div id="quick-roles-list" class="quick-roles-list">
+            
+            <!-- 1. Anandhi C (Super Admin) -->
+            <div class="quick-role-item is-admin">
+              <div class="quick-role-info">
+                <div class="quick-role-avatar" style="border-color: #e11d48; color: #e11d48;">AC</div>
+                <div class="quick-role-details">
+                  <div class="quick-role-name-row">
+                    <span class="quick-role-name">Anandhi C</span>
+                    <span class="badge-role role-super_admin" style="font-size: 0.7rem;">SUPER ADMIN</span>
+                  </div>
+                  <div class="quick-role-meta">
+                    <span>anandhi@worksense.ai</span>
+                    <span class="quick-role-cred">EMP-1001</span>
+                    <span class="quick-role-cred">admin123</span>
+                  </div>
+                </div>
+              </div>
+              <div class="quick-role-actions">
+                <button type="button" class="btn-quick-login" data-role="SUPER_ADMIN" data-email="anandhi@worksense.ai" data-password="admin123" title="Log in as Super Admin">
+                  <span>⚡ 1-Click Login</span>
+                </button>
+                <button type="button" class="btn-quick-fill" data-email="anandhi@worksense.ai" data-password="admin123" title="Fill into form">
+                  <span>📋 Fill</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. Akash A (Employee) -->
+            <div class="quick-role-item is-employee">
+              <div class="quick-role-info">
+                <div class="quick-role-avatar" style="border-color: #10b981; color: #10b981;">AA</div>
+                <div class="quick-role-details">
+                  <div class="quick-role-name-row">
+                    <span class="quick-role-name">Akash A</span>
+                    <span class="badge-role role-employee" style="font-size: 0.7rem;">EMPLOYEE</span>
+                  </div>
+                  <div class="quick-role-meta">
+                    <span>akash.a@worksense.ai</span>
+                    <span class="quick-role-cred">EMP-1002</span>
+                    <span class="quick-role-cred">akash123</span>
+                  </div>
+                </div>
+              </div>
+              <div class="quick-role-actions">
+                <button type="button" class="btn-quick-login" data-role="EMPLOYEE_AKASH" data-email="akash.a@worksense.ai" data-password="akash123" title="Log in as Akash A">
+                  <span>⚡ 1-Click Login</span>
+                </button>
+                <button type="button" class="btn-quick-fill" data-email="akash.a@worksense.ai" data-password="akash123" title="Fill into form">
+                  <span>📋 Fill</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 3. Kanishka Sri S (Employee) -->
+            <div class="quick-role-item is-employee">
+              <div class="quick-role-info">
+                <div class="quick-role-avatar" style="border-color: #10b981; color: #10b981;">KS</div>
+                <div class="quick-role-details">
+                  <div class="quick-role-name-row">
+                    <span class="quick-role-name">Kanishka Sri S</span>
+                    <span class="badge-role role-employee" style="font-size: 0.7rem;">EMPLOYEE</span>
+                  </div>
+                  <div class="quick-role-meta">
+                    <span>kanishka.s@worksense.ai</span>
+                    <span class="quick-role-cred">EMP-1003</span>
+                    <span class="quick-role-cred">kanishka123</span>
+                  </div>
+                </div>
+              </div>
+              <div class="quick-role-actions">
+                <button type="button" class="btn-quick-login" data-role="EMPLOYEE_KANISHKA" data-email="kanishka.s@worksense.ai" data-password="kanishka123" title="Log in as Kanishka Sri S">
+                  <span>⚡ 1-Click Login</span>
+                </button>
+                <button type="button" class="btn-quick-fill" data-email="kanishka.s@worksense.ai" data-password="kanishka123" title="Fill into form">
+                  <span>📋 Fill</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 4. Kartik Raja N (Employee) -->
+            <div class="quick-role-item is-employee">
+              <div class="quick-role-info">
+                <div class="quick-role-avatar" style="border-color: #10b981; color: #10b981;">KR</div>
+                <div class="quick-role-details">
+                  <div class="quick-role-name-row">
+                    <span class="quick-role-name">Kartik Raja N</span>
+                    <span class="badge-role role-employee" style="font-size: 0.7rem;">EMPLOYEE</span>
+                  </div>
+                  <div class="quick-role-meta">
+                    <span>kartik.r@worksense.ai</span>
+                    <span class="quick-role-cred">EMP-1004</span>
+                    <span class="quick-role-cred">kartik123</span>
+                  </div>
+                </div>
+              </div>
+              <div class="quick-role-actions">
+                <button type="button" class="btn-quick-login" data-role="EMPLOYEE_KARTIK" data-email="kartik.r@worksense.ai" data-password="kartik123" title="Log in as Kartik Raja N">
+                  <span>⚡ 1-Click Login</span>
+                </button>
+                <button type="button" class="btn-quick-fill" data-email="kartik.r@worksense.ai" data-password="kartik123" title="Fill into form">
+                  <span>📋 Fill</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      </div>
+
+      <!-- Security Notice -->
+      <footer class="login-security-footer">
+        🔒 Role-Based Access Control • MediaPipe On-Device Vision • Privacy-Preserving Telemetry
+      </footer>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MAIN APPLICATION LAYOUT (DASHBOARD)            -->
+  <!-- ============================================== -->
+  <div id="app-layout" class="app-layout">
     <!-- Sidebar Navigation -->
     <aside class="app-sidebar" aria-label="Main Navigation">
       <div class="sidebar-brand">
@@ -87,6 +300,7 @@
             <option value="EMPLOYEE_KANISHKA">Kanishka Sri S (Employee)</option>
             <option value="EMPLOYEE_KARTIK">Kartik Raja N (Employee)</option>
           </select>
+          <button id="sidebar-logout-btn" class="btn btn-outline btn-sm logout-nav-btn" style="width: 100%; margin-top: 0.6rem;">🚪 Sign Out</button>
         </div>
       </div>
     </aside>
@@ -106,6 +320,7 @@
             <span class="user-avatar">👤</span>
             <span id="user-display-name">Anandhi C (Super Admin)</span>
           </div>
+          <button id="logout-btn" class="btn btn-secondary btn-sm logout-nav-btn" title="Sign out to Login Screen">🚪 Sign Out</button>
         </div>
       </header>
 

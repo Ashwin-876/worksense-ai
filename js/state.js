@@ -213,15 +213,33 @@ class StateManager {
     this.useDemoData = this._load(STORAGE_KEYS.USE_DEMO_DATA, true);
     this.attendance = this._load(STORAGE_KEYS.ATTENDANCE, this._getDefaultAttendance());
     
-    // Primary Administrator: Anandhi C (Super Admin)
-    this.currentRole = 'SUPER_ADMIN';
-    this.currentRoleKey = 'SUPER_ADMIN';
-    this.currentUser = {
-      id: 'EMP-1001',
-      name: 'Anandhi C (Super Admin)',
-      role: 'SUPER_ADMIN',
-      email: 'anandhi@worksense.ai'
-    };
+    // Check if an existing session is saved
+    let saved = null;
+    try {
+      const savedRaw = localStorage.getItem('worksense_active_session');
+      saved = savedRaw ? JSON.parse(savedRaw) : null;
+    } catch(e) {}
+
+    if (saved && saved.roleKey) {
+      this.currentRoleKey = saved.roleKey;
+      this.currentRole = saved.role || (saved.roleKey === 'SUPER_ADMIN' ? 'SUPER_ADMIN' : 'EMPLOYEE');
+      this.currentUser = {
+        id: saved.userId || 'EMP-1001',
+        name: saved.name || 'Anandhi C (Super Admin)',
+        role: this.currentRole,
+        email: saved.email || 'anandhi@worksense.ai'
+      };
+    } else {
+      // Primary Administrator: Anandhi C (Super Admin)
+      this.currentRole = 'SUPER_ADMIN';
+      this.currentRoleKey = 'SUPER_ADMIN';
+      this.currentUser = {
+        id: 'EMP-1001',
+        name: 'Anandhi C (Super Admin)',
+        role: 'SUPER_ADMIN',
+        email: 'anandhi@worksense.ai'
+      };
+    }
   }
 
   _cleanseLegacy(employeesList) {

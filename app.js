@@ -11,6 +11,135 @@ let fpsCounterValue = 0;
 let lastFpsCheck = performance.now();
 let framesThisSecond = 0;
 
+function showLoginScreen(message = null) {
+  const loginScreen = document.getElementById('login-screen');
+  const appLayout = document.getElementById('app-layout');
+  if (loginScreen) {
+    loginScreen.classList.remove('hidden');
+    loginScreen.style.display = 'flex';
+  }
+  if (appLayout) {
+    appLayout.style.display = 'none';
+  }
+  const alertBox = document.getElementById('login-alert-box');
+  if (alertBox) {
+    if (message) {
+      alertBox.textContent = message;
+      alertBox.className = 'login-alert alert-info show';
+    } else {
+      alertBox.className = 'login-alert';
+    }
+  }
+}
+
+function showDashboard() {
+  const loginScreen = document.getElementById('login-screen');
+  const appLayout = document.getElementById('app-layout');
+  if (loginScreen) {
+    loginScreen.classList.add('hidden');
+    loginScreen.style.display = 'none';
+  }
+  if (appLayout) {
+    appLayout.style.display = 'flex';
+  }
+  // Sync role select and badges
+  const roleSelect = document.getElementById('role-selector');
+  if (roleSelect && window.authManager) {
+    roleSelect.value = window.authManager.getCurrentRoleKey();
+  }
+  applyRolePermissions();
+  renderCurrentView();
+}
+
+function setupAuthUI() {
+  const loginForm = document.getElementById('login-form');
+  const usernameInput = document.getElementById('login-username');
+  const passwordInput = document.getElementById('login-password');
+  const alertBox = document.getElementById('login-alert-box');
+  const passwordToggle = document.getElementById('login-password-toggle');
+  const loginThemeToggle = document.getElementById('login-theme-toggle');
+
+  // Password visibility toggle
+  if (passwordToggle && passwordInput) {
+    passwordToggle.addEventListener('click', () => {
+      const isPassword = passwordInput.getAttribute('type') === 'password';
+      passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+      passwordToggle.textContent = isPassword ? '🙈' : '👁️';
+    });
+  }
+
+  // Theme toggle on login screen
+  if (loginThemeToggle) {
+    loginThemeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('worksense_theme', next);
+    });
+  }
+
+  // Form submit handler
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const identifier = usernameInput ? usernameInput.value.trim() : '';
+      const password = passwordInput ? passwordInput.value.trim() : '';
+
+      const res = window.authManager.login(identifier, password);
+      if (res.success) {
+        if (alertBox) alertBox.className = 'login-alert';
+        showDashboard();
+      } else {
+        if (alertBox) {
+          alertBox.textContent = res.error;
+          alertBox.className = 'login-alert alert-error show';
+        }
+      }
+    });
+  }
+
+  // Quick 1-Click Login buttons
+  document.querySelectorAll('.btn-quick-login').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const roleKey = btn.getAttribute('data-role');
+      const res = window.authManager.quickLogin(roleKey);
+      if (res.success) {
+        showDashboard();
+      }
+    });
+  });
+
+  // Quick Autofill buttons
+  document.querySelectorAll('.btn-quick-fill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const email = btn.getAttribute('data-email');
+      const password = btn.getAttribute('data-password');
+      if (usernameInput) usernameInput.value = email;
+      if (passwordInput) passwordInput.value = password;
+      if (alertBox) {
+        alertBox.textContent = `Credentials auto-filled for ${email}. Click "Sign In" or 1-Click Login.`;
+        alertBox.className = 'login-alert alert-info show';
+      }
+      const submitBtn = document.getElementById('login-submit-btn');
+      if (submitBtn) submitBtn.focus();
+    });
+  });
+
+  // Logout Handlers
+  const handleLogout = () => {
+    if (window.aiEngine && window.aiEngine.isRunning) {
+      window.aiEngine.stop();
+    }
+    window.authManager.logout();
+    showLoginScreen("You have signed out safely. Select any staff account below to log back in.");
+  };
+
+  const logoutBtn = document.getElementById('logout-btn');
+  const sidebarLogoutBtn = document.getElementById('sidebar-logout-btn');
+  if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+  if (sidebarLogoutBtn) sidebarLogoutBtn.addEventListener('click', handleLogout);
+}
+
 function initApp() {
   // Bind navigation
   const navItems = document.querySelectorAll('.nav-item');
@@ -22,7 +151,7 @@ function initApp() {
     });
   });
 
-  // Bind Role Switcher
+  // Bind Role Switcher in Sidebar
   const roleSelect = document.getElementById('role-selector');
   if (roleSelect) {
     roleSelect.value = (window.appState && window.appState.currentRoleKey) ? window.appState.currentRoleKey : window.authManager.getCurrentRole();
@@ -33,7 +162,7 @@ function initApp() {
     });
   }
 
-  // Bind Theme Toggle
+  // Bind Dashboard Theme Toggle
   const themeToggle = document.getElementById('theme-toggle-btn');
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {
@@ -73,6 +202,17 @@ function initApp() {
 
   // Initialize Camera Hardware Selection
   populateCameraDevices();
+
+  // Setup Authentication & Login Handlers
+  setupAuthUI();
+
+  // Restore session or display login screen
+  const activeUser = window.authManager.initSession();
+  if (activeUser || window.authManager.isAuthenticated()) {
+    showDashboard();
+  } else {
+    showLoginScreen();
+  }
 
   // Apply RBAC permissions to navigation
   applyRolePermissions();
