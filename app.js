@@ -25,7 +25,7 @@ function initApp() {
   // Bind Role Switcher
   const roleSelect = document.getElementById('role-selector');
   if (roleSelect) {
-    roleSelect.value = window.authManager.getCurrentRole();
+    roleSelect.value = (window.appState && window.appState.currentRoleKey) ? window.appState.currentRoleKey : window.authManager.getCurrentRole();
     roleSelect.addEventListener('change', (e) => {
       window.authManager.switchRole(e.target.value);
       applyRolePermissions();
@@ -86,7 +86,7 @@ function applyRolePermissions() {
   const role = window.authManager.getCurrentRole();
   const roleBadge = document.getElementById('current-role-badge');
   if (roleBadge) {
-    roleBadge.textContent = role;
+    roleBadge.textContent = role === 'SUPER_ADMIN' ? 'SUPER ADMIN' : role;
     roleBadge.className = `badge-role role-${role.toLowerCase()}`;
   }
 
@@ -398,9 +398,10 @@ function handleTelemetryUpdate(data) {
 
 function handleAlertTriggered(alertData) {
   if (window.alertManager) {
+    const user = window.appState ? window.appState.currentUser : { id: 'EMP-1001', name: 'Anandhi C' };
     window.alertManager.dispatchAlert({
-      employeeId: 'EMP-1001',
-      employeeName: 'Ashwin S',
+      employeeId: user.id || 'EMP-1001',
+      employeeName: user.name.split(' (')[0] || 'Anandhi C',
       camera: 'CAM-01',
       ...alertData
     });

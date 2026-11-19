@@ -224,6 +224,7 @@ body {
   letter-spacing: 0.04em;
 }
 
+.role-super_admin { background-color: #e11d48; color: #fff; }
 .role-admin { background-color: var(--color-danger); color: #fff; }
 .role-manager { background-color: var(--color-primary); color: #fff; }
 .role-hr { background-color: var(--color-purple); color: #fff; }

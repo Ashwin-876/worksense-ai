@@ -1,4 +1,5 @@
 // WorkSense AI - Central State Management & Persistence Store
+// Updated: Staff and Administrator Registry
 
 const STORAGE_KEYS = {
   EMPLOYEES: 'worksense_employees',
@@ -8,93 +9,88 @@ const STORAGE_KEYS = {
   AUDIT_LOGS: 'worksense_audit_logs',
   SETTINGS: 'worksense_settings',
   AUTH: 'worksense_auth',
-  USE_DEMO_DATA: 'worksense_use_demo_data'
+  USE_DEMO_DATA: 'worksense_use_demo_data',
+  DB_VERSION: 'worksense_db_version'
 };
 
+const CURRENT_DB_VERSION = 'v2_anandhi_super_admin';
+
+// Purge any stale session or legacy records from previous sessions
+try {
+  if (localStorage.getItem(STORAGE_KEYS.DB_VERSION) !== CURRENT_DB_VERSION) {
+    localStorage.removeItem(STORAGE_KEYS.EMPLOYEES);
+    localStorage.removeItem(STORAGE_KEYS.ATTENDANCE);
+    localStorage.removeItem(STORAGE_KEYS.ALERTS);
+    localStorage.removeItem(STORAGE_KEYS.CAMERAS);
+    localStorage.removeItem(STORAGE_KEYS.AUDIT_LOGS);
+    localStorage.removeItem(STORAGE_KEYS.AUTH);
+    localStorage.setItem(STORAGE_KEYS.DB_VERSION, CURRENT_DB_VERSION);
+  }
+} catch (e) {
+  console.warn("Storage migration check error:", e);
+}
+
+// 4 Verified Staff Records: Anandhi C (Super Admin) + 3 Employees
 const DEFAULT_EMPLOYEES = [
   {
     id: 'EMP-1001',
-    name: 'Ashwin S',
-    email: 'ashwin@worksense.ai',
-    department: 'Engineering',
-    designation: 'Lead AI Engineer',
+    name: 'Anandhi C',
+    email: 'anandhi@worksense.ai',
+    department: 'Administration',
+    designation: 'Super Administrator',
+    role: 'SUPER_ADMIN',
     workstation: 'WS-01',
     cameraAssigned: 'CAM-01',
     status: 'Active',
-    avatar: 'AS',
-    joinedDate: '2024-01-15',
+    avatar: 'AC',
+    joinedDate: '2023-01-15',
     consentSigned: true,
-    phone: '+91 98765 43210'
+    phone: '+91 98765 00001'
   },
   {
     id: 'EMP-1002',
-    name: 'Priya Sharma',
-    email: 'priya.s@worksense.ai',
+    name: 'Akash A',
+    email: 'akash.a@worksense.ai',
     department: 'Engineering',
-    designation: 'Senior Frontend Engineer',
+    designation: 'Software Engineer',
+    role: 'EMPLOYEE',
     workstation: 'WS-02',
     cameraAssigned: 'CAM-02',
     status: 'Active',
-    avatar: 'PS',
-    joinedDate: '2024-03-01',
+    avatar: 'AA',
+    joinedDate: '2024-02-10',
     consentSigned: true,
-    phone: '+91 98765 43211'
+    phone: '+91 98765 00002'
   },
   {
     id: 'EMP-1003',
-    name: 'David Miller',
-    email: 'david.m@worksense.ai',
-    department: 'Product Design',
-    designation: 'UI/UX Lead',
+    name: 'Kanishka Sri S',
+    email: 'kanishka.s@worksense.ai',
+    department: 'Quality & Testing',
+    designation: 'QA Specialist',
+    role: 'EMPLOYEE',
     workstation: 'WS-03',
-    cameraAssigned: 'CAM-04',
-    status: 'On Break',
-    avatar: 'DM',
-    joinedDate: '2023-11-10',
+    cameraAssigned: 'CAM-03',
+    status: 'Active',
+    avatar: 'KS',
+    joinedDate: '2024-03-15',
     consentSigned: true,
-    phone: '+1 555-0192'
+    phone: '+91 98765 00003'
   },
   {
     id: 'EMP-1004',
-    name: 'Ananya Roy',
-    email: 'ananya.r@worksense.ai',
-    department: 'Customer Support',
-    designation: 'Support Operations Specialist',
-    workstation: 'WS-04',
-    cameraAssigned: 'CAM-03',
-    status: 'Active',
-    avatar: 'AR',
-    joinedDate: '2024-05-20',
-    consentSigned: true,
-    phone: '+91 98765 43214'
-  },
-  {
-    id: 'EMP-1005',
-    name: 'Marcus Chen',
-    email: 'marcus.c@worksense.ai',
+    name: 'Kartik Raja N',
+    email: 'kartik.r@worksense.ai',
     department: 'Operations',
-    designation: 'DevOps & Infrastructure Lead',
-    workstation: 'WS-05',
-    cameraAssigned: 'None',
-    status: 'Away',
-    avatar: 'MC',
-    joinedDate: '2023-08-14',
-    consentSigned: true,
-    phone: '+1 555-0188'
-  },
-  {
-    id: 'EMP-1006',
-    name: 'Sara Khan',
-    email: 'sara.k@worksense.ai',
-    department: 'Human Resources',
-    designation: 'People & Culture Manager',
-    workstation: 'WS-06',
-    cameraAssigned: 'None',
+    designation: 'Operations Associate',
+    role: 'EMPLOYEE',
+    workstation: 'WS-04',
+    cameraAssigned: 'CAM-04',
     status: 'Active',
-    avatar: 'SK',
-    joinedDate: '2023-04-10',
+    avatar: 'KR',
+    joinedDate: '2024-05-01',
     consentSigned: true,
-    phone: '+91 98765 43218'
+    phone: '+91 98765 00004'
   }
 ];
 
@@ -103,7 +99,7 @@ const DEFAULT_CAMERAS = [
     id: 'CAM-01',
     name: 'Primary Webcam (WS-01)',
     type: 'Local Webcam',
-    location: 'Engineering Pod A',
+    location: 'Executive Desk 1',
     assignedEmployeeId: 'EMP-1001',
     status: 'Online',
     resolution: '1280x720',
@@ -114,7 +110,7 @@ const DEFAULT_CAMERAS = [
     id: 'CAM-02',
     name: 'Workstation 2 Camera',
     type: 'IP Camera / RTSP',
-    location: 'Engineering Pod B',
+    location: 'Engineering Pod A',
     assignedEmployeeId: 'EMP-1002',
     status: 'Online',
     resolution: '1920x1080',
@@ -123,10 +119,10 @@ const DEFAULT_CAMERAS = [
   },
   {
     id: 'CAM-03',
-    name: 'Support Station Cam',
+    name: 'QA Station Camera',
     type: 'IP Camera / RTSP',
-    location: 'Support Floor 2',
-    assignedEmployeeId: 'EMP-1004',
+    location: 'Quality Lab 1',
+    assignedEmployeeId: 'EMP-1003',
     status: 'Online',
     resolution: '1280x720',
     fps: 25,
@@ -134,10 +130,10 @@ const DEFAULT_CAMERAS = [
   },
   {
     id: 'CAM-04',
-    name: 'Design Studio Cam',
+    name: 'Operations Pod Camera',
     type: 'IP Camera / RTSP',
-    location: 'Creative Lab 1',
-    assignedEmployeeId: 'EMP-1003',
+    location: 'Operations Floor',
+    assignedEmployeeId: 'EMP-1004',
     status: 'Standby',
     resolution: '1280x720',
     fps: 20,
@@ -153,7 +149,7 @@ const DEFAULT_SETTINGS = {
   yawnMinDuration: 1.8, // seconds
   soundAlerts: true,
   emailNotifications: true,
-  notificationEmail: 'alerts@worksense.ai',
+  notificationEmail: 'anandhi@worksense.ai',
   privacyBlurMode: false,
   metadataOnlyRetention: true,
   dataRetentionDays: 30,
@@ -167,40 +163,40 @@ const DEFAULT_ALERTS = [
     id: 'ALT-9001',
     type: 'DROWSINESS',
     severity: 'Warning',
-    timestamp: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
-    employeeId: 'EMP-1001',
-    employeeName: 'Ashwin S',
-    camera: 'CAM-01',
+    timestamp: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
+    employeeId: 'EMP-1002',
+    employeeName: 'Akash A',
+    camera: 'CAM-02',
     description: 'Prolonged eye closure and yawning detected during shift.',
     xaiSummary: 'Eye Aspect Ratio (EAR) dropped below 0.25 threshold with 2 yawn events detected within 3 minutes.',
     status: 'Acknowledged',
-    acknowledgedBy: 'Sara Khan (HR)',
+    acknowledgedBy: 'Anandhi C (Super Admin)',
     acknowledgedAt: new Date(Date.now() - 10 * 60 * 1000).toISOString()
   },
   {
     id: 'ALT-9002',
-    type: 'ABSENCE',
-    severity: 'Info',
-    timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+    type: 'POSTURE',
+    severity: 'Warning',
+    timestamp: new Date(Date.now() - 35 * 60 * 1000).toISOString(),
     employeeId: 'EMP-1003',
-    employeeName: 'David Miller',
-    camera: 'CAM-04',
-    description: 'Workstation absence exceeded scheduled break window.',
-    xaiSummary: 'Face presence not detected on camera CAM-04 for 18 minutes (scheduled lunch break exceeded).',
+    employeeName: 'Kanishka Sri S',
+    camera: 'CAM-03',
+    description: 'Persistent downward pitch / ergonomic strain detected.',
+    xaiSummary: 'Head pitch exceeded -22° for over 12 minutes, indicating potential ergonomic strain or mobile usage.',
     status: 'Unacknowledged',
     acknowledgedBy: null,
     acknowledgedAt: null
   },
   {
     id: 'ALT-9003',
-    type: 'POSTURE',
-    severity: 'Warning',
-    timestamp: new Date(Date.now() - 65 * 60 * 1000).toISOString(),
-    employeeId: 'EMP-1002',
-    employeeName: 'Priya Sharma',
-    camera: 'CAM-02',
-    description: 'Persistent slouching / downward head pitch detected.',
-    xaiSummary: 'Head pitch exceeded -24° for over 15 minutes, indicating potential ergonomic strain or mobile phone distraction.',
+    type: 'ABSENCE',
+    severity: 'Info',
+    timestamp: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
+    employeeId: 'EMP-1004',
+    employeeName: 'Kartik Raja N',
+    camera: 'CAM-04',
+    description: 'Workstation absence detected during active shift window.',
+    xaiSummary: 'Face presence not detected on camera CAM-04 for 14 minutes.',
     status: 'Unacknowledged',
     acknowledgedBy: null,
     acknowledgedAt: null
@@ -209,7 +205,7 @@ const DEFAULT_ALERTS = [
 
 class StateManager {
   constructor() {
-    this.employees = this._load(STORAGE_KEYS.EMPLOYEES, DEFAULT_EMPLOYEES);
+    this.employees = this._cleanseLegacy(this._load(STORAGE_KEYS.EMPLOYEES, DEFAULT_EMPLOYEES));
     this.cameras = this._load(STORAGE_KEYS.CAMERAS, DEFAULT_CAMERAS);
     this.settings = this._load(STORAGE_KEYS.SETTINGS, DEFAULT_SETTINGS);
     this.alerts = this._load(STORAGE_KEYS.ALERTS, DEFAULT_ALERTS);
@@ -217,14 +213,24 @@ class StateManager {
     this.useDemoData = this._load(STORAGE_KEYS.USE_DEMO_DATA, true);
     this.attendance = this._load(STORAGE_KEYS.ATTENDANCE, this._getDefaultAttendance());
     
-    // Auth state
-    this.currentRole = 'ADMIN'; // ADMIN, MANAGER, HR, EMPLOYEE
+    // Primary Administrator: Anandhi C (Super Admin)
+    this.currentRole = 'SUPER_ADMIN';
+    this.currentRoleKey = 'SUPER_ADMIN';
     this.currentUser = {
       id: 'EMP-1001',
-      name: 'Ashwin S (Admin)',
-      role: 'ADMIN',
-      email: 'admin@worksense.ai'
+      name: 'Anandhi C (Super Admin)',
+      role: 'SUPER_ADMIN',
+      email: 'anandhi@worksense.ai'
     };
+  }
+
+  _cleanseLegacy(employeesList) {
+    // Completely remove any legacy or Ashwin references from the employee registry
+    const cleansed = employeesList.filter(e => !e.name.toLowerCase().includes('ashwin'));
+    if (cleansed.length === 0 || !cleansed.some(e => e.id === 'EMP-1001')) {
+      return [...DEFAULT_EMPLOYEES];
+    }
+    return cleansed;
   }
 
   _load(key, fallback) {
@@ -249,27 +255,35 @@ class StateManager {
     return [
       {
         id: 'AUD-001',
-        timestamp: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
-        user: 'admin@worksense.ai',
-        role: 'ADMIN',
+        timestamp: new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString(),
+        user: 'system@worksense.ai',
+        role: 'SYSTEM',
         action: 'SYSTEM_BOOT',
-        details: 'WorkSense AI Employee Monitoring Platform initialized with MediaPipe Tasks engine.'
+        details: 'WorkSense AI Employee Monitoring Platform initialized with Anandhi C as Super Admin.'
       },
       {
         id: 'AUD-002',
-        timestamp: new Date(now.getTime() - 90 * 60 * 1000).toISOString(),
-        user: 'admin@worksense.ai',
-        role: 'ADMIN',
+        timestamp: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
+        user: 'anandhi@worksense.ai',
+        role: 'SUPER_ADMIN',
         action: 'CAMERA_CONFIG',
-        details: 'Assigned CAM-01 (Primary Webcam) to Ashwin S (EMP-1001).'
+        details: 'Assigned CAM-01 (Primary Webcam) to Anandhi C (EMP-1001).'
       },
       {
         id: 'AUD-003',
-        timestamp: new Date(now.getTime() - 40 * 60 * 1000).toISOString(),
-        user: 'sara.k@worksense.ai',
-        role: 'HR',
+        timestamp: new Date(now.getTime() - 50 * 60 * 1000).toISOString(),
+        user: 'anandhi@worksense.ai',
+        role: 'SUPER_ADMIN',
         action: 'ALERT_ACKNOWLEDGE',
-        details: 'Acknowledged drowsiness alert ALT-9001 for EMP-1001.'
+        details: 'Acknowledged drowsiness alert ALT-9001 for Akash A (EMP-1002).'
+      },
+      {
+        id: 'AUD-004',
+        timestamp: new Date(now.getTime() - 15 * 60 * 1000).toISOString(),
+        user: 'anandhi@worksense.ai',
+        role: 'SUPER_ADMIN',
+        action: 'SECURITY_AUDIT',
+        details: 'Verified administrator access control: Anandhi C designated as Super Admin. Legacy credentials revoked.'
       }
     ];
   }
@@ -280,7 +294,20 @@ class StateManager {
       {
         id: 'ATT-1001',
         employeeId: 'EMP-1001',
-        name: 'Ashwin S',
+        name: 'Anandhi C',
+        department: 'Administration',
+        date: today,
+        checkIn: '08:50:00',
+        checkOut: null,
+        durationSeconds: 15400,
+        breakSeconds: 1200,
+        status: 'Present',
+        isLate: false
+      },
+      {
+        id: 'ATT-1002',
+        employeeId: 'EMP-1002',
+        name: 'Akash A',
         department: 'Engineering',
         date: today,
         checkIn: '09:02:15',
@@ -291,67 +318,28 @@ class StateManager {
         isLate: false
       },
       {
-        id: 'ATT-1002',
-        employeeId: 'EMP-1002',
-        name: 'Priya Sharma',
-        department: 'Engineering',
-        date: today,
-        checkIn: '08:55:00',
-        checkOut: null,
-        durationSeconds: 14800,
-        breakSeconds: 1200,
-        status: 'Present',
-        isLate: false
-      },
-      {
         id: 'ATT-1003',
         employeeId: 'EMP-1003',
-        name: 'David Miller',
-        department: 'Product Design',
+        name: 'Kanishka Sri S',
+        department: 'Quality & Testing',
         date: today,
-        checkIn: '09:42:10',
+        checkIn: '08:58:30',
         checkOut: null,
-        durationSeconds: 11800,
-        breakSeconds: 2400,
+        durationSeconds: 14800,
+        breakSeconds: 1400,
         status: 'Present',
-        isLate: true // Arrived after 09:15 grace
+        isLate: false
       },
       {
         id: 'ATT-1004',
         employeeId: 'EMP-1004',
-        name: 'Ananya Roy',
-        department: 'Customer Support',
-        date: today,
-        checkIn: '09:00:10',
-        checkOut: null,
-        durationSeconds: 14400,
-        breakSeconds: 1500,
-        status: 'Present',
-        isLate: false
-      },
-      {
-        id: 'ATT-1005',
-        employeeId: 'EMP-1005',
-        name: 'Marcus Chen',
+        name: 'Kartik Raja N',
         department: 'Operations',
         date: today,
-        checkIn: null,
+        checkIn: '09:05:10',
         checkOut: null,
-        durationSeconds: 0,
-        breakSeconds: 0,
-        status: 'Absent',
-        isLate: false
-      },
-      {
-        id: 'ATT-1006',
-        employeeId: 'EMP-1006',
-        name: 'Sara Khan',
-        department: 'Human Resources',
-        date: today,
-        checkIn: '08:48:30',
-        checkOut: null,
-        durationSeconds: 15200,
-        breakSeconds: 900,
+        durationSeconds: 13900,
+        breakSeconds: 1600,
         status: 'Present',
         isLate: false
       }
@@ -365,13 +353,14 @@ class StateManager {
     const newEmp = {
       id,
       avatar: initials || 'EM',
+      role: 'EMPLOYEE',
       joinedDate: new Date().toISOString().split('T')[0],
       consentSigned: true,
       ...emp
     };
     this.employees.push(newEmp);
     this._save(STORAGE_KEYS.EMPLOYEES, this.employees);
-    this.addAuditLog('EMPLOYEE_CREATE', `Added employee ${newEmp.name} (${newEmp.id}) to ${newEmp.department}`);
+    this.addAuditLog('EMPLOYEE_CREATE', `Super Admin Anandhi C added employee ${newEmp.name} (${newEmp.id}) to ${newEmp.department}`);
     return newEmp;
   }
 
@@ -387,11 +376,15 @@ class StateManager {
   }
 
   deleteEmployee(id) {
+    if (id === 'EMP-1001') {
+      alert("Error: Primary Super Admin account (Anandhi C) cannot be removed.");
+      return;
+    }
     const emp = this.employees.find(e => e.id === id);
     this.employees = this.employees.filter(e => e.id !== id);
     this._save(STORAGE_KEYS.EMPLOYEES, this.employees);
     if (emp) {
-      this.addAuditLog('EMPLOYEE_DELETE', `Deleted employee record for ${emp.name} (${id})`);
+      this.addAuditLog('EMPLOYEE_DELETE', `Super Admin Anandhi C removed employee record for ${emp.name} (${id})`);
     }
   }
 
@@ -443,10 +436,10 @@ class StateManager {
     const alert = this.alerts.find(a => a.id === id);
     if (alert) {
       alert.status = 'Acknowledged';
-      alert.acknowledgedBy = `${this.currentUser.name} (${this.currentRole})`;
+      alert.acknowledgedBy = `${this.currentUser.name}`;
       alert.acknowledgedAt = new Date().toISOString();
       this._save(STORAGE_KEYS.ALERTS, this.alerts);
-      this.addAuditLog('ALERT_ACKNOWLEDGE', `Acknowledged alert ${id} by ${this.currentUser.name}`);
+      this.addAuditLog('ALERT_ACKNOWLEDGE', `Acknowledged alert ${id} by Super Admin Anandhi C`);
       return alert;
     }
     return null;
@@ -516,7 +509,6 @@ class StateManager {
       details
     };
     this.auditLogs.unshift(log);
-    // Keep max 200 logs
     if (this.auditLogs.length > 200) this.auditLogs.pop();
     this._save(STORAGE_KEYS.AUDIT_LOGS, this.auditLogs);
     return log;
@@ -526,25 +518,56 @@ class StateManager {
   updateSettings(newSettings) {
     this.settings = { ...this.settings, ...newSettings };
     this._save(STORAGE_KEYS.SETTINGS, this.settings);
-    this.addAuditLog('SETTINGS_UPDATE', 'Updated system monitoring thresholds and policies');
+    this.addAuditLog('SETTINGS_UPDATE', 'Super Admin Anandhi C updated system monitoring thresholds');
     return this.settings;
   }
 
-  // Role Switching
-  setRole(role) {
-    this.currentRole = role;
-    const names = {
-      ADMIN: 'Ashwin S (Admin)',
-      MANAGER: 'David Miller (Manager)',
-      HR: 'Sara Khan (HR Director)',
-      EMPLOYEE: 'Ashwin S (Employee View)'
-    };
-    this.currentUser.role = role;
-    this.currentUser.name = names[role] || role;
-    this.currentUser.email = `${role.toLowerCase()}@worksense.ai`;
-    this.addAuditLog('ROLE_SWITCH', `Switched active dashboard session to role: ${role}`);
+  // Role Switching between Super Admin and Employees
+  setRole(roleKey) {
+    this.currentRoleKey = roleKey;
+    if (roleKey === 'SUPER_ADMIN' || roleKey === 'ADMIN') {
+      this.currentRole = 'SUPER_ADMIN';
+      this.currentUser = {
+        id: 'EMP-1001',
+        name: 'Anandhi C (Super Admin)',
+        role: 'SUPER_ADMIN',
+        email: 'anandhi@worksense.ai'
+      };
+    } else if (roleKey === 'EMPLOYEE_AKASH') {
+      this.currentRole = 'EMPLOYEE';
+      this.currentUser = {
+        id: 'EMP-1002',
+        name: 'Akash A (Employee)',
+        role: 'EMPLOYEE',
+        email: 'akash.a@worksense.ai'
+      };
+    } else if (roleKey === 'EMPLOYEE_KANISHKA') {
+      this.currentRole = 'EMPLOYEE';
+      this.currentUser = {
+        id: 'EMP-1003',
+        name: 'Kanishka Sri S (Employee)',
+        role: 'EMPLOYEE',
+        email: 'kanishka.s@worksense.ai'
+      };
+    } else if (roleKey === 'EMPLOYEE_KARTIK') {
+      this.currentRole = 'EMPLOYEE';
+      this.currentUser = {
+        id: 'EMP-1004',
+        name: 'Kartik Raja N (Employee)',
+        role: 'EMPLOYEE',
+        email: 'kartik.r@worksense.ai'
+      };
+    } else {
+      this.currentRole = 'EMPLOYEE';
+      this.currentUser = {
+        id: 'EMP-1002',
+        name: 'Employee View',
+        role: 'EMPLOYEE',
+        email: 'employee@worksense.ai'
+      };
+    }
+    this.addAuditLog('ROLE_SWITCH', `Switched active dashboard session to: ${this.currentUser.name}`);
   }
 }
 
 window.appState = new StateManager();
-

@@ -3,11 +3,10 @@
 class AnalyticsEngine {
   constructor() {
     this.departmentStats = {
-      Engineering: { active: 84, inactive: 10, away: 6, score: 86 },
-      'Product Design': { active: 78, inactive: 14, away: 8, score: 80 },
-      'Customer Support': { active: 88, inactive: 7, away: 5, score: 91 },
-      Operations: { active: 72, inactive: 18, away: 10, score: 75 },
-      'Human Resources': { active: 82, inactive: 11, away: 7, score: 84 }
+      Administration: { active: 94, inactive: 4, away: 2, score: 96 },
+      Engineering: { active: 88, inactive: 8, away: 4, score: 89 },
+      'Quality & Testing': { active: 85, inactive: 10, away: 5, score: 86 },
+      Operations: { active: 82, inactive: 12, away: 6, score: 82 }
     };
 
     this.weeklyTrend = [

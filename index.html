@@ -30,7 +30,7 @@
         <div class="brand-logo">👁️</div>
         <div class="brand-text">
           <h2>WorkSense AI</h2>
-          <span>Enterprise Monitor</span>
+          <span>Employee Monitoring System</span>
         </div>
       </div>
 
@@ -80,12 +80,12 @@
 
       <div class="sidebar-footer">
         <div class="sidebar-role-box">
-          <span class="role-caption">Active Role:</span>
-          <select id="role-selector" class="role-select" aria-label="Select Demo Role">
-            <option value="ADMIN">Admin (Full Control)</option>
-            <option value="MANAGER">Manager (Team View)</option>
-            <option value="HR">HR (Attendance & Staff)</option>
-            <option value="EMPLOYEE">Employee (Self-View)</option>
+          <span class="role-caption">Active Staff Account:</span>
+          <select id="role-selector" class="role-select" aria-label="Select Active Staff Account">
+            <option value="SUPER_ADMIN" selected>Anandhi C (Super Admin)</option>
+            <option value="EMPLOYEE_AKASH">Akash A (Employee)</option>
+            <option value="EMPLOYEE_KANISHKA">Kanishka Sri S (Employee)</option>
+            <option value="EMPLOYEE_KARTIK">Kartik Raja N (Employee)</option>
           </select>
         </div>
       </div>
@@ -100,11 +100,11 @@
         </div>
         <div class="topbar-right">
           <span id="system-status-pill" class="status-pill status-ready">System Ready</span>
-          <span id="current-role-badge" class="badge-role role-admin">ADMIN</span>
+          <span id="current-role-badge" class="badge-role role-super_admin">SUPER ADMIN</span>
           <button id="theme-toggle-btn" class="btn btn-secondary" aria-label="Toggle Dark/Light theme">🌓 Theme</button>
           <div class="user-pill">
             <span class="user-avatar">👤</span>
-            <span id="user-display-name">Ashwin S (Admin)</span>
+            <span id="user-display-name">Anandhi C (Super Admin)</span>
           </div>
         </div>
       </header>
@@ -119,22 +119,22 @@
           <div class="kpi-grid">
             <div class="kpi-card">
               <span class="kpi-label">Active Staff</span>
-              <span id="kpi-total-staff" class="kpi-value">6</span>
-              <span class="kpi-sub">Across 5 departments</span>
+              <span id="kpi-total-staff" class="kpi-value">4</span>
+              <span class="kpi-sub">Across 4 departments</span>
             </div>
             <div class="kpi-card">
               <span class="kpi-label">Today's Attendance</span>
-              <span id="kpi-attendance-rate" class="kpi-value">83%</span>
-              <span class="kpi-sub">5 of 6 clocked in</span>
+              <span id="kpi-attendance-rate" class="kpi-value">100%</span>
+              <span class="kpi-sub">4 of 4 clocked in</span>
             </div>
             <div class="kpi-card">
               <span class="kpi-label">Unacknowledged Alerts</span>
-              <span id="kpi-alerts-count" class="kpi-value text-warning">2</span>
+              <span id="kpi-alerts-count" class="kpi-value text-warning">1</span>
               <span class="kpi-sub">Requiring supervisor review</span>
             </div>
             <div class="kpi-card">
               <span class="kpi-label">Average Productivity</span>
-              <span id="kpi-avg-score" class="kpi-value text-success">85%</span>
+              <span id="kpi-avg-score" class="kpi-value text-success">88%</span>
               <span class="kpi-sub">Calculated across all pods</span>
             </div>
           </div>
@@ -149,7 +149,7 @@
               <div class="overview-preview-body">
                 <div class="preview-info-box">
                   <p><strong>Primary Camera:</strong> CAM-01 (Workstation 1)</p>
-                  <p><strong>Assigned:</strong> Ashwin S (Lead AI Engineer)</p>
+                  <p><strong>Assigned:</strong> Anandhi C (Super Administrator)</p>
                   <p><strong>AI Engines:</strong> FaceMesh • EAR • MAR • Yawning • Head-Pose • Posture</p>
                   <div class="preview-actions">
                     <button class="btn btn-secondary" onclick="navigateToView('monitoring')">Launch Camera Telemetry</button>
