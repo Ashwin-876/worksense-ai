@@ -68,7 +68,7 @@ body {
   display: flex;
   min-height: 100vh;
   padding: 24px;
-  gap: 20px;
+  gap: 26px;
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
@@ -79,7 +79,7 @@ body {
 @media (max-width: 1024px) {
   .app-layout {
     padding: 20px;
-    gap: 16px;
+    gap: 20px;
   }
 }
 
@@ -547,7 +547,7 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 36px;
   box-sizing: border-box;
   overflow-x: hidden;
 }
@@ -726,7 +726,7 @@ body {
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.85rem;
   flex-shrink: 0;
 }
 
@@ -949,7 +949,7 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 26px;
+  gap: 32px;
   box-sizing: border-box;
 }
 
@@ -2615,7 +2615,7 @@ tbody tr:hover {
 #view-overview {
   display: flex;
   flex-direction: column;
-  gap: 26px;
+  gap: 32px;
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
@@ -2627,7 +2627,7 @@ tbody tr:hover {
 .kpi-grid-6 {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 18px;
+  gap: 24px;
   margin-bottom: 0;
   width: 100%;
   box-sizing: border-box;
@@ -2636,21 +2636,21 @@ tbody tr:hover {
 @media (max-width: 1440px) {
   .kpi-grid-6 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
+    gap: 24px;
   }
 }
 
 @media (max-width: 1024px) {
   .kpi-grid-6 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    gap: 20px;
   }
 }
 
 @media (max-width: 640px) {
   .kpi-grid-6 {
     grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
+    gap: 16px;
   }
 }
 
@@ -2890,7 +2890,7 @@ tbody tr:hover {
 .overview-charts-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
+  gap: 28px;
   margin-bottom: 0;
   width: 100%;
   box-sizing: border-box;
@@ -2899,7 +2899,7 @@ tbody tr:hover {
 @media (max-width: 1024px) {
   .overview-charts-grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: 22px;
+    gap: 26px;
   }
 }
 
@@ -3210,7 +3210,7 @@ tbody tr:hover {
 .overview-quad-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
+  gap: 24px;
   margin-bottom: 0;
   width: 100%;
   box-sizing: border-box;
@@ -3219,14 +3219,14 @@ tbody tr:hover {
 @media (max-width: 1300px) {
   .overview-quad-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
+    gap: 22px;
   }
 }
 
 @media (max-width: 640px) {
   .overview-quad-grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
+    gap: 16px;
   }
 }
 
