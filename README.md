@@ -74,10 +74,4 @@ Logs are saved in `data/presence_log.csv` and downloadable directly from the web
 | 2026-11-19 | 10:12:00   | 10:15:30 | 210          | Working     |
 | 2026-11-19 | 11:02:12   | 11:07:14 | 302          | Not Working |
 
----
-
-### 📌 Credits
-
-Developed by:
-👩‍🎓 Data Science Student @ IIT Madras
-🔗 Email: [2jyotihill@gmail.com](mailto:2jyotihill@gmail.com)
+--
