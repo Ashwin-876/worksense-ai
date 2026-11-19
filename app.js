@@ -1,4 +1,4 @@
-// Employee Monitoring System - Client-side MediaPipe FaceMesh Implementation
+// WorkSense AI – Employee Monitoring System
 
 // Constants matching main.py
 const LEFT_EYE = [33, 160, 158, 133, 153, 144];
@@ -503,3 +503,4 @@ const savedTheme = localStorage.getItem('theme');
 if (savedTheme) {
   document.documentElement.setAttribute('data-theme', savedTheme);
 }
+

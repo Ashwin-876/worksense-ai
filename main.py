@@ -49,7 +49,7 @@ def main():
     last_status = None
     last_log_time = 0
 
-    print("Employee Monitoring System is running. Press 'q' in the monitor window to stop.")
+    print("WorkSense AI – Employee Monitoring System is running. Press 'q' in the monitor window to stop.")
 
     while True:
         ret, frame = cap.read()
@@ -150,7 +150,7 @@ def main():
                        (30, 250), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
         # Show frame
-        cv2.imshow("Employee Monitor", frame)
+        cv2.imshow("WorkSense AI - Employee Monitor", frame)
 
         # Exit
         if cv2.waitKey(1) & 0xFF == ord('q'):

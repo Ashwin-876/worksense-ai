@@ -1,4 +1,4 @@
-/* Modern Web Styling for Employee Monitoring System */
+/* WorkSense AI – Employee Monitoring System */
 
 :root {
   color-scheme: light dark;
@@ -537,3 +537,4 @@ tbody tr:hover {
   background-color: var(--bg-card);
   margin-top: auto;
 }
+
