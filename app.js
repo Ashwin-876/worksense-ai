@@ -538,7 +538,6 @@ function navigateToView(viewName) {
       reports: 'Compliance Reports & Data Exports',
       privacy: 'Privacy Framework & Audit Logs',
       settings: 'System Configuration & Policy Thresholds',
-      departments: 'Department Performance & Index',
       workstations: 'Workstation Hardware & Utilization'
     };
     pageTitle.textContent = titles[viewName] || 'Executive Dashboard';
