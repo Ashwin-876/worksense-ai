@@ -42,7 +42,7 @@ The evaluation logic logs the session as:
 1. **Clone this repo**
 
    ```bash
-   git clone https://github.com/hillhack/worksense-ai.git
+   git clone https://github.com/Ashwin-876/worksense-ai.git
    cd worksense-ai
    ```
 
