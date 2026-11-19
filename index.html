@@ -237,99 +237,209 @@
   <!-- MAIN APPLICATION LAYOUT (DASHBOARD)            -->
   <!-- ============================================== -->
   <div id="app-layout" class="app-layout">
-    <!-- Sidebar Navigation -->
+    <!-- Sidebar Navigation Matching Design Specification -->
     <aside class="app-sidebar" aria-label="Main Navigation">
       <div class="sidebar-brand">
-        <div class="brand-logo-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
+        <div class="brand-left">
+          <div class="brand-logo-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+              <circle cx="12" cy="12" r="3" fill="#059669"></circle>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h2>WorkSense <span class="brand-accent">AI</span></h2>
+            <span>EMPLOYEE MONITORING SYSTEM</span>
+          </div>
+        </div>
+        <button id="sidebar-collapse-btn" class="sidebar-collapse-btn" title="Collapse sidebar" aria-label="Collapse sidebar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m15 18-6-6 6-6"/>
           </svg>
-        </div>
-        <div class="brand-text">
-          <h2>WorkSense AI</h2>
-          <span>EMPLOYEE MONITORING SYSTEM</span>
-        </div>
+        </button>
       </div>
 
       <nav class="sidebar-nav">
-        <div class="nav-section-title">DASHBOARD</div>
+        <!-- Section 1: Dashboard -->
+        <div class="sidebar-section-header">
+          <span class="section-accent-bar"></span>
+          <span>DASHBOARD</span>
+        </div>
+        
         <a href="#overview" class="nav-item active" data-view="overview" data-perm="view_overview">
-          <span class="nav-icon">📊</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </span>
           <span class="nav-label">Overview</span>
         </a>
+        
         <a href="#monitoring" class="nav-item" data-view="monitoring" data-perm="view_monitoring">
-          <span class="nav-icon">📹</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
+          </span>
           <span class="nav-label">Live Monitoring</span>
         </a>
+        
         <a href="#cameras" class="nav-item" data-view="cameras" data-perm="view_cameras">
-          <span class="nav-icon">⊞</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+          </span>
           <span class="nav-label">Camera Grid</span>
         </a>
+        
         <a href="#employees" class="nav-item" data-view="employees" data-perm="view_employees">
-          <span class="nav-icon">👥</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </span>
           <span class="nav-label">Employees</span>
         </a>
+        
         <a href="#attendance" class="nav-item" data-view="attendance" data-perm="view_attendance">
-          <span class="nav-icon">📅</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+          </span>
           <span class="nav-label">Attendance</span>
         </a>
+        
         <a href="#alerts" class="nav-item" data-view="alerts" data-perm="view_alerts">
-          <span class="nav-icon">🔔</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          </span>
           <span class="nav-label">Alert Center</span>
-          <span id="sidebar-alert-badge" class="badge-count">2</span>
+          <span id="sidebar-alert-badge" class="badge-count-pill">2</span>
         </a>
+        
         <a href="#analytics" class="nav-item" data-view="analytics" data-perm="view_analytics">
-          <span class="nav-icon">📈</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+          </span>
           <span class="nav-label">Activity Analytics</span>
         </a>
+        
         <a href="#reports" class="nav-item" data-view="reports" data-perm="export_reports">
-          <span class="nav-icon">📑</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m16 13-3.5 3.5-2-2L8 17"/></svg>
+          </span>
           <span class="nav-label">Reports & Exports</span>
         </a>
 
-        <div class="nav-section-title">ADMINISTRATION</div>
+        <!-- Section 2: Administration -->
+        <div class="sidebar-section-header">
+          <span class="section-accent-bar"></span>
+          <span>ADMINISTRATION</span>
+        </div>
+        
         <a href="#departments" class="nav-item" data-view="departments" data-perm="view_overview">
-          <span class="nav-icon">🗂️</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          </span>
           <span class="nav-label">Departments</span>
         </a>
+        
         <a href="#workstations" class="nav-item" data-view="workstations" data-perm="view_cameras">
-          <span class="nav-icon">🖥️</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
+          </span>
           <span class="nav-label">Workstations</span>
         </a>
+        
         <a href="#camera-mgmt" class="nav-item" data-view="cameras" data-perm="manage_cameras">
-          <span class="nav-icon">🎥</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+          </span>
           <span class="nav-label">Camera Management</span>
         </a>
+        
         <a href="#roles" class="nav-item" data-view="employees" data-perm="manage_employees">
-          <span class="nav-icon">👥</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="10" r="3"/></svg>
+          </span>
           <span class="nav-label">Users & Roles</span>
         </a>
+        
         <a href="#privacy" class="nav-item" data-view="privacy" data-perm="view_privacy">
-          <span class="nav-icon">🛡️</span>
+          <span class="nav-icon icon-teal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </span>
           <span class="nav-label">Privacy & Audit</span>
         </a>
+        
         <a href="#settings" class="nav-item" data-view="settings" data-perm="manage_settings">
-          <span class="nav-icon">⚙️</span>
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          </span>
           <span class="nav-label">Settings</span>
-        </a>
-        <a href="#logout" class="nav-item nav-item-logout" id="nav-logout-btn" data-view="logout" title="Log out of current session">
-          <span class="nav-icon">🚪</span>
-          <span class="nav-label">Logout</span>
         </a>
       </nav>
 
+      <!-- Bottom Card: Active Staff Account Matching Image -->
       <div class="sidebar-footer">
-        <div class="sidebar-role-box">
-          <span class="role-caption">Active Staff Account:</span>
-          <select id="role-selector" class="role-select" aria-label="Select Active Staff Account">
+        <div class="sidebar-account-card" id="sidebar-account-card">
+          <div class="account-card-header">
+            <span>ACTIVE STAFF ACCOUNT</span>
+          </div>
+          <div class="account-card-body" id="account-dropdown-trigger" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false" title="Click to switch account or log out">
+            <div class="account-avatar-circle">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              </svg>
+            </div>
+            <div class="account-details">
+              <span class="account-name" id="sidebar-account-name">Anandhi C</span>
+              <span class="account-role" id="sidebar-account-role">Super Admin</span>
+            </div>
+            <div class="account-chevron">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Hidden Native select to maintain programmatic state synchronization -->
+          <select id="role-selector" class="role-select-hidden" aria-label="Select Active Staff Account">
             <option value="SUPER_ADMIN" selected>Anandhi C (Super Admin)</option>
             <option value="EMPLOYEE_AKASH">Akash A (Employee)</option>
             <option value="EMPLOYEE_KANISHKA">Kanishka Sri S (Employee)</option>
             <option value="EMPLOYEE_KARTIK">Kartik Raja N (Employee)</option>
             <option value="LOGOUT">🚪 Logout / Sign Out</option>
           </select>
-          <button id="sidebar-logout-btn" class="btn btn-outline btn-sm logout-nav-btn" style="width: 100%; margin-top: 0.6rem; color: var(--color-danger); border-color: var(--color-danger); font-weight: 600;" title="Log out to Login Screen">🚪 Logout</button>
+
+          <!-- Interactive Account Switcher Popover -->
+          <div class="account-popover-menu hidden" id="account-popover-menu">
+            <div class="popover-item active" data-role="SUPER_ADMIN">
+              <span class="popover-avatar-icon">👑</span>
+              <div class="popover-user-meta">
+                <strong>Anandhi C</strong>
+                <small>Super Admin (EMP-1001)</small>
+              </div>
+            </div>
+            <div class="popover-item" data-role="EMPLOYEE_AKASH">
+              <span class="popover-avatar-icon">💻</span>
+              <div class="popover-user-meta">
+                <strong>Akash A</strong>
+                <small>Software Engineer (EMP-1002)</small>
+              </div>
+            </div>
+            <div class="popover-item" data-role="EMPLOYEE_KANISHKA">
+              <span class="popover-avatar-icon">🔬</span>
+              <div class="popover-user-meta">
+                <strong>Kanishka Sri S</strong>
+                <small>QA Specialist (EMP-1003)</small>
+              </div>
+            </div>
+            <div class="popover-item" data-role="EMPLOYEE_KARTIK">
+              <span class="popover-avatar-icon">⚙️</span>
+              <div class="popover-user-meta">
+                <strong>Kartik Raja N</strong>
+                <small>Operations Associate (EMP-1004)</small>
+              </div>
+            </div>
+            <div class="popover-divider"></div>
+            <div class="popover-item item-logout" id="popover-logout-btn">
+              <span>🚪</span>
+              <strong>Logout / Sign Out</strong>
+            </div>
+          </div>
         </div>
       </div>
     </aside>

@@ -172,7 +172,7 @@ function initApp() {
     });
   });
 
-  // Bind Role Switcher in Sidebar
+  // Bind Role Switcher in Sidebar (Native select)
   const roleSelect = document.getElementById('role-selector');
   if (roleSelect) {
     roleSelect.value = (window.appState && window.appState.currentRoleKey) ? window.appState.currentRoleKey : window.authManager.getCurrentRole();
@@ -186,6 +186,58 @@ function initApp() {
       renderCurrentView();
     });
   }
+
+  // Bind Sidebar Account Card Trigger and Popover
+  const accountTrigger = document.getElementById('account-dropdown-trigger');
+  const accountPopover = document.getElementById('account-popover-menu');
+  const accountChevron = document.querySelector('.account-chevron');
+
+  if (accountTrigger && accountPopover) {
+    accountTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isHidden = accountPopover.classList.contains('hidden');
+      accountPopover.classList.toggle('hidden', !isHidden);
+      if (accountChevron) accountChevron.classList.toggle('open', isHidden);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!accountTrigger.contains(e.target) && !accountPopover.contains(e.target)) {
+        accountPopover.classList.add('hidden');
+        if (accountChevron) accountChevron.classList.remove('open');
+      }
+    });
+
+    accountPopover.querySelectorAll('.popover-item[data-role]').forEach(item => {
+      item.addEventListener('click', () => {
+        const targetRole = item.getAttribute('data-role');
+        accountPopover.classList.add('hidden');
+        if (accountChevron) accountChevron.classList.remove('open');
+        window.authManager.switchRole(targetRole);
+        applyRolePermissions();
+        renderCurrentView();
+      });
+    });
+
+    const popoverLogout = document.getElementById('popover-logout-btn');
+    if (popoverLogout) {
+      popoverLogout.addEventListener('click', () => {
+        accountPopover.classList.add('hidden');
+        handleLogout();
+      });
+    }
+  }
+
+  // Sidebar collapse toggle
+  const collapseBtn = document.getElementById('sidebar-collapse-btn');
+  const toggleBtn = document.getElementById('sidebar-toggle-btn');
+  const appLayoutEl = document.querySelector('.app-layout');
+  const handleToggleSidebar = () => {
+    if (appLayoutEl) {
+      appLayoutEl.classList.toggle('sidebar-collapsed');
+    }
+  };
+  if (collapseBtn) collapseBtn.addEventListener('click', handleToggleSidebar);
+  if (toggleBtn) toggleBtn.addEventListener('click', handleToggleSidebar);
 
   // Bind Dashboard Theme Toggle
   const themeToggle = document.getElementById('theme-toggle-btn');
@@ -269,18 +321,34 @@ function applyRolePermissions() {
   const userDisplayName = document.getElementById('user-display-name');
   const userDisplayRole = document.getElementById('user-display-role');
   const userAvatar = document.getElementById('topbar-user-avatar');
+  const sidebarAccountName = document.getElementById('sidebar-account-name');
+  const sidebarAccountRole = document.getElementById('sidebar-account-role');
 
   if (window.appState && window.appState.currentUser) {
     const user = window.appState.currentUser;
     const cleanName = user.name.split(' (')[0];
+    const roleTitle = user.role === 'SUPER_ADMIN' ? 'Super Admin' : (user.designation || 'Staff');
+    
     if (userDisplayName) userDisplayName.textContent = cleanName;
-    if (userDisplayRole) userDisplayRole.textContent = user.role === 'SUPER_ADMIN' ? 'Super Admin' : (user.designation || 'Staff');
+    if (userDisplayRole) userDisplayRole.textContent = roleTitle;
+    if (sidebarAccountName) sidebarAccountName.textContent = cleanName;
+    if (sidebarAccountRole) sidebarAccountRole.textContent = roleTitle;
+
     if (userAvatar) {
       const parts = cleanName.split(' ');
       const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : cleanName.substring(0, 2).toUpperCase();
       userAvatar.textContent = initials;
     }
   }
+
+  // Update active item in popover and sync select
+  const currentKey = window.authManager.getCurrentRoleKey();
+  const roleSelect = document.getElementById('role-selector');
+  if (roleSelect) roleSelect.value = currentKey;
+
+  document.querySelectorAll('.popover-item[data-role]').forEach(item => {
+    item.classList.toggle('active', item.getAttribute('data-role') === currentKey);
+  });
 }
 
 function acknowledgeAlertRow(alertId, btnEl) {

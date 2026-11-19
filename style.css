@@ -66,38 +66,65 @@ body {
 }
 
 .sidebar-brand {
-  padding: 1.25rem 1.25rem;
+  padding: 1.15rem 1.15rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: space-between;
   border-bottom: 1px solid var(--border-color);
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
 }
 
 .brand-logo-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  background-color: light-dark(#ecfdf5, #064e3b);
-  border-radius: 8px;
   flex-shrink: 0;
 }
 
 .brand-text h2 {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 800;
   color: var(--text-main);
-  line-height: 1.2;
+  line-height: 1.15;
+}
+
+.brand-accent {
+  color: #059669;
 }
 
 .brand-text span {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 700;
   display: block;
+}
+
+.sidebar-collapse-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: transparent;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.sidebar-collapse-btn:hover {
+  background-color: var(--bg-subtle);
+  color: var(--text-main);
 }
 
 .sidebar-nav {
@@ -106,28 +133,40 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.25rem;
 }
 
-.nav-section-title {
-  font-size: 0.68rem;
+.sidebar-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.85rem 0.5rem 0.35rem;
+  font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  padding: 0.75rem 0.65rem 0.25rem;
+  color: #475569;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.section-accent-bar {
+  width: 3px;
+  height: 13px;
+  border-radius: 9999px;
+  background-color: #059669;
+  display: inline-block;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 8px;
-  color: var(--text-muted);
+  gap: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 10px;
+  color: #334155;
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 500;
+  position: relative;
   transition: all 0.15s ease;
 }
 
@@ -137,37 +176,201 @@ body {
 }
 
 .nav-item.active {
-  background-color: light-dark(#d1fae5, #064e3b) !important;
-  color: light-dark(#065f46, #34d399) !important;
-  font-weight: 700;
+  background-color: #059669 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.22);
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  border-radius: 9999px;
+  background-color: #34d399;
+}
+
+.nav-item.active .nav-icon svg {
+  stroke: #ffffff;
 }
 
 .nav-icon {
-  font-size: 1rem;
-  width: 18px;
-  display: inline-flex;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  width: 20px;
+  color: inherit;
+  flex-shrink: 0;
 }
 
-.badge-count {
+.badge-count-pill {
   margin-left: auto;
   background-color: #ef4444;
   color: #ffffff;
-  padding: 0.1rem 0.45rem;
-  border-radius: 9999px;
-  font-size: 0.7rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
   font-weight: 700;
+  line-height: 1.2;
 }
 
 .sidebar-footer {
-  padding: 1rem;
+  padding: 0.85rem;
   border-top: 1px solid var(--border-color);
+  background-color: var(--bg-sidebar);
 }
 
-.sidebar-role-box {
+/* Active Staff Account Card matching image */
+.sidebar-account-card {
+  background-color: light-dark(#ecfdf5, #064e3b);
+  border: 1px solid light-dark(#d1fae5, #047857);
+  border-radius: 14px;
+  padding: 0.75rem 0.85rem;
+  position: relative;
+}
+
+.account-card-header {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: light-dark(#047857, #6ee7b7);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.account-card-body {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.account-avatar-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.account-details {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  line-height: 1.2;
+  flex: 1;
+  min-width: 0;
+}
+
+.account-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-role {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.account-chevron {
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.account-chevron.open {
+  transform: rotate(180deg);
+}
+
+.role-select-hidden {
+  display: none !important;
+}
+
+/* Account Switcher Popover */
+.account-popover-menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 0.45rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  animation: fadeIn 0.15s ease;
+}
+
+.account-popover-menu.hidden {
+  display: none !important;
+}
+
+.popover-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.popover-item:hover {
+  background-color: var(--bg-subtle);
+}
+
+.popover-item.active {
+  background-color: light-dark(#ecfdf5, #064e3b);
+}
+
+.popover-avatar-icon {
+  font-size: 1rem;
+}
+
+.popover-user-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.popover-user-meta strong {
+  font-size: 0.82rem;
+  color: var(--text-main);
+}
+
+.popover-user-meta small {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.popover-divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 0.25rem 0;
+}
+
+.popover-item.item-logout {
+  color: var(--color-danger);
+}
+
+.popover-item.item-logout:hover {
+  background-color: light-dark(#ffebe9, #3f191c);
+}
 }
 
 .role-caption {
@@ -2366,4 +2569,48 @@ tbody tr:hover {
   background-color: #10b981;
   color: #ffffff;
   border-color: #10b981;
+}
+
+/* Collapsible Sidebar Styles */
+.sidebar-collapsed .app-sidebar {
+  width: 72px;
+}
+
+.sidebar-collapsed .brand-text,
+.sidebar-collapsed .sidebar-section-header span:last-child,
+.sidebar-collapsed .nav-label,
+.sidebar-collapsed .badge-count-pill,
+.sidebar-collapsed .account-details,
+.sidebar-collapsed .account-card-header,
+.sidebar-collapsed .account-chevron {
+  display: none !important;
+}
+
+.sidebar-collapsed .sidebar-section-header {
+  justify-content: center;
+  padding: 0.75rem 0 0.25rem;
+}
+
+.sidebar-collapsed .sidebar-brand {
+  justify-content: center;
+  padding: 1.15rem 0.5rem;
+}
+
+.sidebar-collapsed .sidebar-collapse-btn {
+  transform: rotate(180deg);
+}
+
+.sidebar-collapsed .nav-item {
+  justify-content: center;
+  padding: 0.65rem 0;
+}
+
+.sidebar-collapsed .nav-item.active::before {
+  left: 2px;
+}
+
+.sidebar-collapsed .sidebar-account-card {
+  padding: 0.4rem;
+  display: flex;
+  justify-content: center;
 }
