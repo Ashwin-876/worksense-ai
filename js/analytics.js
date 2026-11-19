@@ -6,7 +6,10 @@ class AnalyticsEngine {
       Administration: { active: 94, inactive: 4, away: 2, score: 96 },
       Engineering: { active: 88, inactive: 8, away: 4, score: 89 },
       'Quality & Testing': { active: 85, inactive: 10, away: 5, score: 86 },
-      Operations: { active: 82, inactive: 12, away: 6, score: 82 }
+      Operations: { active: 82, inactive: 12, away: 6, score: 82 },
+      'Product Design': { active: 91, inactive: 6, away: 3, score: 92 },
+      'Customer Support': { active: 87, inactive: 9, away: 4, score: 88 },
+      'Human Resources': { active: 93, inactive: 5, away: 2, score: 94 }
     };
 
     this.weeklyTrend = [
@@ -22,20 +25,25 @@ class AnalyticsEngine {
     const employees = window.appState ? window.appState.employees : [];
     const attendance = window.appState ? window.appState.attendance : [];
     const alerts = window.appState ? window.appState.alerts : [];
+    const cameras = window.appState ? window.appState.cameras : [];
 
-    const totalStaff = employees.length;
+    const totalStaff = employees.length || 8;
     const presentStaff = attendance.filter(a => a.status === 'Present').length;
-    const attendanceRate = totalStaff > 0 ? Math.round((presentStaff / totalStaff) * 100) : 0;
+    const attendanceRate = totalStaff > 0 ? Math.round((presentStaff / totalStaff) * 100) : 88;
     const unackAlerts = alerts.filter(a => a.status === 'Unacknowledged').length;
+    const drowsinessEvents = alerts.filter(a => a.type === 'DROWSINESS').length;
+    const activeWorkstations = cameras.length || 8;
     
     // Average productivity calculation
-    const avgScore = 85; 
+    const avgScore = 87; 
 
     return {
       totalStaff,
       presentStaff,
       attendanceRate,
       unackAlerts,
+      drowsinessEvents,
+      activeWorkstations,
       avgScore
     };
   }

@@ -87,12 +87,89 @@ const STAFF_CREDENTIALS = [
     camera: 'CAM-04',
     themeColor: '#3fb950',
     description: 'Employee access: operations station feed (CAM-04), break duration logs, and personal compliance analytics.'
+  },
+  {
+    id: 'EMP-1005',
+    name: 'Rajesh V',
+    displayName: 'Rajesh V (Employee)',
+    email: 'rajesh.v@worksense.ai',
+    password: 'rajesh123',
+    role: 'EMPLOYEE',
+    roleKey: 'EMPLOYEE_RAJESH',
+    roleBadge: 'EMPLOYEE',
+    department: 'Product Design',
+    designation: 'Senior UI/UX Designer',
+    avatar: 'RV',
+    workstation: 'WS-05',
+    camera: 'CAM-05',
+    themeColor: '#3fb950',
+    description: 'Employee access: product design pod feed (CAM-05), focus telemetry, and sprint posture analysis.'
+  },
+  {
+    id: 'EMP-1006',
+    name: 'Divya M',
+    displayName: 'Divya M (Employee)',
+    email: 'divya.m@worksense.ai',
+    password: 'divya123',
+    role: 'EMPLOYEE',
+    roleKey: 'EMPLOYEE_DIVYA',
+    roleBadge: 'EMPLOYEE',
+    department: 'Customer Support',
+    designation: 'Support Lead',
+    avatar: 'DM',
+    workstation: 'WS-06',
+    camera: 'CAM-06',
+    themeColor: '#3fb950',
+    description: 'Employee access: support station telemetry (CAM-06), speech activity index, and attendance records.'
+  },
+  {
+    id: 'EMP-1007',
+    name: 'Vikram P',
+    displayName: 'Vikram P (Employee)',
+    email: 'vikram.p@worksense.ai',
+    password: 'vikram123',
+    role: 'EMPLOYEE',
+    roleKey: 'EMPLOYEE_VIKRAM',
+    roleBadge: 'EMPLOYEE',
+    department: 'Engineering',
+    designation: 'Cloud Infrastructure Architect',
+    avatar: 'VP',
+    workstation: 'WS-07',
+    camera: 'CAM-07',
+    themeColor: '#3fb950',
+    description: 'Employee access: cloud infra station feed (CAM-07), alertness monitoring, and system metrics.'
+  },
+  {
+    id: 'EMP-1008',
+    name: 'Sneha R',
+    displayName: 'Sneha R (Employee)',
+    email: 'sneha.r@worksense.ai',
+    password: 'sneha123',
+    role: 'EMPLOYEE',
+    roleKey: 'EMPLOYEE_SNEHA',
+    roleBadge: 'EMPLOYEE',
+    department: 'Human Resources',
+    designation: 'People & Culture Partner',
+    avatar: 'SR',
+    workstation: 'WS-08',
+    camera: 'CAM-08',
+    themeColor: '#3fb950',
+    description: 'Employee access: HR suite feed (CAM-08), shift check-out telemetry, and wellness metrics.'
   }
 ];
 
 class AuthManager {
   constructor() {
-    this.roles = ['SUPER_ADMIN', 'EMPLOYEE_AKASH', 'EMPLOYEE_KANISHKA', 'EMPLOYEE_KARTIK'];
+    this.roles = [
+      'SUPER_ADMIN', 
+      'EMPLOYEE_AKASH', 
+      'EMPLOYEE_KANISHKA', 
+      'EMPLOYEE_KARTIK',
+      'EMPLOYEE_RAJESH',
+      'EMPLOYEE_DIVYA',
+      'EMPLOYEE_VIKRAM',
+      'EMPLOYEE_SNEHA'
+    ];
     this.sessionKey = 'worksense_active_session';
   }
 

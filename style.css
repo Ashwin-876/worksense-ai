@@ -48,7 +48,7 @@ body {
     radial-gradient(circle at 50% 50%, rgba(240, 253, 250, 0.5) 0%, transparent 50%),
     #f6f8fb;
   background-attachment: fixed;
-  color: #1e293b;
+  color: var(--text-main);
   line-height: 1.5;
   min-height: 100vh;
 }
@@ -1458,13 +1458,29 @@ canvas#output-canvas.privacy-blur {
 }
 
 .employee-card {
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  background-color: var(--bg-card);
-  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  padding: 1.15rem;
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
+  color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+.employee-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .employee-card {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 .emp-card-header {
@@ -1477,37 +1493,67 @@ canvas#output-canvas.privacy-blur {
   width: 44px;
   height: 44px;
   border-radius: 9999px;
-  background-color: var(--color-primary);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 0.95rem;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
 }
 
 .emp-info h3 {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+[data-theme="dark"] .emp-info h3 {
+  color: #f8fafc;
 }
 
 .emp-desig {
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: #475569;
+}
+
+[data-theme="dark"] .emp-desig {
+  color: #94a3b8;
 }
 
 .emp-details-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.4rem;
+  gap: 0.45rem;
   font-size: 0.8rem;
-  padding: 0.6rem;
-  background-color: var(--bg-subtle);
-  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  background: rgba(241, 245, 249, 0.85);
+  border-radius: 10px;
+  color: #1e293b;
+}
+
+[data-theme="dark"] .emp-details-grid {
+  background: rgba(30, 41, 59, 0.65);
+  color: #e2e8f0;
 }
 
 .emp-detail-item span {
-  color: var(--text-muted);
+  color: #64748b;
+  margin-right: 0.25rem;
+}
+
+.emp-detail-item strong {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .emp-detail-item span {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .emp-detail-item strong {
+  color: #f1f5f9;
 }
 
 .emp-card-actions {
@@ -1972,7 +2018,7 @@ tbody tr:hover {
 
 /* Hero Typography */
 .login-hero-copy {
-  margin-bottom: clamp(0.5rem, 1.4vh, 1.15rem);
+  margin-bottom: clamp(0.6rem, 1.8vh, 1.35rem);
   flex-shrink: 0;
 }
 
@@ -2003,9 +2049,9 @@ tbody tr:hover {
 .login-feature-cards {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: clamp(0.35rem, 0.8vh, 0.65rem);
+  gap: clamp(0.4rem, 1vh, 0.75rem);
   max-width: 440px;
-  margin-bottom: clamp(0.5rem, 1.3vh, 1.15rem);
+  margin-bottom: clamp(0.6rem, 2vh, 1.5rem);
   flex-shrink: 0;
 }
 
@@ -2013,7 +2059,7 @@ tbody tr:hover {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: clamp(0.38rem, 0.8vh, 0.6rem) clamp(0.55rem, 0.9vw, 0.8rem);
+  padding: clamp(0.42rem, 0.95vh, 0.68rem) clamp(0.55rem, 0.9vw, 0.8rem);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(45, 212, 191, 0.16);
   border-radius: 9px;
@@ -2049,19 +2095,30 @@ tbody tr:hover {
 /* Bottom Desk Artwork (Plant & Laptop HUD) */
 .login-hero-desk-art {
   width: 100%;
-  max-width: clamp(250px, 32vh, 380px);
+  max-width: 100%;
   margin-top: auto;
   margin-bottom: 0;
-  flex-shrink: 1;
+  flex: 1;
+  min-height: 0;
   display: flex;
   align-items: flex-end;
+  justify-content: center;
+  padding-top: clamp(0.5rem, 1.5vh, 1.5rem);
 }
 
 .hero-desk-svg {
   width: 100%;
-  max-height: clamp(80px, 14vh, 130px);
+  max-width: 500px;
+  max-height: clamp(200px, 38vh, 370px);
   height: auto;
   display: block;
+}
+
+@media (min-height: 800px) {
+  .hero-desk-svg {
+    max-height: clamp(250px, 44vh, 420px);
+    max-width: 530px;
+  }
 }
 
 /* Organic S-Curve Divider (Teal Neon Border) */

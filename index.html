@@ -138,98 +138,142 @@
 
           <!-- Bottom Desk Illustration (Potted Plant + Laptop AI Telemetry HUD) -->
           <div class="login-hero-desk-art">
-            <svg class="hero-desk-svg" viewBox="0 0 460 170" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg class="hero-desk-svg" viewBox="0 0 500 305" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="laptopGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#0e2329"/>
-                  <stop offset="100%" stop-color="#06161a"/>
+                  <stop offset="0%" stop-color="#0a1d22"/>
+                  <stop offset="60%" stop-color="#051418"/>
+                  <stop offset="100%" stop-color="#020a0d"/>
                 </linearGradient>
                 <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stop-color="#94a3b8"/>
-                  <stop offset="100%" stop-color="#475569"/>
+                  <stop offset="50%" stop-color="#64748b"/>
+                  <stop offset="100%" stop-color="#334155"/>
+                </linearGradient>
+                <linearGradient id="plantPotGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#ffffff"/>
+                  <stop offset="100%" stop-color="#e2e8f0"/>
+                </linearGradient>
+                <linearGradient id="screenGloss" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.07"/>
+                  <stop offset="40%" stop-color="#ffffff" stop-opacity="0.02"/>
+                  <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0"/>
+                </linearGradient>
+                <linearGradient id="cyanAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#10b981" stop-opacity="0.25"/>
+                  <stop offset="100%" stop-color="#10b981" stop-opacity="0.0"/>
                 </linearGradient>
                 <filter id="deskShadow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="8" result="blur"/>
-                  <feColorMatrix type="matrix" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.35 0"/>
+                  <feGaussianBlur stdDeviation="12" result="blur"/>
+                  <feColorMatrix type="matrix" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.45 0"/>
                 </filter>
               </defs>
               
               <!-- Soft Desk Surface Shadow -->
-              <ellipse cx="230" cy="155" rx="200" ry="12" fill="url(#deskShadow)"/>
+              <ellipse cx="260" cy="296" rx="230" ry="9" fill="url(#deskShadow)"/>
 
-              <!-- Potted Plant on Left -->
-              <g transform="translate(18, 55)">
-                <!-- Ceramic Pot -->
-                <path d="M22 62 L18 96 C18 99 22 102 36 102 C50 102 54 99 54 96 L50 62 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
-                <ellipse cx="36" cy="62" rx="14" ry="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
-                <!-- Plant Soil -->
-                <ellipse cx="36" cy="62" rx="11" ry="2.8" fill="#334155"/>
-                <!-- Lush Green Succulent Leaves -->
-                <path d="M36 62 Q20 38 12 18 Q26 24 36 62 Z" fill="#059669"/>
-                <path d="M36 62 Q28 28 32 4 Q42 16 36 62 Z" fill="#10b981"/>
-                <path d="M36 62 Q45 28 58 10 Q56 28 36 62 Z" fill="#34d399"/>
-                <path d="M36 62 Q52 42 66 32 Q54 48 36 62 Z" fill="#047857"/>
-                <path d="M36 62 Q22 48 10 38 Q22 52 36 62 Z" fill="#059669"/>
+              <!-- Potted Plant on Left (Vibrant Succulent Flora) -->
+              <g transform="translate(10, 100)">
+                <!-- Ceramic Pot Shadow & Body -->
+                <path d="M26 110 L20 180 C20 186 28 192 48 192 C68 192 76 186 76 180 L70 110 Z" fill="url(#plantPotGrad)" stroke="#cbd5e1" stroke-width="1.8"/>
+                <ellipse cx="48" cy="110" rx="22" ry="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+                <!-- Plant Soil with Dark Mineral Pebbles -->
+                <ellipse cx="48" cy="110" rx="18" ry="4.5" fill="#334155"/>
+                
+                <!-- Lush Green Tropical Succulent Leaves -->
+                <path d="M48 110 Q32 40 44 2 Q60 25 48 110 Z" fill="#10b981"/>
+                <path d="M48 110 Q20 60 8 28 Q34 38 48 110 Z" fill="#059669"/>
+                <path d="M48 110 Q68 45 88 15 Q82 48 48 110 Z" fill="#34d399"/>
+                <path d="M48 110 Q14 78 0 58 Q22 88 48 110 Z" fill="#047857"/>
+                <path d="M48 110 Q78 68 96 48 Q78 84 48 110 Z" fill="#059669"/>
+                <path d="M48 110 Q40 68 44 35 Q56 68 48 110 Z" fill="#2dd4bf"/>
               </g>
 
-              <!-- Modern Laptop with AI Vision Dashboard Screen -->
-              <g transform="translate(95, 12)">
+              <!-- Modern Big Laptop with AI Vision Dashboard Screen -->
+              <g transform="translate(80, 15)">
                 <!-- Laptop Screen Bezel -->
-                <rect x="25" y="6" width="220" height="130" rx="8" fill="#111c21" stroke="#334155" stroke-width="2"/>
-                <!-- Webcam Dot & Indicator -->
-                <circle cx="135" cy="11" r="2.2" fill="#0f172a" stroke="#475569" stroke-width="0.8"/>
-                <circle cx="142" cy="11" r="1.2" fill="#10b981"/>
+                <rect x="20" y="5" width="395" height="268" rx="14" fill="#0c171b" stroke="#334155" stroke-width="3"/>
+                <!-- HD Webcam Dot & Green Active LED -->
+                <circle cx="217" cy="12" r="3.2" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+                <circle cx="227" cy="12" r="1.8" fill="#10b981"/>
 
                 <!-- Display Glass Area -->
-                <rect x="31" y="16" width="208" height="114" rx="4" fill="url(#laptopGrad)"/>
+                <rect x="30" y="20" width="375" height="240" rx="8" fill="url(#laptopGrad)"/>
+                <path d="M 30 20 L 220 20 L 30 210 Z" fill="url(#screenGloss)"/>
 
-                <!-- Laptop Screen Content: Analytics & Facial Telemetry -->
-                <!-- Top Nav Bar -->
-                <line x1="36" y1="26" x2="234" y2="26" stroke="#1e3a42" stroke-width="1"/>
-                <circle cx="42" cy="21" r="2" fill="#ef4444"/>
-                <circle cx="48" cy="21" r="2" fill="#f59e0b"/>
-                <circle cx="54" cy="21" r="2" fill="#10b981"/>
-                <text x="64" y="24" fill="#94a3b8" font-size="7" font-family="sans-serif" font-weight="600">WorkSense Vision Telemetry</text>
+                <!-- Laptop Top Window Header Bar -->
+                <line x1="38" y1="42" x2="397" y2="42" stroke="#1e3a42" stroke-width="1.5"/>
+                <circle cx="48" cy="32" r="3.5" fill="#ef4444"/>
+                <circle cx="58" cy="32" r="3.5" fill="#f59e0b"/>
+                <circle cx="68" cy="32" r="3.5" fill="#10b981"/>
+                <text x="82" y="36" fill="#94a3b8" font-size="10.5" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-weight="600">WorkSense Vision Telemetry • Live Neural Pipeline</text>
+                
+                <!-- Online Status Tag in Window Header -->
+                <rect x="340" y="25" width="56" height="14" rx="7" fill="rgba(16,185,129,0.18)" stroke="#10b981" stroke-width="0.8"/>
+                <circle cx="347" cy="32" r="2.5" fill="#10b981"/>
+                <text x="353" y="35" fill="#6ee7b7" font-size="7.5" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-weight="700">ONLINE</text>
 
-                <!-- Left: Activity Bar Chart -->
-                <g transform="translate(40, 40)">
-                  <text x="0" y="-3" fill="#64748b" font-size="6.5" font-family="sans-serif">Focus & Activity</text>
-                  <rect x="2" y="44" width="7" height="24" rx="1.5" fill="#10b981" fill-opacity="0.9"/>
-                  <rect x="13" y="28" width="7" height="40" rx="1.5" fill="#10b981"/>
-                  <rect x="24" y="36" width="7" height="32" rx="1.5" fill="#10b981" fill-opacity="0.85"/>
-                  <rect x="35" y="18" width="7" height="50" rx="1.5" fill="#2dd4bf"/>
-                  <rect x="46" y="24" width="7" height="44" rx="1.5" fill="#10b981"/>
-                  <rect x="57" y="38" width="7" height="30" rx="1.5" fill="#10b981" fill-opacity="0.8"/>
-                  <line x1="0" y1="69" x2="68" y2="69" stroke="#1e3a42" stroke-width="1"/>
-                  <!-- Sparkline Curve -->
-                  <path d="M 5 40 Q 20 18 38 28 T 62 16" fill="none" stroke="#5eead4" stroke-width="1.4" stroke-linecap="round"/>
-                </g>
-
-                <!-- Right: Facial Mesh Bounding Box (AI Vision HUD) -->
-                <g transform="translate(138, 36)">
-                  <!-- Target Bounding Box Corners -->
-                  <path d="M 12 18 L 6 18 L 6 24" fill="none" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round"/>
-                  <path d="M 54 18 L 60 18 L 60 24" fill="none" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round"/>
-                  <path d="M 6 56 L 6 62 L 12 62" fill="none" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round"/>
-                  <path d="M 60 56 L 60 62 L 54 62" fill="none" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round"/>
+                <!-- Left Screen Pane: Focus & Productivity Velocity -->
+                <g transform="translate(46, 56)">
+                  <text x="0" y="0" fill="#64748b" font-size="9.5" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-weight="700">FOCUS & ACTIVITY VELOCITY</text>
+                  <!-- Background Grid Lines -->
+                  <line x1="0" y1="35" x2="160" y2="35" stroke="#162e35" stroke-dasharray="3 3"/>
+                  <line x1="0" y1="70" x2="160" y2="70" stroke="#162e35" stroke-dasharray="3 3"/>
+                  <line x1="0" y1="105" x2="160" y2="105" stroke="#162e35" stroke-width="1.2"/>
                   
-                  <!-- Facial Wireframe Silhouette -->
-                  <ellipse cx="33" cy="34" rx="12" ry="15" fill="none" stroke="#2dd4bf" stroke-width="1.3" stroke-dasharray="2 2"/>
-                  <!-- Eyes & Mouth Markers -->
-                  <circle cx="28" cy="30" r="1.5" fill="#2dd4bf"/>
-                  <circle cx="38" cy="30" r="1.5" fill="#2dd4bf"/>
-                  <ellipse cx="33" cy="40" rx="4" ry="1.5" fill="none" stroke="#2dd4bf" stroke-width="1"/>
-                  <!-- Shoulders Outline -->
-                  <path d="M 14 62 C 16 52 24 50 33 50 C 42 50 50 52 52 62" fill="none" stroke="#2dd4bf" stroke-width="1.3"/>
-                  <!-- Telemetry Status Pill -->
-                  <rect x="8" y="66" width="50" height="9" rx="4.5" fill="#042f2e" stroke="#0d9488" stroke-width="0.8"/>
-                  <circle cx="14" cy="70.5" r="2" fill="#10b981"/>
-                  <text x="20" y="73.5" fill="#a7f3d0" font-size="5.5" font-family="sans-serif" font-weight="600">ACTIVE • 98.4%</text>
+                  <!-- Area Fill Under Activity Trend -->
+                  <path d="M 10 75 Q 40 38 75 48 T 145 28 L 145 105 L 10 105 Z" fill="url(#cyanAreaGrad)"/>
+                  <path d="M 10 75 Q 40 38 75 48 T 145 28" fill="none" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round"/>
+                  
+                  <!-- 7 Dynamic Activity Histogram Bars -->
+                  <rect x="6" y="62" width="13" height="43" rx="2.5" fill="#10b981" fill-opacity="0.9"/>
+                  <rect x="27" y="36" width="13" height="69" rx="2.5" fill="#10b981"/>
+                  <rect x="48" y="48" width="13" height="57" rx="2.5" fill="#10b981" fill-opacity="0.85"/>
+                  <rect x="69" y="16" width="13" height="89" rx="2.5" fill="#2dd4bf"/>
+                  <rect x="90" y="30" width="13" height="75" rx="2.5" fill="#10b981"/>
+                  <rect x="111" y="52" width="13" height="53" rx="2.5" fill="#10b981" fill-opacity="0.8"/>
+                  <rect x="132" y="42" width="13" height="63" rx="2.5" fill="#34d399"/>
+                  
+                  <!-- Focus Index Metric Badge -->
+                  <rect x="6" y="118" width="144" height="22" rx="6" fill="#042f2e" stroke="#0d9488" stroke-width="1.2"/>
+                  <circle cx="18" cy="129" r="3.2" fill="#10b981"/>
+                  <text x="26" y="133" fill="#a7f3d0" font-size="9" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-weight="700">INDEX: 98.4% FOCUS SCORE</text>
                 </g>
 
-                <!-- Laptop Base & Keyboard Well -->
-                <path d="M 6 136 L 264 136 L 278 144 L -8 144 Z" fill="url(#bodyGrad)" stroke="#475569" stroke-width="1"/>
-                <rect x="105" y="137" width="60" height="4" rx="1.5" fill="#64748b"/>
+                <!-- Right Screen Pane: Facial Mesh HUD Telemetry -->
+                <g transform="translate(225, 56)">
+                  <text x="8" y="0" fill="#64748b" font-size="9.5" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-weight="700">FACIAL LANDMARK TELEMETRY</text>
+                  
+                  <!-- Target Bounding Box Corners -->
+                  <path d="M 38 14 L 24 14 L 24 28" fill="none" stroke="#2dd4bf" stroke-width="2.8" stroke-linecap="round"/>
+                  <path d="M 140 14 L 154 14 L 154 28" fill="none" stroke="#2dd4bf" stroke-width="2.8" stroke-linecap="round"/>
+                  <path d="M 24 100 L 24 114 L 38 114" fill="none" stroke="#2dd4bf" stroke-width="2.8" stroke-linecap="round"/>
+                  <path d="M 154 100 L 154 114 L 140 114" fill="none" stroke="#2dd4bf" stroke-width="2.8" stroke-linecap="round"/>
+                  
+                  <!-- Face Mesh Wireframe Contour -->
+                  <ellipse cx="89" cy="62" rx="26" ry="32" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-dasharray="4 3"/>
+                  <!-- Eyes & Eyebrows -->
+                  <ellipse cx="78" cy="54" rx="5" ry="3" fill="none" stroke="#2dd4bf" stroke-width="1.6"/>
+                  <circle cx="78" cy="54" r="2" fill="#2dd4bf"/>
+                  <ellipse cx="100" cy="54" rx="5" ry="3" fill="none" stroke="#2dd4bf" stroke-width="1.6"/>
+                  <circle cx="100" cy="54" r="2" fill="#2dd4bf"/>
+                  <path d="M 72 47 Q 78 44 84 47" stroke="#2dd4bf" stroke-width="1.6" fill="none"/>
+                  <path d="M 94 47 Q 100 44 106 47" stroke="#2dd4bf" stroke-width="1.6" fill="none"/>
+                  <!-- Nose & Lips -->
+                  <path d="M 89 51 L 89 67 L 92 70" stroke="#2dd4bf" stroke-width="1.6" fill="none"/>
+                  <ellipse cx="89" cy="78" rx="8" ry="3.2" fill="none" stroke="#2dd4bf" stroke-width="1.8"/>
+                  <!-- Shoulder Line -->
+                  <path d="M 52 114 C 58 94 72 90 89 90 C 106 90 120 94 126 114" fill="none" stroke="#2dd4bf" stroke-width="2"/>
+                  
+                  <!-- AI Presence Status Pill -->
+                  <rect x="22" y="118" width="138" height="22" rx="6" fill="#042f2e" stroke="#0d9488" stroke-width="1.2"/>
+                  <circle cx="34" cy="129" r="3.2" fill="#10b981"/>
+                  <text x="42" y="133" fill="#a7f3d0" font-size="9" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-weight="700">ACTIVE • ATTENTIVE (EAR 0.31)</text>
+                </g>
+
+                <!-- Laptop Base Deck & Precision Trackpad Notch -->
+                <path d="M -15 273 L 450 273 L 474 288 L -38 288 Z" fill="url(#bodyGrad)" stroke="#475569" stroke-width="1.5"/>
+                <rect x="175" y="274" width="85" height="5.5" rx="2.5" fill="#64748b"/>
               </g>
             </svg>
           </div>
@@ -753,10 +797,10 @@
                 <span class="kpi-v2-title">Active Staff</span>
               </div>
               <div class="kpi-v2-middle">
-                <span id="kpi-total-staff" class="kpi-v2-num">4</span>
-                <span class="kpi-badge-trend trend-green">↑ 0%</span>
+                <span id="kpi-total-staff" class="kpi-v2-num">8</span>
+                <span class="kpi-badge-trend trend-green">↑ 100%</span>
               </div>
-              <span class="kpi-v2-sub">Across all departments</span>
+              <span class="kpi-v2-sub">Across 7 departments</span>
             </div>
 
             <!-- Card 2: Today's Attendance -->
@@ -768,7 +812,7 @@
                 <span class="kpi-v2-title">Today's Attendance</span>
               </div>
               <div class="kpi-v2-middle">
-                <span id="kpi-attendance-rate" class="kpi-v2-num">100%</span>
+                <span id="kpi-attendance-rate" class="kpi-v2-num">88%</span>
                 <div class="kpi-mini-bars">
                   <span style="height: 80%"></span>
                   <span style="height: 90%"></span>
@@ -777,7 +821,7 @@
                   <span style="height: 100%"></span>
                 </div>
               </div>
-              <span class="kpi-v2-sub">4 of 4 checked in</span>
+              <span class="kpi-v2-sub">7 of 8 checked in</span>
             </div>
 
             <!-- Card 3: Unacknowledged Alerts -->
@@ -789,8 +833,8 @@
                 <span class="kpi-v2-title">Unacknowledged Alerts</span>
               </div>
               <div class="kpi-v2-middle">
-                <span id="kpi-alerts-count" class="kpi-v2-num">7</span>
-                <span class="kpi-badge-trend trend-red">↑ 100%</span>
+                <span id="kpi-alerts-count" class="kpi-v2-num">4</span>
+                <span class="kpi-badge-trend trend-red">↑ 50%</span>
               </div>
               <span class="kpi-v2-sub">Requires attention</span>
             </div>
@@ -804,8 +848,8 @@
                 <span class="kpi-v2-title">Active Workstations</span>
               </div>
               <div class="kpi-v2-middle">
-                <span id="kpi-active-ws" class="kpi-v2-num">4</span>
-                <span class="kpi-badge-trend trend-green">↑ 0%</span>
+                <span id="kpi-active-ws" class="kpi-v2-num">8</span>
+                <span class="kpi-badge-trend trend-green">↑ 100%</span>
               </div>
               <span class="kpi-v2-sub">All workstations online</span>
             </div>
@@ -819,8 +863,8 @@
                 <span class="kpi-v2-title">Drowsiness Events</span>
               </div>
               <div class="kpi-v2-middle">
-                <span id="kpi-drowsiness-count" class="kpi-v2-num">3</span>
-                <span class="kpi-badge-trend trend-orange">↑ 50%</span>
+                <span id="kpi-drowsiness-count" class="kpi-v2-num">2</span>
+                <span class="kpi-badge-trend trend-orange">↑ 25%</span>
               </div>
               <span class="kpi-v2-sub">Detected today</span>
             </div>
@@ -1079,7 +1123,7 @@
                   <p>Current workstation usage</p>
                 </div>
               </div>
-              <div class="ws-progress-layout">
+              <div class="ws-progress-layout" id="overview-ws-progress-list" style="max-height: 145px; overflow-y: auto; padding-right: 4px;">
                 <div class="ws-row">
                   <span class="ws-label">WS-01</span>
                   <div class="ws-bar-track"><div class="ws-bar-fill w-100"></div></div>
@@ -1100,6 +1144,26 @@
                   <div class="ws-bar-track"><div class="ws-bar-fill w-100"></div></div>
                   <span class="ws-val">100%</span>
                 </div>
+                <div class="ws-row">
+                  <span class="ws-label">WS-05</span>
+                  <div class="ws-bar-track"><div class="ws-bar-fill w-100"></div></div>
+                  <span class="ws-val">100%</span>
+                </div>
+                <div class="ws-row">
+                  <span class="ws-label">WS-06</span>
+                  <div class="ws-bar-track"><div class="ws-bar-fill w-75"></div></div>
+                  <span class="ws-val">88%</span>
+                </div>
+                <div class="ws-row">
+                  <span class="ws-label">WS-07</span>
+                  <div class="ws-bar-track"><div class="ws-bar-fill w-100"></div></div>
+                  <span class="ws-val">95%</span>
+                </div>
+                <div class="ws-row">
+                  <span class="ws-label">WS-08</span>
+                  <div class="ws-bar-track"><div class="ws-bar-fill w-75"></div></div>
+                  <span class="ws-val">82%</span>
+                </div>
               </div>
             </div>
 
@@ -1116,28 +1180,28 @@
               </div>
               <div class="events-bar-chart-layout">
                 <div class="event-col">
-                  <span class="event-val">3</span>
-                  <div class="event-bar" style="height: 65px; background-color: #10b981;"></div>
+                  <span class="event-val">2</span>
+                  <div class="event-bar" style="height: 48px; background-color: #10b981;"></div>
                   <span class="event-label">Drowsiness</span>
                 </div>
                 <div class="event-col">
-                  <span class="event-val">2</span>
-                  <div class="event-bar" style="height: 44px; background-color: #34d399;"></div>
-                  <span class="event-label">Inactivity</span>
+                  <span class="event-val">1</span>
+                  <div class="event-bar" style="height: 28px; background-color: #34d399;"></div>
+                  <span class="event-label">Distraction</span>
                 </div>
                 <div class="event-col">
                   <span class="event-val">1</span>
-                  <div class="event-bar" style="height: 24px; background-color: #6ee7b7;"></div>
+                  <div class="event-bar" style="height: 28px; background-color: #6ee7b7;"></div>
                   <span class="event-label">Absence</span>
                 </div>
                 <div class="event-col">
-                  <span class="event-val">0</span>
-                  <div class="event-bar" style="height: 4px; background-color: #e2e8f0;"></div>
+                  <span class="event-val">1</span>
+                  <div class="event-bar" style="height: 28px; background-color: #059669;"></div>
                   <span class="event-label">Posture</span>
                 </div>
                 <div class="event-col">
-                  <span class="event-val">1</span>
-                  <div class="event-bar" style="height: 24px; background-color: #a7f3d0;"></div>
+                  <span class="event-val">3</span>
+                  <div class="event-bar" style="height: 68px; background-color: #a7f3d0;"></div>
                   <span class="event-label">Other</span>
                 </div>
               </div>
@@ -1160,7 +1224,7 @@
                     <circle cx="50" cy="50" r="38" stroke="#10b981" stroke-width="12" fill="none" />
                   </svg>
                   <div class="donut-center-text">
-                    <strong>4</strong>
+                    <strong id="overview-att-total-center">8</strong>
                     <span>Employees</span>
                   </div>
                 </div>
@@ -1168,17 +1232,17 @@
                   <div class="dept-score-item">
                     <span class="dot" style="background-color: #10b981;"></span>
                     <span class="dept-title">Present</span>
-                    <strong class="dept-pct">4 (100%)</strong>
+                    <strong class="dept-pct" id="overview-att-present-val">7 (88%)</strong>
                   </div>
                   <div class="dept-score-item">
                     <span class="dot" style="background-color: #94a3b8;"></span>
                     <span class="dept-title">Absent</span>
-                    <strong class="dept-pct">0 (0%)</strong>
+                    <strong class="dept-pct" id="overview-att-absent-val">0 (0%)</strong>
                   </div>
                   <div class="dept-score-item">
                     <span class="dot" style="background-color: #d97706;"></span>
-                    <span class="dept-title">On Break</span>
-                    <strong class="dept-pct">0 (0%)</strong>
+                    <span class="dept-title">Checked Out</span>
+                    <strong class="dept-pct" id="overview-att-leave-val">1 (12%)</strong>
                   </div>
                 </div>
               </div>

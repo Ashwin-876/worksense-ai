@@ -13,7 +13,7 @@ const STORAGE_KEYS = {
   DB_VERSION: 'worksense_db_version'
 };
 
-const CURRENT_DB_VERSION = 'v2_anandhi_super_admin';
+const CURRENT_DB_VERSION = 'v3_worksense_rich_dataset';
 
 // Purge any stale session or legacy records from previous sessions
 try {
@@ -30,7 +30,7 @@ try {
   console.warn("Storage migration check error:", e);
 }
 
-// 4 Verified Staff Records: Anandhi C (Super Admin) + 3 Employees
+// 8 Verified Enterprise Staff Records Across Diverse Departments
 const DEFAULT_EMPLOYEES = [
   {
     id: 'EMP-1001',
@@ -91,6 +91,66 @@ const DEFAULT_EMPLOYEES = [
     joinedDate: '2024-05-01',
     consentSigned: true,
     phone: '+91 98765 00004'
+  },
+  {
+    id: 'EMP-1005',
+    name: 'Rajesh V',
+    email: 'rajesh.v@worksense.ai',
+    department: 'Product Design',
+    designation: 'Senior UI/UX Designer',
+    role: 'EMPLOYEE',
+    workstation: 'WS-05',
+    cameraAssigned: 'CAM-05',
+    status: 'Active',
+    avatar: 'RV',
+    joinedDate: '2023-11-20',
+    consentSigned: true,
+    phone: '+91 98765 00005'
+  },
+  {
+    id: 'EMP-1006',
+    name: 'Divya M',
+    email: 'divya.m@worksense.ai',
+    department: 'Customer Support',
+    designation: 'Support Lead',
+    role: 'EMPLOYEE',
+    workstation: 'WS-06',
+    cameraAssigned: 'CAM-06',
+    status: 'Active',
+    avatar: 'DM',
+    joinedDate: '2024-01-08',
+    consentSigned: true,
+    phone: '+91 98765 00006'
+  },
+  {
+    id: 'EMP-1007',
+    name: 'Vikram P',
+    email: 'vikram.p@worksense.ai',
+    department: 'Engineering',
+    designation: 'Cloud Infrastructure Architect',
+    role: 'EMPLOYEE',
+    workstation: 'WS-07',
+    cameraAssigned: 'CAM-07',
+    status: 'Active',
+    avatar: 'VP',
+    joinedDate: '2023-08-14',
+    consentSigned: true,
+    phone: '+91 98765 00007'
+  },
+  {
+    id: 'EMP-1008',
+    name: 'Sneha R',
+    email: 'sneha.r@worksense.ai',
+    department: 'Human Resources',
+    designation: 'People & Culture Partner',
+    role: 'EMPLOYEE',
+    workstation: 'WS-08',
+    cameraAssigned: 'CAM-08',
+    status: 'Active',
+    avatar: 'SR',
+    joinedDate: '2024-04-02',
+    consentSigned: true,
+    phone: '+91 98765 00008'
   }
 ];
 
@@ -138,6 +198,50 @@ const DEFAULT_CAMERAS = [
     resolution: '1280x720',
     fps: 20,
     isHardware: false
+  },
+  {
+    id: 'CAM-05',
+    name: 'Design Studio Cam',
+    type: 'IP Camera / RTSP',
+    location: 'Product Design Pod',
+    assignedEmployeeId: 'EMP-1005',
+    status: 'Online',
+    resolution: '1920x1080',
+    fps: 30,
+    isHardware: false
+  },
+  {
+    id: 'CAM-06',
+    name: 'Support Hub Camera',
+    type: 'IP Camera / RTSP',
+    location: 'Customer Success Floor',
+    assignedEmployeeId: 'EMP-1006',
+    status: 'Online',
+    resolution: '1280x720',
+    fps: 25,
+    isHardware: false
+  },
+  {
+    id: 'CAM-07',
+    name: 'Cloud Infra Station Cam',
+    type: 'IP Camera / RTSP',
+    location: 'Engineering Pod B',
+    assignedEmployeeId: 'EMP-1007',
+    status: 'Online',
+    resolution: '1920x1080',
+    fps: 30,
+    isHardware: false
+  },
+  {
+    id: 'CAM-08',
+    name: 'HR Suite Camera',
+    type: 'IP Camera / RTSP',
+    location: 'People Operations Wing',
+    assignedEmployeeId: 'EMP-1008',
+    status: 'Online',
+    resolution: '1280x720',
+    fps: 20,
+    isHardware: false
   }
 ];
 
@@ -164,12 +268,12 @@ const DEFAULT_ALERTS = [
     id: 'ALT-9001',
     type: 'DROWSINESS',
     severity: 'Warning',
-    timestamp: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
+    timestamp: new Date(Date.now() - 18 * 60 * 1000).toISOString(),
     employeeId: 'EMP-1002',
     employeeName: 'Akash A',
     camera: 'CAM-02',
-    description: 'Prolonged eye closure and yawning detected during shift.',
-    xaiSummary: 'Eye Aspect Ratio (EAR) dropped below 0.25 threshold with 2 yawn events detected within 3 minutes.',
+    description: 'Prolonged eye closure and repetitive yawning detected during sprint coding.',
+    xaiSummary: 'Eye Aspect Ratio (EAR) dropped below 0.22 for 8 consecutive seconds; 3 yawn events registered within a 4-minute window.',
     status: 'Acknowledged',
     acknowledgedBy: 'Anandhi C (Super Admin)',
     acknowledgedAt: new Date(Date.now() - 10 * 60 * 1000).toISOString()
@@ -178,12 +282,12 @@ const DEFAULT_ALERTS = [
     id: 'ALT-9002',
     type: 'POSTURE',
     severity: 'Warning',
-    timestamp: new Date(Date.now() - 35 * 60 * 1000).toISOString(),
+    timestamp: new Date(Date.now() - 32 * 60 * 1000).toISOString(),
     employeeId: 'EMP-1003',
     employeeName: 'Kanishka Sri S',
     camera: 'CAM-03',
-    description: 'Persistent downward pitch / ergonomic strain detected.',
-    xaiSummary: 'Head pitch exceeded -22° for over 12 minutes, indicating potential ergonomic strain or mobile usage.',
+    description: 'Persistent downward pitch / ergonomic neck strain detected.',
+    xaiSummary: 'Head pitch exceeded -24° for over 15 minutes, indicating potential ergonomic strain or off-screen mobile phone usage.',
     status: 'Unacknowledged',
     acknowledgedBy: null,
     acknowledgedAt: null
@@ -192,15 +296,85 @@ const DEFAULT_ALERTS = [
     id: 'ALT-9003',
     type: 'ABSENCE',
     severity: 'Info',
-    timestamp: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
+    timestamp: new Date(Date.now() - 48 * 60 * 1000).toISOString(),
     employeeId: 'EMP-1004',
     employeeName: 'Kartik Raja N',
     camera: 'CAM-04',
     description: 'Workstation absence detected during active shift window.',
-    xaiSummary: 'Face presence not detected on camera CAM-04 for 14 minutes.',
+    xaiSummary: 'Face presence not detected on camera CAM-04 for 16 minutes during core business hours.',
     status: 'Unacknowledged',
     acknowledgedBy: null,
     acknowledgedAt: null
+  },
+  {
+    id: 'ALT-9004',
+    type: 'DISTRACTION',
+    severity: 'Warning',
+    timestamp: new Date(Date.now() - 72 * 60 * 1000).toISOString(),
+    employeeId: 'EMP-1005',
+    employeeName: 'Rajesh V',
+    camera: 'CAM-05',
+    description: 'Gaze deviation and handheld device interaction detected.',
+    xaiSummary: 'Continuous off-screen gaze angle (>35°) coupled with hand proximity to face for 7 continuous minutes.',
+    status: 'Unacknowledged',
+    acknowledgedBy: null,
+    acknowledgedAt: null
+  },
+  {
+    id: 'ALT-9005',
+    type: 'TALKING',
+    severity: 'Info',
+    timestamp: new Date(Date.now() - 95 * 60 * 1000).toISOString(),
+    employeeId: 'EMP-1006',
+    employeeName: 'Divya M',
+    camera: 'CAM-06',
+    description: 'Frequent conversational lip movement detected in silent zone.',
+    xaiSummary: 'Mouth Aspect Ratio (MAR) oscillating between 0.35 and 0.65 at 22 cycles/min in designated quiet support area.',
+    status: 'Acknowledged',
+    acknowledgedBy: 'Anandhi C (Super Admin)',
+    acknowledgedAt: new Date(Date.now() - 60 * 60 * 1000).toISOString()
+  },
+  {
+    id: 'ALT-9006',
+    type: 'DROWSINESS',
+    severity: 'Critical',
+    timestamp: new Date(Date.now() - 130 * 60 * 1000).toISOString(),
+    employeeId: 'EMP-1007',
+    employeeName: 'Vikram P',
+    camera: 'CAM-07',
+    description: 'Micro-sleep event detected: head nodding with eyes closed for >12s.',
+    xaiSummary: 'EAR < 0.18 for 12.4 seconds combined with head drop angle of 31°. System triggered acoustic chime.',
+    status: 'Unacknowledged',
+    acknowledgedBy: null,
+    acknowledgedAt: null
+  },
+  {
+    id: 'ALT-9007',
+    type: 'MULTIPLE_FACES',
+    severity: 'Warning',
+    timestamp: new Date(Date.now() - 165 * 60 * 1000).toISOString(),
+    employeeId: 'EMP-1001',
+    employeeName: 'Anandhi C',
+    camera: 'CAM-01',
+    description: 'Secondary unauthorized viewer detected in camera frame.',
+    xaiSummary: 'Dual facial landmarks detected at executive desk 1. Privacy filter recommended for confidential administrative screens.',
+    status: 'Acknowledged',
+    acknowledgedBy: 'Anandhi C (Super Admin)',
+    acknowledgedAt: new Date(Date.now() - 140 * 60 * 1000).toISOString()
+  },
+  {
+    id: 'ALT-9008',
+    type: 'LOW_LIGHTING',
+    severity: 'Info',
+    timestamp: new Date(Date.now() - 200 * 60 * 1000).toISOString(),
+    employeeId: 'EMP-1008',
+    employeeName: 'Sneha R',
+    camera: 'CAM-08',
+    description: 'Sub-optimal ambient workplace illuminance detected.',
+    xaiSummary: 'Frame luminance histogram skewing below 30 lux threshold; facial landmark confidence degraded by 18%.',
+    status: 'Acknowledged',
+    acknowledgedBy: 'Anandhi C (Super Admin)',
+    acknowledgedAt: new Date(Date.now() - 170 * 60 * 1000).toISOString()
   }
 ];
 
@@ -274,7 +448,7 @@ class StateManager {
     return [
       {
         id: 'AUD-001',
-        timestamp: new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString(),
+        timestamp: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString(),
         user: 'system@worksense.ai',
         role: 'SYSTEM',
         action: 'SYSTEM_BOOT',
@@ -282,22 +456,38 @@ class StateManager {
       },
       {
         id: 'AUD-002',
-        timestamp: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
+        timestamp: new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString(),
         user: 'anandhi@worksense.ai',
         role: 'SUPER_ADMIN',
         action: 'CAMERA_CONFIG',
-        details: 'Assigned CAM-01 (Primary Webcam) to Anandhi C (EMP-1001).'
+        details: 'Multi-camera stream array initialized: CAM-01 through CAM-08 mapped to workstations.'
       },
       {
         id: 'AUD-003',
-        timestamp: new Date(now.getTime() - 50 * 60 * 1000).toISOString(),
+        timestamp: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
         user: 'anandhi@worksense.ai',
         role: 'SUPER_ADMIN',
-        action: 'ALERT_ACKNOWLEDGE',
-        details: 'Acknowledged drowsiness alert ALT-9001 for Akash A (EMP-1002).'
+        action: 'POLICY_UPDATE',
+        details: 'Synchronized computer vision thresholds: Drowsiness EAR 0.25, Head Pitch -22°, Absence 120s.'
       },
       {
         id: 'AUD-004',
+        timestamp: new Date(now.getTime() - 90 * 60 * 1000).toISOString(),
+        user: 'anandhi@worksense.ai',
+        role: 'SUPER_ADMIN',
+        action: 'ALERT_ACKNOWLEDGE',
+        details: 'Acknowledged talking incident ALT-9005 for Divya M (EMP-1006).'
+      },
+      {
+        id: 'AUD-005',
+        timestamp: new Date(now.getTime() - 45 * 60 * 1000).toISOString(),
+        user: 'anandhi@worksense.ai',
+        role: 'SUPER_ADMIN',
+        action: 'ATTENDANCE_SYNC',
+        details: 'Completed automated morning attendance verification for 8 registered employees.'
+      },
+      {
+        id: 'AUD-006',
         timestamp: new Date(now.getTime() - 15 * 60 * 1000).toISOString(),
         user: 'anandhi@worksense.ai',
         role: 'SUPER_ADMIN',
@@ -318,7 +508,7 @@ class StateManager {
         date: today,
         checkIn: '08:50:00',
         checkOut: null,
-        durationSeconds: 15400,
+        durationSeconds: 16200,
         breakSeconds: 1200,
         status: 'Present',
         isLate: false
@@ -331,7 +521,7 @@ class StateManager {
         date: today,
         checkIn: '09:02:15',
         checkOut: null,
-        durationSeconds: 14200,
+        durationSeconds: 15400,
         breakSeconds: 1800,
         status: 'Present',
         isLate: false
@@ -344,7 +534,7 @@ class StateManager {
         date: today,
         checkIn: '08:58:30',
         checkOut: null,
-        durationSeconds: 14800,
+        durationSeconds: 15800,
         breakSeconds: 1400,
         status: 'Present',
         isLate: false
@@ -357,9 +547,61 @@ class StateManager {
         date: today,
         checkIn: '09:05:10',
         checkOut: null,
-        durationSeconds: 13900,
+        durationSeconds: 14900,
         breakSeconds: 1600,
         status: 'Present',
+        isLate: false
+      },
+      {
+        id: 'ATT-1005',
+        employeeId: 'EMP-1005',
+        name: 'Rajesh V',
+        department: 'Product Design',
+        date: today,
+        checkIn: '08:45:00',
+        checkOut: null,
+        durationSeconds: 16500,
+        breakSeconds: 1500,
+        status: 'Present',
+        isLate: false
+      },
+      {
+        id: 'ATT-1006',
+        employeeId: 'EMP-1006',
+        name: 'Divya M',
+        department: 'Customer Support',
+        date: today,
+        checkIn: '09:12:00',
+        checkOut: null,
+        durationSeconds: 14100,
+        breakSeconds: 2100,
+        status: 'Present',
+        isLate: false
+      },
+      {
+        id: 'ATT-1007',
+        employeeId: 'EMP-1007',
+        name: 'Vikram P',
+        department: 'Engineering',
+        date: today,
+        checkIn: '09:32:40',
+        checkOut: null,
+        durationSeconds: 13200,
+        breakSeconds: 1100,
+        status: 'Present',
+        isLate: true
+      },
+      {
+        id: 'ATT-1008',
+        employeeId: 'EMP-1008',
+        name: 'Sneha R',
+        department: 'Human Resources',
+        date: today,
+        checkIn: '08:55:10',
+        checkOut: '13:30:00',
+        durationSeconds: 16200,
+        breakSeconds: 1800,
+        status: 'Checked Out',
         isLate: false
       }
     ];
@@ -552,38 +794,29 @@ class StateManager {
         role: 'SUPER_ADMIN',
         email: 'anandhi@worksense.ai'
       };
-    } else if (roleKey === 'EMPLOYEE_AKASH') {
-      this.currentRole = 'EMPLOYEE';
-      this.currentUser = {
-        id: 'EMP-1002',
-        name: 'Akash A (Employee)',
-        role: 'EMPLOYEE',
-        email: 'akash.a@worksense.ai'
-      };
-    } else if (roleKey === 'EMPLOYEE_KANISHKA') {
-      this.currentRole = 'EMPLOYEE';
-      this.currentUser = {
-        id: 'EMP-1003',
-        name: 'Kanishka Sri S (Employee)',
-        role: 'EMPLOYEE',
-        email: 'kanishka.s@worksense.ai'
-      };
-    } else if (roleKey === 'EMPLOYEE_KARTIK') {
-      this.currentRole = 'EMPLOYEE';
-      this.currentUser = {
-        id: 'EMP-1004',
-        name: 'Kartik Raja N (Employee)',
-        role: 'EMPLOYEE',
-        email: 'kartik.r@worksense.ai'
-      };
     } else {
-      this.currentRole = 'EMPLOYEE';
-      this.currentUser = {
-        id: 'EMP-1002',
-        name: 'Employee View',
-        role: 'EMPLOYEE',
-        email: 'employee@worksense.ai'
-      };
+      // Find matching employee by ID or by EMPLOYEE_<FIRSTNAME>
+      const emp = this.employees.find(e => 
+        e.id === roleKey || 
+        `EMPLOYEE_${e.name.split(' ')[0].toUpperCase()}` === roleKey
+      );
+      if (emp) {
+        this.currentRole = emp.role || 'EMPLOYEE';
+        this.currentUser = {
+          id: emp.id,
+          name: `${emp.name} (${emp.role === 'SUPER_ADMIN' ? 'Super Admin' : 'Employee'})`,
+          role: emp.role || 'EMPLOYEE',
+          email: emp.email
+        };
+      } else {
+        this.currentRole = 'EMPLOYEE';
+        this.currentUser = {
+          id: 'EMP-1002',
+          name: 'Akash A (Employee)',
+          role: 'EMPLOYEE',
+          email: 'akash.a@worksense.ai'
+        };
+      }
     }
     this.addAuditLog('ROLE_SWITCH', `Switched active dashboard session to: ${this.currentUser.name}`);
   }

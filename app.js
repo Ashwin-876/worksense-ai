@@ -584,23 +584,104 @@ function renderAlertsBadge() {
 // -------------------------------------------------------------
 function renderOverviewView() {
   const kpis = window.analyticsEngine ? window.analyticsEngine.getOverviewKPIs() : {
-    totalStaff: 4,
-    attendanceRate: 100,
-    unackAlerts: 2,
-    avgScore: 85
+    totalStaff: 8,
+    presentStaff: 7,
+    attendanceRate: 88,
+    unackAlerts: 4,
+    drowsinessEvents: 2,
+    activeWorkstations: 8,
+    avgScore: 87
   };
   
   const totalStaffEl = document.getElementById('kpi-total-staff');
   const attendanceRateEl = document.getElementById('kpi-attendance-rate');
   const alertsCountEl = document.getElementById('kpi-alerts-count');
   const avgScoreEl = document.getElementById('kpi-avg-score');
+  const activeWsEl = document.getElementById('kpi-active-ws');
+  const drowsinessEl = document.getElementById('kpi-drowsiness-count');
 
   if (totalStaffEl) totalStaffEl.textContent = kpis.totalStaff;
-  if (attendanceRateEl) attendanceRateEl.textContent = `${kpis.attendanceRate}%`;
+  if (attendanceRateEl) {
+    attendanceRateEl.textContent = `${kpis.attendanceRate}%`;
+    const subEl = attendanceRateEl.closest('.kpi-card-v2')?.querySelector('.kpi-v2-sub');
+    if (subEl) subEl.textContent = `${kpis.presentStaff} of ${kpis.totalStaff} checked in`;
+  }
   if (alertsCountEl) alertsCountEl.textContent = kpis.unackAlerts;
   if (avgScoreEl) avgScoreEl.textContent = `${kpis.avgScore}%`;
+  if (activeWsEl) activeWsEl.textContent = kpis.activeWorkstations;
+  if (drowsinessEl) drowsinessEl.textContent = kpis.drowsinessEvents;
+
+  // Sync Attendance Distribution Donut & Legend
+  const attCenterTotal = document.getElementById('overview-att-total-center');
+  if (attCenterTotal) attCenterTotal.textContent = kpis.totalStaff;
+  
+  const attPresentVal = document.getElementById('overview-att-present-val');
+  if (attPresentVal) attPresentVal.textContent = `${kpis.presentStaff} (${kpis.attendanceRate}%)`;
+  
+  const attLeaveVal = document.getElementById('overview-att-leave-val');
+  if (attLeaveVal) {
+    const checkedOutCount = Math.max(0, kpis.totalStaff - kpis.presentStaff);
+    const leavePct = Math.round((checkedOutCount / kpis.totalStaff) * 100);
+    attLeaveVal.textContent = `${checkedOutCount} (${leavePct}%)`;
+  }
 
   renderAlertsBadge();
+  renderRecentAlertsOverview();
+}
+
+function renderRecentAlertsOverview() {
+  const tbody = document.getElementById('recent-alerts-tbody');
+  if (!tbody || !window.appState) return;
+
+  const alerts = window.appState.alerts || [];
+  if (alerts.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:1.5rem; color:#94a3b8;">No recent incident alerts</td></tr>`;
+    return;
+  }
+
+  const categoryIcons = {
+    DROWSINESS: { icon: '💤', colorClass: 'text-purple' },
+    POSTURE: { icon: '🧘', colorClass: 'text-warning' },
+    ABSENCE: { icon: '🖥️', colorClass: 'text-primary' },
+    DISTRACTION: { icon: '📱', colorClass: 'text-warning' },
+    TALKING: { icon: '💬', colorClass: 'text-teal' },
+    MULTIPLE_FACES: { icon: '👥', colorClass: 'text-danger' },
+    LOW_LIGHTING: { icon: '💡', colorClass: 'text-warning' }
+  };
+
+  const severityPills = {
+    Critical: 'pill-danger',
+    Warning: 'pill-warning',
+    Info: 'pill-info'
+  };
+
+  const topAlerts = alerts.slice(0, 5);
+  tbody.innerHTML = topAlerts.map((a, idx) => {
+    const cat = categoryIcons[a.type] || { icon: '⚠️', colorClass: 'text-warning' };
+    const sevClass = severityPills[a.severity] || 'pill-info';
+    const isAck = a.status === 'Acknowledged';
+    const dateObj = new Date(a.timestamp);
+    const timeFormatted = isNaN(dateObj.getTime()) ? 'Just now' : dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    return `
+      <tr>
+        <td>${idx + 1}</td>
+        <td><span class="tbl-user-icon">👤</span> <strong>${a.employeeName}</strong></td>
+        <td><span class="cat-icon ${cat.colorClass}">${cat.icon}</span> ${a.type.replace('_', ' ')}</td>
+        <td style="max-width: 280px; white-space: normal;">${a.description}</td>
+        <td>Today, ${timeFormatted}</td>
+        <td><span class="pill-badge ${sevClass}">${a.severity}</span></td>
+        <td><span class="pill-status ${isAck ? 'text-success' : 'text-danger'}">${a.status}</span></td>
+        <td style="text-align: right;">
+          ${isAck ? `
+            <button class="btn-action-outline" onclick="navigateToView('alerts')">View</button>
+          ` : `
+            <button class="btn-action-outline" onclick="acknowledgeAlertRow('${a.id}', this)">Acknowledge</button>
+          `}
+        </td>
+      </tr>
+    `;
+  }).join('');
 }
 
 // -------------------------------------------------------------
