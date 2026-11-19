@@ -148,6 +148,7 @@ const DEFAULT_SETTINGS = {
   yawnThreshold: 0.08, // MAR
   yawnMinDuration: 1.8, // seconds
   soundAlerts: true,
+  soundAlertTheme: 'digital_beep', // 'digital_beep', 'chime', 'radar', 'siren', 'voice'
   emailNotifications: true,
   notificationEmail: 'anandhi@worksense.ai',
   privacyBlurMode: false,

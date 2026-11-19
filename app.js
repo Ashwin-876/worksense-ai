@@ -661,6 +661,29 @@ function renderMonitoringView() {
     };
   }
 
+  // Absence Alarm Sound Theme Selector
+  const soundSelect = document.getElementById('select-alarm-sound');
+  if (soundSelect && window.appState) {
+    soundSelect.value = window.appState.settings.soundAlertTheme || 'digital_beep';
+    soundSelect.onchange = (e) => {
+      window.appState.updateSettings({ soundAlertTheme: e.target.value });
+      const cfgSound = document.getElementById('cfg-alarm-sound');
+      if (cfgSound) cfgSound.value = e.target.value;
+      if (window.alertManager) {
+        window.alertManager.playAlarmPulse(e.target.value);
+      }
+    };
+  }
+
+  // Preview / Test Sound Button
+  const testSoundBtn = document.getElementById('btn-test-sound');
+  if (testSoundBtn && window.alertManager) {
+    testSoundBtn.onclick = () => {
+      const selectedTheme = soundSelect ? soundSelect.value : 'digital_beep';
+      window.alertManager.playAlarmPulse(selectedTheme);
+    };
+  }
+
   renderLiveSessionLogs();
 }
 
@@ -1249,6 +1272,7 @@ function renderSettingsView() {
   const inputTalk = document.getElementById('cfg-talk-threshold');
   const inputYawn = document.getElementById('cfg-yawn-threshold');
   const checkSound = document.getElementById('cfg-sound-alerts');
+  const selectAlarmTheme = document.getElementById('cfg-alarm-sound');
   const checkEmail = document.getElementById('cfg-email-alerts');
   const inputEmail = document.getElementById('cfg-notification-email');
   const saveBtn = document.getElementById('save-settings-btn');
@@ -1258,6 +1282,7 @@ function renderSettingsView() {
   if (inputTalk) inputTalk.value = s.talkFrequencyThreshold;
   if (inputYawn) inputYawn.value = s.yawnThreshold;
   if (checkSound) checkSound.checked = s.soundAlerts;
+  if (selectAlarmTheme) selectAlarmTheme.value = s.soundAlertTheme || 'digital_beep';
   if (checkEmail) checkEmail.checked = s.emailNotifications;
   if (inputEmail) inputEmail.value = s.notificationEmail;
 
@@ -1269,9 +1294,12 @@ function renderSettingsView() {
         talkFrequencyThreshold: parseInt(inputTalk.value) || 4,
         yawnThreshold: parseFloat(inputYawn.value) || 0.08,
         soundAlerts: checkSound.checked,
+        soundAlertTheme: selectAlarmTheme ? selectAlarmTheme.value : 'digital_beep',
         emailNotifications: checkEmail.checked,
         notificationEmail: inputEmail.value.trim()
       });
+      const liveSelect = document.getElementById('select-alarm-sound');
+      if (liveSelect && selectAlarmTheme) liveSelect.value = selectAlarmTheme.value;
       alert("Settings saved successfully and applied across all monitoring modules!");
     };
   }
