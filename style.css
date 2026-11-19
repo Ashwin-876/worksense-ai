@@ -81,7 +81,7 @@ body {
 
 /* Sidebar */
 .app-sidebar {
-  width: 250px;
+  width: 270px;
   background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
@@ -107,70 +107,134 @@ body {
 }
 
 .sidebar-brand {
-  padding: 1.25rem 1.25rem 0.95rem;
+  margin: 0.75rem 0.75rem 0.5rem 0.75rem;
+  padding: 0.55rem 0.75rem;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  border-radius: 22px;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.06),
+              inset 0 1px 1px rgba(255, 255, 255, 0.95);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+  gap: 0.5rem;
+  transition: all 0.2s ease;
 }
 
 [data-theme="dark"] .sidebar-brand {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(30, 41, 59, 0.6);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25),
+              inset 0 1px 1px rgba(255, 255, 255, 0.06);
 }
 
 .brand-left {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
   min-width: 0;
+  flex: 1;
 }
 
 .brand-logo-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.28);
+}
+
+.brand-divider {
+  width: 1px;
+  height: 26px;
+  background-color: rgba(203, 213, 225, 0.85);
+  margin: 0 0.65rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+}
+
+[data-theme="dark"] .brand-divider {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  justify-content: center;
 }
 
 .brand-text h2 {
-  font-size: 1.1rem;
+  font-size: 1.12rem;
   font-weight: 800;
-  color: var(--text-main);
-  line-height: 1.15;
+  color: #0f172a;
+  line-height: 1.1;
+  white-space: nowrap;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+[data-theme="dark"] .brand-text h2 {
+  color: #f1f5f9;
 }
 
 .brand-accent {
   color: #059669;
+  font-weight: 800;
 }
 
 .brand-text span {
-  font-size: 0.62rem;
-  color: var(--text-muted);
+  font-size: 0.58rem;
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 700;
   display: block;
+  white-space: nowrap;
+  margin-top: 0.2rem;
+}
+
+[data-theme="dark"] .brand-text span {
+  color: #94a3b8;
 }
 
 .sidebar-collapse-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  border: 1px solid rgba(203, 213, 225, 0.8);
-  background-color: rgba(255, 255, 255, 0.5);
-  color: var(--text-muted);
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(226, 232, 240, 0.85);
+  background: rgba(255, 255, 255, 0.8);
+  color: #475569;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
   transition: all 0.15s ease;
   flex-shrink: 0;
 }
 
+[data-theme="dark"] .sidebar-collapse-btn {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+}
+
 .sidebar-collapse-btn:hover {
   background-color: #ffffff;
-  color: var(--text-main);
+  color: #0f172a;
   border-color: #cbd5e1;
+  transform: scale(1.03);
+}
+
+[data-theme="dark"] .sidebar-collapse-btn:hover {
+  background-color: #334155;
+  color: #ffffff;
 }
 
 .sidebar-nav {
@@ -3350,9 +3414,10 @@ tbody tr:hover {
 
 /* Collapsible Sidebar Styles */
 .sidebar-collapsed .app-sidebar {
-  width: 72px;
+  width: 76px;
 }
 
+.sidebar-collapsed .brand-divider,
 .sidebar-collapsed .brand-text,
 .sidebar-collapsed .sidebar-section-header span:last-child,
 .sidebar-collapsed .nav-label,
@@ -3369,21 +3434,19 @@ tbody tr:hover {
 }
 
 .sidebar-collapsed .sidebar-brand {
+  margin: 0.75rem 0.4rem;
+  padding: 0.5rem 0.35rem;
   justify-content: center;
-  padding: 1.15rem 0.5rem;
+  border-radius: 16px;
 }
 
 .sidebar-collapsed .sidebar-collapse-btn {
-  transform: rotate(180deg);
+  display: none !important;
 }
 
 .sidebar-collapsed .nav-item {
   justify-content: center;
   padding: 0.65rem 0;
-}
-
-.sidebar-collapsed .nav-item.active::before {
-  left: 2px;
 }
 
 .sidebar-collapsed .sidebar-account-card {
