@@ -326,17 +326,48 @@ function initApp() {
     }
   }
 
-  // Sidebar collapse toggle
+  // Sidebar collapse & mobile drawer toggle
   const collapseBtn = document.getElementById('sidebar-collapse-btn');
   const toggleBtn = document.getElementById('sidebar-toggle-btn');
+  const sidebarBackdrop = document.getElementById('sidebar-backdrop');
   const appLayoutEl = document.querySelector('.app-layout');
+  
   const handleToggleSidebar = () => {
     if (appLayoutEl) {
-      appLayoutEl.classList.toggle('sidebar-collapsed');
+      if (window.innerWidth <= 768) {
+        appLayoutEl.classList.toggle('sidebar-mobile-open');
+      } else {
+        appLayoutEl.classList.toggle('sidebar-collapsed');
+      }
     }
   };
-  if (collapseBtn) collapseBtn.addEventListener('click', handleToggleSidebar);
+
+  if (collapseBtn) collapseBtn.addEventListener('click', () => {
+    if (appLayoutEl) {
+      if (window.innerWidth <= 768) {
+        appLayoutEl.classList.remove('sidebar-mobile-open');
+      } else {
+        appLayoutEl.classList.toggle('sidebar-collapsed');
+      }
+    }
+  });
+
   if (toggleBtn) toggleBtn.addEventListener('click', handleToggleSidebar);
+
+  if (sidebarBackdrop) {
+    sidebarBackdrop.addEventListener('click', () => {
+      if (appLayoutEl) appLayoutEl.classList.remove('sidebar-mobile-open');
+    });
+  }
+
+  // Auto-close mobile drawer when navigation link is clicked
+  document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      if (window.innerWidth <= 768 && appLayoutEl) {
+        appLayoutEl.classList.remove('sidebar-mobile-open');
+      }
+    });
+  });
 
   // Bind Dashboard Theme Toggle
   const themeToggle = document.getElementById('theme-toggle-btn');
