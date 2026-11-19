@@ -2399,6 +2399,8 @@ tbody tr:hover {
   border-radius: 12px;
   padding: 1.25rem 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
 }
 
 .ui-card-header {
@@ -2556,29 +2558,58 @@ tbody tr:hover {
 
 .activity-trend-chart-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: 200px;
   position: relative;
   margin-top: 0.5rem;
+  width: 100%;
+}
+
+.activity-trend-chart-container .chart-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 0.75rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: right;
+  min-width: 38px;
+  height: calc(100% - 24px);
+  margin-bottom: 24px;
+}
+
+.trend-plot-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  position: relative;
 }
 
 .trend-svg-wrapper {
   flex: 1;
   position: relative;
+  border-left: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  overflow: hidden;
 }
 
 .trend-line-svg {
   width: 100%;
   height: 100%;
-  overflow: visible;
+  display: block;
 }
 
 .chart-x-axis {
   display: flex;
   justify-content: space-between;
-  padding: 0.4rem 0.5rem 0;
+  align-items: center;
+  padding: 0.35rem 0.5rem 0;
   font-size: 0.7rem;
   color: var(--text-muted);
+  height: 24px;
+  box-sizing: border-box;
 }
 
 /* Quad Grid (4 Metric Cards) */
@@ -2754,10 +2785,11 @@ tbody tr:hover {
 /* Daily Monitoring Events Bar layout */
 .events-bar-chart-layout {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: flex-end;
   height: 95px;
-  padding-top: 0.5rem;
+  padding: 0.5rem 0.25rem 0;
+  gap: 0.25rem;
 }
 
 .event-col {
@@ -2767,7 +2799,8 @@ tbody tr:hover {
   gap: 0.25rem;
   height: 100%;
   justify-content: flex-end;
-  width: 18%;
+  flex: 1;
+  min-width: 0;
 }
 
 .event-val {
@@ -2783,8 +2816,10 @@ tbody tr:hover {
 }
 
 .event-label {
-  font-size: 0.68rem;
+  font-size: 0.62rem;
+  letter-spacing: -0.02em;
   color: var(--text-muted);
+  text-align: center;
   white-space: nowrap;
 }
 
