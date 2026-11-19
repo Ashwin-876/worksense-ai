@@ -1,0 +1,8 @@
+{
+  "name": "employee-monitoring-system",
+  "version": "1.0.0",
+  "description": "Real-time Employee Monitoring System using MediaPipe FaceMesh",
+  "scripts": {
+    "start": "npx serve ."
+  }
+}

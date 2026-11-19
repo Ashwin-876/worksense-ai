@@ -1,21 +1,24 @@
 import cv2
-import mediapipe as mp
+from mediapipe.tasks.python.vision import drawing_utils, drawing_styles, FaceLandmarksConnections
 
 def draw_face_annotations(frame, landmarks, eye_indices, lip_indices):
     h, w, _ = frame.shape
-    mp.solutions.drawing_utils.draw_landmarks(
+    landmark_list = getattr(landmarks, 'landmark', landmarks)
+    
+    # Draw face mesh tesselation
+    drawing_utils.draw_landmarks(
         frame,
-        landmarks,
-        mp.solutions.face_mesh.FACEMESH_TESSELATION,
+        landmark_list,
+        FaceLandmarksConnections.FACE_LANDMARKS_TESSELATION,
         landmark_drawing_spec=None,
-        connection_drawing_spec=mp.solutions.drawing_styles.get_default_face_mesh_tesselation_style()
+        connection_drawing_spec=drawing_styles.get_default_face_mesh_tesselation_style()
     )
     
     # Draw eye/lip boxes
     def draw_box(indices, color):
         pts = []
         for i in indices:
-            lm = landmarks.landmark[i]
+            lm = landmark_list[i]
             pts.append((int(lm.x * w), int(lm.y * h)))
         if pts:
             x_min = min(p[0] for p in pts)

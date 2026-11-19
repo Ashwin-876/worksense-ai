@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+models/*.task
+.vercel/
+node_modules/
+.DS_Store
+test_venv/
+.vercel

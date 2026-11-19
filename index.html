@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Employee Monitoring System</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- MediaPipe CDN scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-icon">👁️</div>
+      <div>
+        <h1>Employee Monitoring System</h1>
+        <p class="subtitle">Real-time Presence, Eye Tracking & Activity Detection</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <span id="system-status-pill" class="status-pill status-ready">System Ready</span>
+      <button id="theme-toggle" class="btn btn-secondary" aria-label="Toggle theme">🌓 Theme</button>
+    </div>
+  </header>
+
+  <main class="dashboard-container">
+    <!-- Camera Viewport Card -->
+    <section class="card camera-card" aria-labelledby="camera-heading">
+      <div class="card-header">
+        <h2 id="camera-heading">Live Camera Feed</h2>
+        <div class="camera-actions">
+          <button id="start-btn" class="btn btn-primary">▶ Start Monitoring</button>
+          <button id="stop-btn" class="btn btn-danger" disabled>⏹ Stop Monitoring</button>
+        </div>
+      </div>
+
+      <div class="video-wrapper">
+        <video id="webcam" playsinline muted></video>
+        <canvas id="output-canvas"></canvas>
+
+        <div id="camera-placeholder" class="placeholder-overlay">
+          <div class="placeholder-content">
+            <span class="camera-icon">📷</span>
+            <p>Click <strong>Start Monitoring</strong> to grant webcam access and begin real-time activity tracking.</p>
+          </div>
+        </div>
+
+        <!-- In-video Heads-Up Display -->
+        <div id="hud-overlay" class="hud-overlay hidden">
+          <div class="hud-item" id="hud-presence">Presence: Absent</div>
+          <div class="hud-item" id="hud-eye">Eye: Unknown</div>
+          <div class="hud-item" id="hud-mouth">Mouth: Not Talking</div>
+          <div class="hud-item" id="hud-talk-events">Talk Events: 0/4</div>
+          <div class="hud-item hud-status" id="hud-status">Status: Working</div>
+          <div class="hud-timer hidden" id="hud-eye-timer">Eyes Closed: 0s / 300s</div>
+          <div class="hud-timer hidden" id="hud-absence-timer">Absent: 0s / 120s</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Metrics Panel -->
+    <section class="card metrics-card" aria-labelledby="metrics-heading">
+      <div class="card-header">
+        <h2 id="metrics-heading">Live Telemetry</h2>
+        <span id="fps-counter" class="badge">0 FPS</span>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <span class="metric-label">Presence</span>
+          <span id="metric-presence" class="metric-value badge-absent">Absent</span>
+          <span id="metric-absence-time" class="metric-sub">Absence timer: 0s</span>
+        </div>
+
+        <div class="metric-box">
+          <span class="metric-label">Eye State</span>
+          <span id="metric-eye" class="metric-value badge-neutral">Unknown</span>
+          <span id="metric-ear" class="metric-sub">EAR: 0.00</span>
+        </div>
+
+        <div class="metric-box">
+          <span class="metric-label">Mouth State</span>
+          <span id="metric-mouth" class="metric-value badge-neutral">Not Talking</span>
+          <span id="metric-mar" class="metric-sub">MAR: 0.000</span>
+        </div>
+
+        <div class="metric-box">
+          <span class="metric-label">Talk Events (1m)</span>
+          <span id="metric-talk-events" class="metric-value badge-neutral">0 / 4</span>
+          <span class="metric-sub">Rolling 60s window</span>
+        </div>
+
+        <div class="metric-box metric-full">
+          <span class="metric-label">Working Evaluation</span>
+          <span id="metric-working-status" class="metric-value badge-working">Working</span>
+          <span id="metric-session-duration" class="metric-sub">Session time: 0s</span>
+        </div>
+      </div>
+
+      <!-- Settings Accordion -->
+      <details class="settings-accordion">
+        <summary>⚙️ Monitoring Thresholds</summary>
+        <div class="settings-content">
+          <div class="setting-item">
+            <label for="input-eye-thresh">Eye Closure Threshold (seconds):</label>
+            <input type="number" id="input-eye-thresh" value="300" min="1" max="1800">
+          </div>
+          <div class="setting-item">
+            <label for="input-absence-thresh">Absence Threshold (seconds):</label>
+            <input type="number" id="input-absence-thresh" value="120" min="1" max="1800">
+          </div>
+          <div class="setting-item">
+            <label for="input-talk-thresh">Talking Frequency Threshold (events/min):</label>
+            <input type="number" id="input-talk-thresh" value="4" min="1" max="60">
+          </div>
+          <div class="setting-item checkbox-item">
+            <label>
+              <input type="checkbox" id="check-draw-mesh" checked>
+              Draw Face Mesh & Boxes
+            </label>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- Session Log Table Section -->
+    <section class="card log-card" aria-labelledby="logs-heading">
+      <div class="card-header">
+        <h2 id="logs-heading">Activity & Presence Session Logs</h2>
+        <div class="log-actions">
+          <button id="download-csv-btn" class="btn btn-secondary">📥 Download CSV</button>
+          <button id="clear-logs-btn" class="btn btn-outline">🗑 Clear</button>
+        </div>
+      </div>
+
+      <div tabindex="0" role="region" aria-labelledby="employee-table-caption" class="table-wrapper">
+        <table id="session-table">
+          <caption id="employee-table-caption">Session Status Transition Log</caption>
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Start Time</th>
+              <th scope="col">End Time</th>
+              <th scope="col">Duration (s)</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody id="session-log-body">
+            <tr class="empty-row">
+              <td colspan="5">No sessions logged yet. Start monitoring to begin recording activity transitions.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Employee Monitoring System • Powered by OpenCV & MediaPipe FaceMesh</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

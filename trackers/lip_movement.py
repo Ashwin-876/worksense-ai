@@ -1,19 +1,14 @@
 import cv2
-import mediapipe as mp
 import numpy as np
 from collections import deque
 import time
 from utils.metric_utils import calculate_mar
+from trackers.face_landmarker_wrapper import SharedFaceLandmarker
 
 class LipMovementDetector:
     def __init__(self, mar_threshold=0.04, window_size=5, talking_timeout=1.5):
-        self.mp_face_mesh = mp.solutions.face_mesh
-        self.face_mesh = self.mp_face_mesh.FaceMesh(
-            max_num_faces=1,
-            refine_landmarks=True,
-            min_detection_confidence=0.5,
-            min_tracking_confidence=0.5
-        )
+        self.landmarker = SharedFaceLandmarker.get_instance()
+        self.face_mesh = self.landmarker  # For legacy compatibility
         self.MAR_THRESHOLD = mar_threshold
         self.lip_distances = deque(maxlen=window_size)
         self.LIP_POINTS = [13, 14, 78, 308]
@@ -22,17 +17,16 @@ class LipMovementDetector:
         self.prev_is_talking = False  # Track previous state
         self.talking_timeout = talking_timeout
         
-    def detect_talking(self, frame):
-        h, w, _ = frame.shape
-        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = self.face_mesh.process(rgb_frame)
+    def detect_talking(self, frame, landmarks=None):
+        if landmarks is None:
+            landmarks = self.landmarker.detect(frame)
 
         current_time = time.time()
         mar = 0.0
         state_change = False  # Track if state changed from not talking to talking
 
-        if results.multi_face_landmarks:
-            landmarks = results.multi_face_landmarks[0].landmark
+        if landmarks is not None and len(landmarks) > 0:
+            h, w, _ = frame.shape
             mar = calculate_mar(self.LIP_POINTS, landmarks, w, h)
             self.lip_distances.append(mar)
 

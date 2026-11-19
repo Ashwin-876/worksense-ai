@@ -1,25 +1,28 @@
 # presence_tracker.py
 
-import mediapipe as mp
 import cv2
 import csv
 from datetime import datetime
+from trackers.face_landmarker_wrapper import SharedFaceLandmarker, DetectionResults
 
 LOG_FILE = 'data/presence_log.csv'
 
 class PresenceTracker:
     def __init__(self):
-        self.mp_face_detection = mp.solutions.face_detection
-        self.face_detection = self.mp_face_detection.FaceDetection(
-            model_selection=0, min_detection_confidence=0.6
-        )
-    
-    def detect_presence(self, frame):
-        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = self.face_detection.process(rgb_frame)
-        return results.detections is not None
+        self.landmarker = SharedFaceLandmarker.get_instance()
+        # For legacy compatibility
+        self.face_detection = self
 
-# ✅ Add these two functions:
+    def process(self, rgb_frame):
+        landmarks = self.landmarker.detect(rgb_frame)
+        return DetectionResults(landmarks is not None)
+    
+    def detect_presence(self, frame, landmarks=None):
+        if landmarks is not None:
+            return len(landmarks) > 0
+        detected_landmarks = self.landmarker.detect(frame)
+        return detected_landmarks is not None
+
 def init_log_file():
     try:
         with open(LOG_FILE, mode='a', newline='') as file:
