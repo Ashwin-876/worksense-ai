@@ -1246,6 +1246,7 @@
 
                 <!-- In-video HUD Overlay -->
                 <div id="hud-overlay" class="hud-overlay hidden">
+                  <div class="hud-item hud-alarm hidden" id="hud-alarm-indicator">🚨 ALARM: NO PERSON DETECTED</div>
                   <div class="hud-item" id="hud-presence">Presence: Absent</div>
                   <div class="hud-item" id="hud-eye">Eye: Unknown</div>
                   <div class="hud-item" id="hud-mouth">Mouth: Not Talking</div>
@@ -1263,7 +1264,11 @@
                 </label>
                 <label class="toolbar-checkbox">
                   <input type="checkbox" id="check-draw-mesh" checked>
-                  <span>Draw Face Mesh & 3D Pose</span>
+                  <span>Draw Face Mesh & Bounding Boxes</span>
+                </label>
+                <label class="toolbar-checkbox">
+                  <input type="checkbox" id="check-absence-alarm" checked>
+                  <span>🚨 No-Person Alarm Sound</span>
                 </label>
               </div>
             </div>

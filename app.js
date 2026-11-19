@@ -68,6 +68,9 @@ function showDashboard() {
 }
 
 function handleLogout() {
+  if (window.alertManager) {
+    window.alertManager.stopAbsenceAlarm();
+  }
   if (window.aiEngine && window.aiEngine.isRunning) {
     try {
       window.aiEngine.stop();
@@ -607,6 +610,12 @@ function renderMonitoringView() {
     };
 
     stopBtn.onclick = () => {
+      if (window.alertManager) {
+        window.alertManager.stopAbsenceAlarm();
+      }
+      const hudAlarm = document.getElementById('hud-alarm-indicator');
+      if (hudAlarm) hudAlarm.classList.add('hidden');
+
       window.aiEngine.stop();
       startBtn.disabled = false;
       startBtn.textContent = '▶ Start Monitoring';
@@ -637,6 +646,18 @@ function renderMonitoringView() {
     meshCheck.checked = window.appState.settings.drawFaceMesh;
     meshCheck.onchange = (e) => {
       window.appState.updateSettings({ drawFaceMesh: e.target.checked });
+    };
+  }
+
+  // Absence Alarm Sound Toggle
+  const alarmCheck = document.getElementById('check-absence-alarm');
+  if (alarmCheck && window.appState) {
+    alarmCheck.checked = window.appState.settings.soundAlerts;
+    alarmCheck.onchange = (e) => {
+      window.appState.updateSettings({ soundAlerts: e.target.checked });
+      if (!e.target.checked && window.alertManager) {
+        window.alertManager.stopAbsenceAlarm();
+      }
     };
   }
 
@@ -694,6 +715,27 @@ function handleTelemetryUpdate(data) {
     } else {
       hudAbsenceTimer.classList.add('hidden');
     }
+  }
+
+  // Handle Absence Alarm Sound when no person is detected
+  const hudAlarm = document.getElementById('hud-alarm-indicator');
+  if (window.aiEngine && window.aiEngine.isRunning) {
+    if (!data.present) {
+      if (window.alertManager) {
+        window.alertManager.startAbsenceAlarm();
+      }
+      if (hudAlarm) hudAlarm.classList.remove('hidden');
+    } else {
+      if (window.alertManager) {
+        window.alertManager.stopAbsenceAlarm();
+      }
+      if (hudAlarm) hudAlarm.classList.add('hidden');
+    }
+  } else {
+    if (window.alertManager) {
+      window.alertManager.stopAbsenceAlarm();
+    }
+    if (hudAlarm) hudAlarm.classList.add('hidden');
   }
 
   // Update Telemetry Cards

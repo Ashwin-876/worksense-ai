@@ -380,20 +380,6 @@ class AIEngine {
     drawBox(this.LEFT_EYE, '#FFFF00');
     drawBox(this.RIGHT_EYE, '#FFFF00');
     drawBox(this.LIP_POINTS, '#FF00FF');
-
-    // Draw Head-Pose orientation axis from nose tip (landmark 1)
-    const nose = landmarks[1];
-    const nx = nose.x * w;
-    const ny = nose.y * h;
-    const yawLength = headPose.yaw * 1.5;
-    const pitchLength = headPose.pitch * 1.5;
-
-    ctx.beginPath();
-    ctx.strokeStyle = '#00FFCC';
-    ctx.lineWidth = 3;
-    ctx.moveTo(nx, ny);
-    ctx.lineTo(nx + yawLength, ny + pitchLength);
-    ctx.stroke();
   }
 
   async start(videoElement, deviceId) {
@@ -426,6 +412,9 @@ class AIEngine {
   stop() {
     this.isRunning = false;
     if (this.camera) this.camera.stop();
+    if (window.alertManager) {
+      window.alertManager.stopAbsenceAlarm();
+    }
   }
 }
 
