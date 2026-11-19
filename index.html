@@ -240,24 +240,30 @@
     <!-- Sidebar Navigation -->
     <aside class="app-sidebar" aria-label="Main Navigation">
       <div class="sidebar-brand">
-        <div class="brand-logo">👁️</div>
+        <div class="brand-logo-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
         <div class="brand-text">
           <h2>WorkSense AI</h2>
-          <span>Employee Monitoring System</span>
+          <span>EMPLOYEE MONITORING SYSTEM</span>
         </div>
       </div>
 
       <nav class="sidebar-nav">
+        <div class="nav-section-title">DASHBOARD</div>
         <a href="#overview" class="nav-item active" data-view="overview" data-perm="view_overview">
           <span class="nav-icon">📊</span>
           <span class="nav-label">Overview</span>
         </a>
         <a href="#monitoring" class="nav-item" data-view="monitoring" data-perm="view_monitoring">
-          <span class="nav-icon">👁️</span>
+          <span class="nav-icon">📹</span>
           <span class="nav-label">Live Monitoring</span>
         </a>
         <a href="#cameras" class="nav-item" data-view="cameras" data-perm="view_cameras">
-          <span class="nav-icon">📹</span>
+          <span class="nav-icon">⊞</span>
           <span class="nav-label">Camera Grid</span>
         </a>
         <a href="#employees" class="nav-item" data-view="employees" data-perm="view_employees">
@@ -265,13 +271,13 @@
           <span class="nav-label">Employees</span>
         </a>
         <a href="#attendance" class="nav-item" data-view="attendance" data-perm="view_attendance">
-          <span class="nav-icon">⏱️</span>
+          <span class="nav-icon">📅</span>
           <span class="nav-label">Attendance</span>
         </a>
         <a href="#alerts" class="nav-item" data-view="alerts" data-perm="view_alerts">
           <span class="nav-icon">🔔</span>
           <span class="nav-label">Alert Center</span>
-          <span id="sidebar-alert-badge" class="badge-count" style="display: none;">0</span>
+          <span id="sidebar-alert-badge" class="badge-count">2</span>
         </a>
         <a href="#analytics" class="nav-item" data-view="analytics" data-perm="view_analytics">
           <span class="nav-icon">📈</span>
@@ -280,6 +286,24 @@
         <a href="#reports" class="nav-item" data-view="reports" data-perm="export_reports">
           <span class="nav-icon">📑</span>
           <span class="nav-label">Reports & Exports</span>
+        </a>
+
+        <div class="nav-section-title">ADMINISTRATION</div>
+        <a href="#departments" class="nav-item" data-view="departments" data-perm="view_overview">
+          <span class="nav-icon">🗂️</span>
+          <span class="nav-label">Departments</span>
+        </a>
+        <a href="#workstations" class="nav-item" data-view="workstations" data-perm="view_cameras">
+          <span class="nav-icon">🖥️</span>
+          <span class="nav-label">Workstations</span>
+        </a>
+        <a href="#camera-mgmt" class="nav-item" data-view="cameras" data-perm="manage_cameras">
+          <span class="nav-icon">🎥</span>
+          <span class="nav-label">Camera Management</span>
+        </a>
+        <a href="#roles" class="nav-item" data-view="employees" data-perm="manage_employees">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Users & Roles</span>
         </a>
         <a href="#privacy" class="nav-item" data-view="privacy" data-perm="view_privacy">
           <span class="nav-icon">🛡️</span>
@@ -312,18 +336,44 @@
 
     <!-- Main Content Area -->
     <div class="main-content">
-      <!-- Topbar -->
+      <!-- Topbar matching Enterprise Design -->
       <header class="app-topbar">
         <div class="topbar-left">
-          <h1 id="page-title">Executive Dashboard & Overview</h1>
+          <button id="sidebar-toggle-btn" class="topbar-toggle-btn" aria-label="Toggle Navigation">
+            <span>▦</span>
+          </button>
+          <div class="topbar-title-box">
+            <h1 id="page-title">Executive Dashboard</h1>
+            <p class="topbar-subtitle">Real-time employee monitoring and analytics</p>
+          </div>
         </div>
+
+        <div class="topbar-center">
+          <div class="topbar-search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="topbar-search-input" placeholder="Search employees, alerts, cameras..." class="topbar-search-input" aria-label="Search dashboard">
+            <kbd class="search-shortcut">⌘K</kbd>
+          </div>
+        </div>
+
         <div class="topbar-right">
-          <span id="system-status-pill" class="status-pill status-ready">System Ready</span>
-          <span id="current-role-badge" class="badge-role role-super_admin">SUPER ADMIN</span>
-          <button id="theme-toggle-btn" class="btn btn-secondary" aria-label="Toggle Dark/Light theme">🌓 Theme</button>
-          <div id="user-pill-container" class="user-pill" title="Current session user (Click to Logout)" style="cursor: pointer;">
-            <span class="user-avatar">👤</span>
-            <span id="user-display-name">Anandhi C (Super Admin)</span>
+          <div class="topbar-status-pill">
+            <span class="pulse-dot"></span>
+            <span id="system-status-pill">System Online</span>
+          </div>
+          <button id="topbar-bell-btn" class="topbar-icon-btn" title="Alerts" onclick="navigateToView('alerts')">
+            <span class="icon">🔔</span>
+            <span class="topbar-badge" id="topbar-alert-count">2</span>
+          </button>
+          <button id="theme-toggle-btn" class="topbar-icon-btn" title="Toggle Theme" aria-label="Toggle Dark/Light theme">
+            <span class="icon">🌙</span>
+          </button>
+          <div id="user-pill-container" class="topbar-user-profile" title="Current session user (Click to Logout)" style="cursor: pointer;">
+            <div class="topbar-user-avatar" id="topbar-user-avatar">AC</div>
+            <div class="topbar-user-info">
+              <span class="topbar-user-name" id="user-display-name">Anandhi C</span>
+              <span class="topbar-user-role" id="user-display-role">Super Admin</span>
+            </div>
           </div>
           <button id="logout-btn" class="logout-topbar-btn" title="Log out of current session">
             <span>🚪</span>
@@ -336,72 +386,507 @@
       <main class="content-body">
         
         <!-- ============================================== -->
-        <!-- VIEW 1: OVERVIEW DASHBOARD                     -->
+        <!-- VIEW 1: OVERVIEW DASHBOARD (ENTERPRISE UI)     -->
         <!-- ============================================== -->
         <section id="view-overview" class="view-panel">
-          <div class="kpi-grid">
-            <div class="kpi-card">
-              <span class="kpi-label">Active Staff</span>
-              <span id="kpi-total-staff" class="kpi-value">4</span>
-              <span class="kpi-sub">Across 4 departments</span>
+          
+          <!-- ROW 1: 6 KPI CARDS -->
+          <div class="kpi-grid-6">
+            <!-- Card 1: Active Staff -->
+            <div class="kpi-card-v2">
+              <div class="kpi-v2-top">
+                <div class="kpi-icon-box bg-mint"><span class="kpi-icon">👥</span></div>
+                <span class="kpi-v2-title">Active Staff</span>
+              </div>
+              <div class="kpi-v2-middle">
+                <span id="kpi-total-staff" class="kpi-v2-num">4</span>
+                <span class="kpi-badge-trend trend-green">↑ +0%</span>
+                <div class="kpi-mini-bars">
+                  <span style="height: 40%"></span>
+                  <span style="height: 60%"></span>
+                  <span style="height: 75%"></span>
+                  <span style="height: 90%"></span>
+                  <span style="height: 100%"></span>
+                </div>
+              </div>
+              <span class="kpi-v2-sub">Across all departments</span>
             </div>
-            <div class="kpi-card">
-              <span class="kpi-label">Today's Attendance</span>
-              <span id="kpi-attendance-rate" class="kpi-value">100%</span>
-              <span class="kpi-sub">4 of 4 clocked in</span>
+
+            <!-- Card 2: Today's Attendance -->
+            <div class="kpi-card-v2">
+              <div class="kpi-v2-top">
+                <div class="kpi-icon-box bg-mint"><span class="kpi-icon">📅</span></div>
+                <span class="kpi-v2-title">Today's Attendance</span>
+              </div>
+              <div class="kpi-v2-middle">
+                <span id="kpi-attendance-rate" class="kpi-v2-num">100%</span>
+                <div class="kpi-mini-bars">
+                  <span style="height: 80%"></span>
+                  <span style="height: 90%"></span>
+                  <span style="height: 85%"></span>
+                  <span style="height: 95%"></span>
+                  <span style="height: 100%"></span>
+                </div>
+              </div>
+              <span class="kpi-v2-sub">4 of 4 checked in</span>
             </div>
-            <div class="kpi-card">
-              <span class="kpi-label">Unacknowledged Alerts</span>
-              <span id="kpi-alerts-count" class="kpi-value text-warning">1</span>
-              <span class="kpi-sub">Requiring supervisor review</span>
+
+            <!-- Card 3: Unacknowledged Alerts -->
+            <div class="kpi-card-v2">
+              <div class="kpi-v2-top">
+                <div class="kpi-icon-box bg-rose"><span class="kpi-icon">⚠️</span></div>
+                <span class="kpi-v2-title">Unacknowledged Alerts</span>
+              </div>
+              <div class="kpi-v2-middle">
+                <span id="kpi-alerts-count" class="kpi-v2-num">2</span>
+                <span class="kpi-badge-trend trend-red">↑ 100%</span>
+                <div class="kpi-mini-bars bars-red">
+                  <span style="height: 30%"></span>
+                  <span style="height: 50%"></span>
+                  <span style="height: 40%"></span>
+                  <span style="height: 70%"></span>
+                  <span style="height: 95%"></span>
+                </div>
+              </div>
+              <span class="kpi-v2-sub">Requires attention</span>
             </div>
-            <div class="kpi-card">
-              <span class="kpi-label">Average Productivity</span>
-              <span id="kpi-avg-score" class="kpi-value text-success">88%</span>
-              <span class="kpi-sub">Calculated across all pods</span>
+
+            <!-- Card 4: Active Workstations -->
+            <div class="kpi-card-v2">
+              <div class="kpi-v2-top">
+                <div class="kpi-icon-box bg-mint"><span class="kpi-icon">🖥️</span></div>
+                <span class="kpi-v2-title">Active Workstations</span>
+              </div>
+              <div class="kpi-v2-middle">
+                <span id="kpi-active-ws" class="kpi-v2-num">4</span>
+                <span class="kpi-badge-trend trend-green">↑ +0%</span>
+                <div class="kpi-mini-bars">
+                  <span style="height: 50%"></span>
+                  <span style="height: 70%"></span>
+                  <span style="height: 60%"></span>
+                  <span style="height: 85%"></span>
+                  <span style="height: 100%"></span>
+                </div>
+              </div>
+              <span class="kpi-v2-sub">All workstations online</span>
+            </div>
+
+            <!-- Card 5: Drowsiness Events -->
+            <div class="kpi-card-v2">
+              <div class="kpi-v2-top">
+                <div class="kpi-icon-box bg-purple"><span class="kpi-icon">💤</span></div>
+                <span class="kpi-v2-title">Drowsiness Events</span>
+              </div>
+              <div class="kpi-v2-middle">
+                <span id="kpi-drowsiness-count" class="kpi-v2-num">3</span>
+                <span class="kpi-badge-trend trend-orange">↑ +50%</span>
+                <div class="kpi-mini-bars bars-purple">
+                  <span style="height: 40%"></span>
+                  <span style="height: 60%"></span>
+                  <span style="height: 50%"></span>
+                  <span style="height: 80%"></span>
+                  <span style="height: 100%"></span>
+                </div>
+              </div>
+              <span class="kpi-v2-sub">Detected today</span>
+            </div>
+
+            <!-- Card 6: Average Activity Index -->
+            <div class="kpi-card-v2">
+              <div class="kpi-v2-top">
+                <div class="kpi-icon-box bg-mint"><span class="kpi-icon">📈</span></div>
+                <span class="kpi-v2-title">Average Activity Index</span>
+              </div>
+              <div class="kpi-v2-middle">
+                <span id="kpi-avg-score" class="kpi-v2-num">85%</span>
+                <span class="kpi-badge-trend trend-green">↑ +4.7%</span>
+                <div class="kpi-mini-bars">
+                  <span style="height: 55%"></span>
+                  <span style="height: 70%"></span>
+                  <span style="height: 65%"></span>
+                  <span style="height: 85%"></span>
+                  <span style="height: 95%"></span>
+                </div>
+              </div>
+              <span class="kpi-v2-sub">Across all employees</span>
             </div>
           </div>
 
-          <div class="overview-dual-grid">
-            <!-- Left: Live Preview Quickcard -->
-            <div class="card">
-              <div class="card-header">
-                <h2>Live Monitoring Quick-Look</h2>
-                <button class="btn btn-sm btn-primary" onclick="navigateToView('monitoring')">Open Full Stream</button>
+          <!-- ROW 2: 2 MAIN CHARTS (SIDE BY SIDE) -->
+          <div class="overview-charts-grid">
+            <!-- Left Chart: Weekly Attendance Overview -->
+            <div class="ui-card">
+              <div class="ui-card-header">
+                <div class="ui-card-title-group">
+                  <div class="header-icon-box"><span class="card-icon">📅</span></div>
+                  <div>
+                    <h3>Weekly Attendance Overview</h3>
+                    <p>Employee attendance rate for the last 7 days</p>
+                  </div>
+                </div>
+                <div class="ui-card-actions">
+                  <select class="clean-select-pill" id="weekly-filter-select">
+                    <option value="this_week">This Week</option>
+                    <option value="last_week">Last Week</option>
+                    <option value="last_month">Last Month</option>
+                  </select>
+                </div>
               </div>
-              <div class="overview-preview-body">
-                <div class="preview-info-box">
-                  <p><strong>Primary Camera:</strong> CAM-01 (Workstation 1)</p>
-                  <p><strong>Assigned:</strong> Anandhi C (Super Administrator)</p>
-                  <p><strong>AI Engines:</strong> FaceMesh • EAR • MAR • Yawning • Head-Pose • Posture</p>
-                  <div class="preview-actions">
-                    <button class="btn btn-secondary" onclick="navigateToView('monitoring')">Launch Camera Telemetry</button>
+
+              <div class="weekly-bar-chart-container">
+                <div class="chart-y-axis">
+                  <span>100%</span>
+                  <span>80%</span>
+                  <span>60%</span>
+                  <span>40%</span>
+                  <span>20%</span>
+                  <span>0%</span>
+                </div>
+                <div class="weekly-bars-wrapper">
+                  <div class="chart-grid-line" style="bottom: 100%;"></div>
+                  <div class="chart-grid-line" style="bottom: 80%;"></div>
+                  <div class="chart-grid-line" style="bottom: 60%;"></div>
+                  <div class="chart-grid-line" style="bottom: 40%;"></div>
+                  <div class="chart-grid-line" style="bottom: 20%;"></div>
+                  <div class="chart-grid-line" style="bottom: 0%;"></div>
+
+                  <!-- 7 Days -->
+                  <div class="day-col">
+                    <span class="col-val">100%</span>
+                    <div class="bar-pill bar-100"></div>
+                    <span class="col-label">Mon</span>
+                  </div>
+                  <div class="day-col">
+                    <span class="col-val">100%</span>
+                    <div class="bar-pill bar-100"></div>
+                    <span class="col-label">Tue</span>
+                  </div>
+                  <div class="day-col">
+                    <span class="col-val">100%</span>
+                    <div class="bar-pill bar-100"></div>
+                    <span class="col-label">Wed</span>
+                  </div>
+                  <div class="day-col">
+                    <span class="col-val">100%</span>
+                    <div class="bar-pill bar-100"></div>
+                    <span class="col-label">Thu</span>
+                  </div>
+                  <div class="day-col">
+                    <span class="col-val">100%</span>
+                    <div class="bar-pill bar-100"></div>
+                    <span class="col-label">Fri</span>
+                  </div>
+                  <div class="day-col">
+                    <span class="col-val">75%</span>
+                    <div class="bar-pill bar-75"></div>
+                    <span class="col-label">Sat</span>
+                  </div>
+                  <div class="day-col">
+                    <span class="col-val">100%</span>
+                    <div class="bar-pill bar-100"></div>
+                    <span class="col-label">Sun</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Right: Department Performance -->
-            <div class="card">
-              <div class="card-header">
-                <h2>Department Productivity Index</h2>
+            <!-- Right Chart: Employee Activity Trends -->
+            <div class="ui-card">
+              <div class="ui-card-header">
+                <div class="ui-card-title-group">
+                  <div class="header-icon-box"><span class="card-icon">👥</span></div>
+                  <div>
+                    <h3>Employee Activity Trends</h3>
+                    <p>Active vs. inactive time (hourly)</p>
+                  </div>
+                </div>
+                <div class="chart-legend-box">
+                  <span class="legend-item"><span class="legend-dot dot-active"></span> Active</span>
+                  <span class="legend-item"><span class="legend-dot dot-inactive"></span> Inactive</span>
+                </div>
               </div>
-              <div id="overview-department-list" class="dept-list-container">
-                <!-- Injected by app.js -->
+
+              <div class="activity-trend-chart-container">
+                <div class="chart-y-axis">
+                  <span>100%</span>
+                  <span>80%</span>
+                  <span>60%</span>
+                  <span>40%</span>
+                  <span>20%</span>
+                  <span>0%</span>
+                </div>
+                <div class="trend-svg-wrapper">
+                  <svg viewBox="0 0 540 180" class="trend-line-svg" preserveAspectRatio="none">
+                    <!-- Background Grid lines -->
+                    <line x1="0" y1="0" x2="540" y2="0" stroke="#f1f5f9" stroke-width="1" />
+                    <line x1="0" y1="36" x2="540" y2="36" stroke="#f1f5f9" stroke-width="1" />
+                    <line x1="0" y1="72" x2="540" y2="72" stroke="#f1f5f9" stroke-width="1" />
+                    <line x1="0" y1="108" x2="540" y2="108" stroke="#f1f5f9" stroke-width="1" />
+                    <line x1="0" y1="144" x2="540" y2="144" stroke="#f1f5f9" stroke-width="1" />
+                    <line x1="0" y1="180" x2="540" y2="180" stroke="#f1f5f9" stroke-width="1" />
+
+                    <!-- Line 1: Active Trend (Emerald Green #10b981) -->
+                    <path d="M 15 50 L 75 42 L 135 52 L 195 38 L 255 58 L 315 48 L 375 52 L 435 34 L 515 45" 
+                          fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    
+                    <!-- Line 1 Nodes -->
+                    <circle cx="15" cy="50" r="4" fill="#ffffff" stroke="#10b981" stroke-width="2.5" />
+                    <circle cx="75" cy="42" r="4" fill="#ffffff" stroke="#10b981" stroke-width="2.5" />
+                    <circle cx="135" cy="52" r="4" fill="#ffffff" stroke="#10b981" stroke-width="2.5" />
+                    <circle cx="195" cy="38" r="4" fill="#ffffff" stroke="#10b981" stroke-width="2.5" />
+                    <circle cx="255" cy="58" r="4" fill="#ffffff" stroke="#10b981" stroke-width="2.5" />
+                    <circle cx="315" cy="48" r="4" fill="#ffffff" stroke="#10b981" stroke-width="2.5" />
+                    <circle cx="375" cy="52" r="4" fill="#ffffff" stroke="#10b981" stroke-width="2.5" />
+                    <circle cx="435" cy="34" r="4" fill="#ffffff" stroke="#10b981" stroke-width="2.5" />
+                    <circle cx="515" cy="45" r="4" fill="#ffffff" stroke="#10b981" stroke-width="2.5" />
+
+                    <!-- Line 2: Inactive Trend (Light Mint/Teal #6ee7b7) -->
+                    <path d="M 15 145 L 75 148 L 135 140 L 195 146 L 255 138 L 315 144 L 375 142 L 435 150 L 515 146" 
+                          fill="none" stroke="#6ee7b7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    
+                    <!-- Line 2 Nodes -->
+                    <circle cx="15" cy="145" r="4" fill="#ffffff" stroke="#6ee7b7" stroke-width="2.5" />
+                    <circle cx="75" cy="148" r="4" fill="#ffffff" stroke="#6ee7b7" stroke-width="2.5" />
+                    <circle cx="135" cy="140" r="4" fill="#ffffff" stroke="#6ee7b7" stroke-width="2.5" />
+                    <circle cx="195" cy="146" r="4" fill="#ffffff" stroke="#6ee7b7" stroke-width="2.5" />
+                    <circle cx="255" cy="138" r="4" fill="#ffffff" stroke="#6ee7b7" stroke-width="2.5" />
+                    <circle cx="315" cy="144" r="4" fill="#ffffff" stroke="#6ee7b7" stroke-width="2.5" />
+                    <circle cx="375" cy="142" r="4" fill="#ffffff" stroke="#6ee7b7" stroke-width="2.5" />
+                    <circle cx="435" cy="150" r="4" fill="#ffffff" stroke="#6ee7b7" stroke-width="2.5" />
+                    <circle cx="515" cy="146" r="4" fill="#ffffff" stroke="#6ee7b7" stroke-width="2.5" />
+                  </svg>
+                </div>
+                <div class="chart-x-axis">
+                  <span>09:00</span>
+                  <span>10:00</span>
+                  <span>11:00</span>
+                  <span>12:00</span>
+                  <span>13:00</span>
+                  <span>14:00</span>
+                  <span>15:00</span>
+                  <span>16:00</span>
+                  <span>17:00</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Bottom: Recent Smart Alerts -->
-          <div class="card mt-4">
-            <div class="card-header">
-              <h2>Recent Incident Alerts</h2>
-              <button class="btn btn-sm btn-secondary" onclick="navigateToView('alerts')">View Alert Center</button>
+          <!-- ROW 3: 4 METRIC CARDS -->
+          <div class="overview-quad-grid">
+            <!-- 1. Department Activity Comparison -->
+            <div class="ui-card">
+              <div class="ui-card-header-compact">
+                <span class="card-icon-sm">🗂️</span>
+                <div>
+                  <h4>Department Activity Comparison</h4>
+                  <p>Average activity index by department</p>
+                </div>
+              </div>
+              <div class="dept-donut-layout">
+                <div class="donut-chart-container">
+                  <svg viewBox="0 0 100 100" class="donut-svg">
+                    <circle cx="50" cy="50" r="38" stroke="#ecfdf5" stroke-width="12" fill="none" />
+                    <circle cx="50" cy="50" r="38" stroke="#10b981" stroke-width="12" fill="none"
+                            stroke-dasharray="238.76" stroke-dashoffset="35.8" stroke-linecap="round"
+                            transform="rotate(-90 50 50)" />
+                  </svg>
+                  <div class="donut-center-text">
+                    <strong>85%</strong>
+                    <span>Overall</span>
+                  </div>
+                </div>
+                <div class="dept-scores-list">
+                  <div class="dept-score-item">
+                    <span class="dot dot-admin"></span>
+                    <span class="dept-title">Administration</span>
+                    <strong class="dept-pct">96%</strong>
+                  </div>
+                  <div class="dept-score-item">
+                    <span class="dot dot-eng"></span>
+                    <span class="dept-title">Engineering</span>
+                    <strong class="dept-pct">89%</strong>
+                  </div>
+                  <div class="dept-score-item">
+                    <span class="dot dot-qa"></span>
+                    <span class="dept-title">Quality & Testing</span>
+                    <strong class="dept-pct">86%</strong>
+                  </div>
+                  <div class="dept-score-item">
+                    <span class="dot dot-ops"></span>
+                    <span class="dept-title">Operations</span>
+                    <strong class="dept-pct">82%</strong>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div id="overview-recent-alerts" class="recent-alerts-grid">
-              <!-- Injected by app.js -->
+
+            <!-- 2. Workstation Utilization -->
+            <div class="ui-card">
+              <div class="ui-card-header-compact">
+                <span class="card-icon-sm">🖥️</span>
+                <div>
+                  <h4>Workstation Utilization</h4>
+                  <p>Current workstation usage</p>
+                </div>
+              </div>
+              <div class="ws-progress-layout">
+                <div class="ws-row">
+                  <span class="ws-label">WS-01</span>
+                  <div class="ws-bar-track"><div class="ws-bar-fill w-100"></div></div>
+                  <span class="ws-val">100%</span>
+                </div>
+                <div class="ws-row">
+                  <span class="ws-label">WS-02</span>
+                  <div class="ws-bar-track"><div class="ws-bar-fill w-100"></div></div>
+                  <span class="ws-val">100%</span>
+                </div>
+                <div class="ws-row">
+                  <span class="ws-label">WS-03</span>
+                  <div class="ws-bar-track"><div class="ws-bar-fill w-75"></div></div>
+                  <span class="ws-val">75%</span>
+                </div>
+                <div class="ws-row">
+                  <span class="ws-label">WS-04</span>
+                  <div class="ws-bar-track"><div class="ws-bar-fill w-100"></div></div>
+                  <span class="ws-val">100%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Daily Monitoring Events -->
+            <div class="ui-card">
+              <div class="ui-card-header-compact">
+                <span class="card-icon-sm">📈</span>
+                <div>
+                  <h4>Daily Monitoring Events</h4>
+                  <p>AI-detected events for today</p>
+                </div>
+              </div>
+              <div class="events-bar-chart-layout">
+                <div class="event-col">
+                  <span class="event-val">3</span>
+                  <div class="event-bar" style="height: 65px; background-color: #10b981;"></div>
+                  <span class="event-label">Drowsiness</span>
+                </div>
+                <div class="event-col">
+                  <span class="event-val">2</span>
+                  <div class="event-bar" style="height: 44px; background-color: #34d399;"></div>
+                  <span class="event-label">Inactivity</span>
+                </div>
+                <div class="event-col">
+                  <span class="event-val">1</span>
+                  <div class="event-bar" style="height: 24px; background-color: #6ee7b7;"></div>
+                  <span class="event-label">Absence</span>
+                </div>
+                <div class="event-col">
+                  <span class="event-val">0</span>
+                  <div class="event-bar" style="height: 4px; background-color: #e2e8f0;"></div>
+                  <span class="event-label">Posture</span>
+                </div>
+                <div class="event-col">
+                  <span class="event-val">1</span>
+                  <div class="event-bar" style="height: 24px; background-color: #a7f3d0;"></div>
+                  <span class="event-label">Other</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Employee Attendance Distribution -->
+            <div class="ui-card">
+              <div class="ui-card-header-compact">
+                <span class="card-icon-sm">👥</span>
+                <div>
+                  <h4>Employee Attendance Distribution</h4>
+                  <p>Today's check-in status</p>
+                </div>
+              </div>
+              <div class="dept-donut-layout">
+                <div class="donut-chart-container">
+                  <svg viewBox="0 0 100 100" class="donut-svg">
+                    <circle cx="50" cy="50" r="38" stroke="#10b981" stroke-width="12" fill="none" />
+                  </svg>
+                  <div class="donut-center-text">
+                    <strong>4</strong>
+                    <span>Employees</span>
+                  </div>
+                </div>
+                <div class="dept-scores-list">
+                  <div class="dept-score-item">
+                    <span class="dot" style="background-color: #10b981;"></span>
+                    <span class="dept-title">Present</span>
+                    <strong class="dept-pct">4 (100%)</strong>
+                  </div>
+                  <div class="dept-score-item">
+                    <span class="dot" style="background-color: #94a3b8;"></span>
+                    <span class="dept-title">Absent</span>
+                    <strong class="dept-pct">0 (0%)</strong>
+                  </div>
+                  <div class="dept-score-item">
+                    <span class="dot" style="background-color: #d97706;"></span>
+                    <span class="dept-title">On Break</span>
+                    <strong class="dept-pct">0 (0%)</strong>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- ROW 4: RECENT ALERTS DATA TABLE -->
+          <div class="ui-card recent-alerts-card">
+            <div class="ui-card-header-compact" style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.85rem; margin-bottom: 0;">
+              <span class="card-icon-sm">⏱️</span>
+              <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: var(--text-main);">Recent Alerts</h3>
+            </div>
+            <div class="table-responsive">
+              <table class="recent-alerts-table">
+                <thead>
+                  <tr>
+                    <th style="width: 40px;">#</th>
+                    <th>Employee</th>
+                    <th>Alert Category</th>
+                    <th>Event Description</th>
+                    <th>Timestamp</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-alerts-tbody">
+                  <tr>
+                    <td>1</td>
+                    <td><span class="tbl-user-icon">👤</span> <strong>Akash A</strong></td>
+                    <td><span class="cat-icon text-purple">💤</span> Drowsiness</td>
+                    <td>Prolonged eye closure and yawning detected</td>
+                    <td>Today, 08:34:02</td>
+                    <td><span class="pill-badge pill-warning">Warning</span></td>
+                    <td><span class="pill-status text-danger">Unacknowledged</span></td>
+                    <td style="text-align: right;"><button class="btn-action-outline" onclick="acknowledgeAlertRow('ALT-9001', this)">Acknowledge</button></td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td><span class="tbl-user-icon">👤</span> <strong>Kanishka Sri S</strong></td>
+                    <td><span class="cat-icon text-warning">⚡</span> Inactivity</td>
+                    <td>No significant movement for 5 minutes</td>
+                    <td>Today, 08:19:02</td>
+                    <td><span class="pill-badge pill-warning">Warning</span></td>
+                    <td><span class="pill-status text-danger">Unacknowledged</span></td>
+                    <td style="text-align: right;"><button class="btn-action-outline" onclick="acknowledgeAlertRow('ALT-9002', this)">Acknowledge</button></td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td><span class="tbl-user-icon">👤</span> <strong>Kartik Raja N</strong></td>
+                    <td><span class="cat-icon text-primary">🖥️</span> Absence</td>
+                    <td>Workstation absence detected</td>
+                    <td>Today, 08:04:02</td>
+                    <td><span class="pill-badge pill-info">Info</span></td>
+                    <td><span class="pill-status text-success">Acknowledged</span></td>
+                    <td style="text-align: right;"><button class="btn-action-outline" onclick="navigateToView('alerts')">View</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </section>
 
         <!-- ============================================== -->

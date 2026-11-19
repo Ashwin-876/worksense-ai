@@ -267,10 +267,41 @@ function applyRolePermissions() {
   });
 
   const userDisplayName = document.getElementById('user-display-name');
-  if (userDisplayName && window.appState) {
-    userDisplayName.textContent = window.appState.currentUser.name;
+  const userDisplayRole = document.getElementById('user-display-role');
+  const userAvatar = document.getElementById('topbar-user-avatar');
+
+  if (window.appState && window.appState.currentUser) {
+    const user = window.appState.currentUser;
+    const cleanName = user.name.split(' (')[0];
+    if (userDisplayName) userDisplayName.textContent = cleanName;
+    if (userDisplayRole) userDisplayRole.textContent = user.role === 'SUPER_ADMIN' ? 'Super Admin' : (user.designation || 'Staff');
+    if (userAvatar) {
+      const parts = cleanName.split(' ');
+      const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : cleanName.substring(0, 2).toUpperCase();
+      userAvatar.textContent = initials;
+    }
   }
 }
+
+function acknowledgeAlertRow(alertId, btnEl) {
+  if (window.appState) {
+    window.appState.acknowledgeAlert(alertId);
+  }
+  if (btnEl) {
+    const row = btnEl.closest('tr');
+    if (row) {
+      const statusCell = row.querySelector('.pill-status');
+      if (statusCell) {
+        statusCell.textContent = 'Acknowledged';
+        statusCell.className = 'pill-status text-success';
+      }
+    }
+    btnEl.textContent = 'View';
+    btnEl.onclick = () => navigateToView('alerts');
+  }
+  renderAlertsBadge();
+}
+window.acknowledgeAlertRow = acknowledgeAlertRow;
 
 function navigateToView(viewName) {
   currentView = viewName;
@@ -295,18 +326,20 @@ function navigateToView(viewName) {
   const pageTitle = document.getElementById('page-title');
   if (pageTitle) {
     const titles = {
-      overview: 'Executive Dashboard & Overview',
+      overview: 'Executive Dashboard',
       monitoring: 'Live Computer Vision Monitoring',
       cameras: 'Multi-Camera Monitoring Grid',
-      employees: 'Employee Management & Directory',
-      attendance: 'Attendance & Timecard Hub',
-      alerts: 'Smart Alert Center',
-      analytics: 'Activity Analytics & Workstation Ergonomics',
+      employees: 'Staff & Personnel Directory',
+      attendance: 'Attendance Management & Duration Logs',
+      alerts: 'Smart Automated Incident Center',
+      analytics: 'Workstation & Focus Analytics',
       reports: 'Compliance Reports & Data Exports',
-      privacy: 'Privacy, Consent & Audit Trail',
-      settings: 'System Configuration & Thresholds'
+      privacy: 'Privacy Framework & Audit Logs',
+      settings: 'System Configuration & Policy Thresholds',
+      departments: 'Department Performance & Index',
+      workstations: 'Workstation Hardware & Utilization'
     };
-    pageTitle.textContent = titles[viewName] || 'Dashboard';
+    pageTitle.textContent = titles[viewName] || 'Executive Dashboard';
   }
 
   renderCurrentView();
@@ -324,18 +357,23 @@ function renderCurrentView() {
     case 'reports': renderReportsView(); break;
     case 'privacy': renderPrivacyView(); break;
     case 'settings': renderSettingsView(); break;
+    case 'departments': renderAnalyticsView(); break;
+    case 'workstations': renderCamerasView(); break;
   }
 }
 
 function renderAlertsBadge() {
   const badge = document.getElementById('sidebar-alert-badge');
-  if (!badge) return;
-  const count = window.alertManager ? window.alertManager.getUnacknowledgedCount() : 0;
-  if (count > 0) {
+  const topbarBadge = document.getElementById('topbar-alert-count');
+  const count = window.alertManager ? window.alertManager.getUnacknowledgedCount() : 2;
+  
+  if (badge) {
     badge.textContent = count;
-    badge.style.display = 'inline-block';
-  } else {
-    badge.style.display = 'none';
+    badge.style.display = count > 0 ? 'inline-block' : 'none';
+  }
+  if (topbarBadge) {
+    topbarBadge.textContent = count;
+    topbarBadge.style.display = count > 0 ? 'flex' : 'none';
   }
 }
 
@@ -343,7 +381,12 @@ function renderAlertsBadge() {
 // View 1: Overview Dashboard
 // -------------------------------------------------------------
 function renderOverviewView() {
-  const kpis = window.analyticsEngine.getOverviewKPIs();
+  const kpis = window.analyticsEngine ? window.analyticsEngine.getOverviewKPIs() : {
+    totalStaff: 4,
+    attendanceRate: 100,
+    unackAlerts: 2,
+    avgScore: 85
+  };
   
   const totalStaffEl = document.getElementById('kpi-total-staff');
   const attendanceRateEl = document.getElementById('kpi-attendance-rate');
@@ -355,43 +398,7 @@ function renderOverviewView() {
   if (alertsCountEl) alertsCountEl.textContent = kpis.unackAlerts;
   if (avgScoreEl) avgScoreEl.textContent = `${kpis.avgScore}%`;
 
-  // Render recent alerts preview
-  const alertsList = document.getElementById('overview-recent-alerts');
-  if (alertsList && window.appState) {
-    const recent = window.appState.alerts.slice(0, 4);
-    if (recent.length === 0) {
-      alertsList.innerHTML = `<p class="empty-text">No active alerts. All systems operational.</p>`;
-    } else {
-      alertsList.innerHTML = recent.map(a => `
-        <div class="alert-mini-card ${a.severity.toLowerCase()}">
-          <div class="alert-mini-top">
-            <span class="badge-tag ${a.severity.toLowerCase()}">${a.severity}</span>
-            <span class="time-ago">${new Date(a.timestamp).toLocaleTimeString()}</span>
-          </div>
-          <div class="alert-mini-body">
-            <strong>${a.employeeName}</strong>: ${a.description}
-          </div>
-        </div>
-      `).join('');
-    }
-  }
-
-  // Render department breakdown
-  const deptList = document.getElementById('overview-department-list');
-  if (deptList) {
-    const stats = window.analyticsEngine.departmentStats;
-    deptList.innerHTML = Object.entries(stats).map(([dept, data]) => `
-      <div class="dept-stat-row">
-        <div class="dept-name">
-          <span>${dept}</span>
-          <strong>${data.score}%</strong>
-        </div>
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill" style="width: ${data.score}%"></div>
-        </div>
-      </div>
-    `).join('');
-  }
+  renderAlertsBadge();
 }
 
 // -------------------------------------------------------------
