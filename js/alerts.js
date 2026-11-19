@@ -119,15 +119,31 @@ class AlertManager {
 
   playVoiceAlert() {
     if (!('speechSynthesis' in window)) {
-      this.playAlarmPulse('digital_beep');
+      this.playAlarmPulse('chime');
       return;
     }
-    if (window.speechSynthesis.speaking) return;
-    const utterance = new SpeechSynthesisUtterance("Warning: No person detected at workstation.");
-    utterance.rate = 1.05;
-    utterance.pitch = 1.0;
-    utterance.volume = 0.95;
-    window.speechSynthesis.speak(utterance);
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance("Warning: No person detected at workstation.");
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+
+      // Select an English voice if available
+      const voices = window.speechSynthesis.getVoices();
+      if (voices && voices.length > 0) {
+        const preferredVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('Google') || v.name.includes('Daniel') || v.name.includes('Siri') || v.name.includes('Karen')));
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+        } else {
+          const enVoice = voices.find(v => v.lang.startsWith('en'));
+          if (enVoice) utterance.voice = enVoice;
+        }
+      }
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {
+      console.warn("Speech synthesis error:", e);
+    }
   }
 
   startAbsenceAlarm() {
@@ -135,7 +151,7 @@ class AlertManager {
     if (!window.appState || !window.appState.settings.soundAlerts) return;
 
     this.absenceAlarmActive = true;
-    const theme = (window.appState.settings && window.appState.settings.soundAlertTheme) || 'digital_beep';
+    const theme = (window.appState.settings && window.appState.settings.soundAlertTheme) || 'voice';
 
     if (theme === 'voice') {
       this.playVoiceAlert();
@@ -145,7 +161,7 @@ class AlertManager {
         } else {
           this.stopAbsenceAlarm();
         }
-      }, 2500);
+      }, 3500);
       return;
     }
 

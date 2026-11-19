@@ -148,7 +148,7 @@ const DEFAULT_SETTINGS = {
   yawnThreshold: 0.08, // MAR
   yawnMinDuration: 1.8, // seconds
   soundAlerts: true,
-  soundAlertTheme: 'digital_beep', // 'digital_beep', 'chime', 'radar', 'siren', 'voice'
+  soundAlertTheme: 'voice', // Default: Spoken Voice Alert ("Warning: No person detected at workstation")
   emailNotifications: true,
   notificationEmail: 'anandhi@worksense.ai',
   privacyBlurMode: false,

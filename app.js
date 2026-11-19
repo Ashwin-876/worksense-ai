@@ -664,7 +664,7 @@ function renderMonitoringView() {
   // Absence Alarm Sound Theme Selector
   const soundSelect = document.getElementById('select-alarm-sound');
   if (soundSelect && window.appState) {
-    soundSelect.value = window.appState.settings.soundAlertTheme || 'digital_beep';
+    soundSelect.value = window.appState.settings.soundAlertTheme || 'voice';
     soundSelect.onchange = (e) => {
       window.appState.updateSettings({ soundAlertTheme: e.target.value });
       const cfgSound = document.getElementById('cfg-alarm-sound');
@@ -679,7 +679,7 @@ function renderMonitoringView() {
   const testSoundBtn = document.getElementById('btn-test-sound');
   if (testSoundBtn && window.alertManager) {
     testSoundBtn.onclick = () => {
-      const selectedTheme = soundSelect ? soundSelect.value : 'digital_beep';
+      const selectedTheme = soundSelect ? soundSelect.value : 'voice';
       window.alertManager.playAlarmPulse(selectedTheme);
     };
   }
@@ -1282,7 +1282,7 @@ function renderSettingsView() {
   if (inputTalk) inputTalk.value = s.talkFrequencyThreshold;
   if (inputYawn) inputYawn.value = s.yawnThreshold;
   if (checkSound) checkSound.checked = s.soundAlerts;
-  if (selectAlarmTheme) selectAlarmTheme.value = s.soundAlertTheme || 'digital_beep';
+  if (selectAlarmTheme) selectAlarmTheme.value = s.soundAlertTheme || 'voice';
   if (checkEmail) checkEmail.checked = s.emailNotifications;
   if (inputEmail) inputEmail.value = s.notificationEmail;
 
@@ -1294,7 +1294,7 @@ function renderSettingsView() {
         talkFrequencyThreshold: parseInt(inputTalk.value) || 4,
         yawnThreshold: parseFloat(inputYawn.value) || 0.08,
         soundAlerts: checkSound.checked,
-        soundAlertTheme: selectAlarmTheme ? selectAlarmTheme.value : 'digital_beep',
+        soundAlertTheme: selectAlarmTheme ? selectAlarmTheme.value : 'voice',
         emailNotifications: checkEmail.checked,
         notificationEmail: inputEmail.value.trim()
       });
