@@ -27,209 +27,423 @@
   <!-- LOGIN & ROLE AUTHENTICATION SCREEN             -->
   <!-- ============================================== -->
   <div id="login-screen" class="login-screen">
-    <div class="login-container">
+    <div class="login-split-card">
       
-      <!-- Top Brand Bar -->
-      <header class="login-header">
-        <div class="login-brand-wrapper">
-          <div class="login-brand-logo">👁️</div>
-          <div class="login-brand-titles">
-            <h1>WorkSense AI</h1>
-            <p>AI-Powered Employee Monitoring System • Role Portal</p>
+      <!-- LEFT HERO PANEL (Dark Teal Slate with Feature Cards & AI Laptop HUD) -->
+      <section class="login-hero-panel" aria-label="WorkSense AI Overview">
+        <div class="login-hero-inner">
+          
+          <!-- Brand Logo & System Title -->
+          <div class="login-hero-brand">
+            <div class="hero-brand-logo">
+              <svg width="36" height="36" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                <circle cx="20" cy="20" r="18" stroke="#2dd4bf" stroke-width="1.8" stroke-opacity="0.35"/>
+                <ellipse cx="20" cy="20" rx="14" ry="9" stroke="#2dd4bf" stroke-width="2.2" stroke-linecap="round"/>
+                <circle cx="20" cy="20" r="4.5" fill="#2dd4bf"/>
+                <circle cx="21.5" cy="18.5" r="1.5" fill="#ffffff"/>
+              </svg>
+            </div>
+            <div class="hero-brand-titles">
+              <div class="hero-brand-title">WorkSense <span class="brand-ai-cyan">AI</span></div>
+              <div class="hero-brand-sub">EMPLOYEE MONITORING SYSTEM</div>
+            </div>
           </div>
-        </div>
-        <div class="login-header-actions">
-          <span class="login-status-badge">System Ready</span>
-          <button id="login-theme-toggle" class="btn btn-secondary btn-sm" aria-label="Toggle Theme">🌓 Theme</button>
-        </div>
-      </header>
 
-      <!-- Main Dual Login Layout -->
-      <div class="login-grid">
+          <!-- Main Hero Heading -->
+          <div class="login-hero-copy">
+            <h1 class="hero-heading-main">
+              <span>AI-Powered</span>
+              <span class="text-cyan-gradient">Employee Monitoring</span>
+            </h1>
+            <p class="hero-subtext">Real-time workplace monitoring, activity analysis and attendance management.</p>
+          </div>
+
+          <!-- 6 Feature Cards (2 cols x 3 rows) -->
+          <div class="login-feature-cards">
+            <!-- 1. Live Monitoring -->
+            <div class="feature-card">
+              <div class="feature-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                </svg>
+              </div>
+              <span class="feature-card-title">Live Monitoring</span>
+            </div>
+
+            <!-- 2. Employee Management -->
+            <div class="feature-card">
+              <div class="feature-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <span class="feature-card-title">Employee Management</span>
+            </div>
+
+            <!-- 3. Attendance Tracking -->
+            <div class="feature-card">
+              <div class="feature-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="8" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                  <path d="m9 16 2 2 4-4"></path>
+                </svg>
+              </div>
+              <span class="feature-card-title">Attendance Tracking</span>
+            </div>
+
+            <!-- 4. Smart Alerts -->
+            <div class="feature-card">
+              <div class="feature-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+              </div>
+              <span class="feature-card-title">Smart Alerts</span>
+            </div>
+
+            <!-- 5. Activity Analytics -->
+            <div class="feature-card">
+              <div class="feature-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+              </div>
+              <span class="feature-card-title">Activity Analytics</span>
+            </div>
+
+            <!-- 6. Reports & Exports -->
+            <div class="feature-card">
+              <div class="feature-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </div>
+              <span class="feature-card-title">Reports & Exports</span>
+            </div>
+          </div>
+
+          <!-- Bottom Desk Illustration (Potted Plant + Laptop AI Telemetry HUD) -->
+          <div class="login-hero-desk-art">
+            <svg class="hero-desk-svg" viewBox="0 0 460 170" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="laptopGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#0e2329"/>
+                  <stop offset="100%" stop-color="#06161a"/>
+                </linearGradient>
+                <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#94a3b8"/>
+                  <stop offset="100%" stop-color="#475569"/>
+                </linearGradient>
+                <filter id="deskShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="8" result="blur"/>
+                  <feColorMatrix type="matrix" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.35 0"/>
+                </filter>
+              </defs>
+              
+              <!-- Soft Desk Surface Shadow -->
+              <ellipse cx="230" cy="155" rx="200" ry="12" fill="url(#deskShadow)"/>
+
+              <!-- Potted Plant on Left -->
+              <g transform="translate(18, 55)">
+                <!-- Ceramic Pot -->
+                <path d="M22 62 L18 96 C18 99 22 102 36 102 C50 102 54 99 54 96 L50 62 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+                <ellipse cx="36" cy="62" rx="14" ry="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
+                <!-- Plant Soil -->
+                <ellipse cx="36" cy="62" rx="11" ry="2.8" fill="#334155"/>
+                <!-- Lush Green Succulent Leaves -->
+                <path d="M36 62 Q20 38 12 18 Q26 24 36 62 Z" fill="#059669"/>
+                <path d="M36 62 Q28 28 32 4 Q42 16 36 62 Z" fill="#10b981"/>
+                <path d="M36 62 Q45 28 58 10 Q56 28 36 62 Z" fill="#34d399"/>
+                <path d="M36 62 Q52 42 66 32 Q54 48 36 62 Z" fill="#047857"/>
+                <path d="M36 62 Q22 48 10 38 Q22 52 36 62 Z" fill="#059669"/>
+              </g>
+
+              <!-- Modern Laptop with AI Vision Dashboard Screen -->
+              <g transform="translate(95, 12)">
+                <!-- Laptop Screen Bezel -->
+                <rect x="25" y="6" width="220" height="130" rx="8" fill="#111c21" stroke="#334155" stroke-width="2"/>
+                <!-- Webcam Dot & Indicator -->
+                <circle cx="135" cy="11" r="2.2" fill="#0f172a" stroke="#475569" stroke-width="0.8"/>
+                <circle cx="142" cy="11" r="1.2" fill="#10b981"/>
+
+                <!-- Display Glass Area -->
+                <rect x="31" y="16" width="208" height="114" rx="4" fill="url(#laptopGrad)"/>
+
+                <!-- Laptop Screen Content: Analytics & Facial Telemetry -->
+                <!-- Top Nav Bar -->
+                <line x1="36" y1="26" x2="234" y2="26" stroke="#1e3a42" stroke-width="1"/>
+                <circle cx="42" cy="21" r="2" fill="#ef4444"/>
+                <circle cx="48" cy="21" r="2" fill="#f59e0b"/>
+                <circle cx="54" cy="21" r="2" fill="#10b981"/>
+                <text x="64" y="24" fill="#94a3b8" font-size="7" font-family="sans-serif" font-weight="600">WorkSense Vision Telemetry</text>
+
+                <!-- Left: Activity Bar Chart -->
+                <g transform="translate(40, 40)">
+                  <text x="0" y="-3" fill="#64748b" font-size="6.5" font-family="sans-serif">Focus & Activity</text>
+                  <rect x="2" y="44" width="7" height="24" rx="1.5" fill="#10b981" fill-opacity="0.9"/>
+                  <rect x="13" y="28" width="7" height="40" rx="1.5" fill="#10b981"/>
+                  <rect x="24" y="36" width="7" height="32" rx="1.5" fill="#10b981" fill-opacity="0.85"/>
+                  <rect x="35" y="18" width="7" height="50" rx="1.5" fill="#2dd4bf"/>
+                  <rect x="46" y="24" width="7" height="44" rx="1.5" fill="#10b981"/>
+                  <rect x="57" y="38" width="7" height="30" rx="1.5" fill="#10b981" fill-opacity="0.8"/>
+                  <line x1="0" y1="69" x2="68" y2="69" stroke="#1e3a42" stroke-width="1"/>
+                  <!-- Sparkline Curve -->
+                  <path d="M 5 40 Q 20 18 38 28 T 62 16" fill="none" stroke="#5eead4" stroke-width="1.4" stroke-linecap="round"/>
+                </g>
+
+                <!-- Right: Facial Mesh Bounding Box (AI Vision HUD) -->
+                <g transform="translate(138, 36)">
+                  <!-- Target Bounding Box Corners -->
+                  <path d="M 12 18 L 6 18 L 6 24" fill="none" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M 54 18 L 60 18 L 60 24" fill="none" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M 6 56 L 6 62 L 12 62" fill="none" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M 60 56 L 60 62 L 54 62" fill="none" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round"/>
+                  
+                  <!-- Facial Wireframe Silhouette -->
+                  <ellipse cx="33" cy="34" rx="12" ry="15" fill="none" stroke="#2dd4bf" stroke-width="1.3" stroke-dasharray="2 2"/>
+                  <!-- Eyes & Mouth Markers -->
+                  <circle cx="28" cy="30" r="1.5" fill="#2dd4bf"/>
+                  <circle cx="38" cy="30" r="1.5" fill="#2dd4bf"/>
+                  <ellipse cx="33" cy="40" rx="4" ry="1.5" fill="none" stroke="#2dd4bf" stroke-width="1"/>
+                  <!-- Shoulders Outline -->
+                  <path d="M 14 62 C 16 52 24 50 33 50 C 42 50 50 52 52 62" fill="none" stroke="#2dd4bf" stroke-width="1.3"/>
+                  <!-- Telemetry Status Pill -->
+                  <rect x="8" y="66" width="50" height="9" rx="4.5" fill="#042f2e" stroke="#0d9488" stroke-width="0.8"/>
+                  <circle cx="14" cy="70.5" r="2" fill="#10b981"/>
+                  <text x="20" y="73.5" fill="#a7f3d0" font-size="5.5" font-family="sans-serif" font-weight="600">ACTIVE • 98.4%</text>
+                </g>
+
+                <!-- Laptop Base & Keyboard Well -->
+                <path d="M 6 136 L 264 136 L 278 144 L -8 144 Z" fill="url(#bodyGrad)" stroke="#475569" stroke-width="1"/>
+                <rect x="105" y="137" width="60" height="4" rx="1.5" fill="#64748b"/>
+              </g>
+            </svg>
+          </div>
+
+        </div>
+
+        <!-- Organic Wave Divider: Seamless Right-edge S-Curve -->
+        <div class="login-panel-wave" aria-hidden="true">
+          <svg viewBox="0 0 100 1000" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="waveLineGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2dd4bf" stop-opacity="0.85"/>
+                <stop offset="45%" stop-color="#14b8a6" stop-opacity="1"/>
+                <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0.85"/>
+              </linearGradient>
+            </defs>
+            <!-- Filled dark panel wave mask -->
+            <path d="M 0,0 L 40,0 C 85,200 105,340 75,520 C 40,700 80,860 92,1000 L 0,1000 Z" fill="#072227"/>
+            <!-- Neon Cyan/Teal Boundary Wave -->
+            <path d="M 40,0 C 85,200 105,340 75,520 C 40,700 80,860 92,1000" fill="none" stroke="url(#waveLineGrad)" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </section>
+
+      <!-- RIGHT FORM PANEL (Clean White / Pure Workspace Sign-in) -->
+      <main class="login-form-panel" aria-label="Sign In Workspace">
         
-        <!-- Left: Form Authentication -->
-        <section class="login-card-manual" aria-label="Direct Credentials Login">
-          <div>
-            <div class="login-card-header">
-              <h2>🔐 Direct Sign In</h2>
-              <p>Enter your corporate credentials or employee ID below</p>
-            </div>
+        <!-- Top Theme Toggle Pill -->
+        <div class="login-top-bar">
+          <div class="theme-pill-container" id="login-theme-pill" role="group" aria-label="Theme Switcher">
+            <button type="button" class="theme-pill-btn" id="theme-btn-moon" aria-label="Dark Mode" title="Dark Theme">
+              <span class="pill-icon">🌙</span>
+            </button>
+            <button type="button" class="theme-pill-btn active" id="theme-btn-sun" aria-label="Light Mode" title="Light Theme">
+              <span class="pill-icon">☀️</span>
+            </button>
+          </div>
+        </div>
 
-            <form id="login-form" class="login-form" onsubmit="return false;">
-              <div id="login-alert-box" class="login-alert" role="alert"></div>
-
-              <div class="login-input-group">
-                <label for="login-username">Corporate Email or Employee ID</label>
-                <div class="login-input-wrapper">
-                  <span class="login-input-icon">👤</span>
-                  <input 
-                    type="text" 
-                    id="login-username" 
-                    class="login-input" 
-                    placeholder="e.g. anandhi@worksense.ai or EMP-1001" 
-                    autocomplete="username" 
-                    required
-                  >
-                </div>
-              </div>
-
-              <div class="login-input-group">
-                <label for="login-password">Password</label>
-                <div class="login-input-wrapper">
-                  <span class="login-input-icon">🔒</span>
-                  <input 
-                    type="password" 
-                    id="login-password" 
-                    class="login-input" 
-                    placeholder="Enter your password" 
-                    autocomplete="current-password" 
-                    required
-                  >
-                  <button type="button" id="login-password-toggle" class="login-password-toggle" aria-label="Toggle Password Visibility">👁️</button>
-                </div>
-              </div>
-
-              <div class="login-form-options">
-                <label>
-                  <input type="checkbox" id="login-remember" checked>
-                  Remember this device
-                </label>
-                <span style="color: var(--text-muted); font-size: 0.78rem;">Edge On-Device AI</span>
-              </div>
-
-              <button type="submit" id="login-submit-btn" class="login-btn-submit">
-                <span>Sign In to WorkSense</span>
-                <span>➜</span>
-              </button>
-            </form>
+        <div class="login-form-body">
+          
+          <!-- Welcome Header -->
+          <div class="login-form-heading">
+            <h2 class="form-title">
+              <span>Welcome to WorkSense</span>
+              <span class="text-emerald">AI</span>
+            </h2>
+            <p class="form-subtitle">Sign in to access your workspace</p>
           </div>
 
-          <div style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 0.85rem;">
-            💡 <strong>Quick Access:</strong> Select any staff role on the right for instant 1-click login with pre-filled credentials.
+          <!-- Dual Mode Tab Switcher: Account Login vs Quick Login -->
+          <div class="login-tabs-bar" role="tablist">
+            <button type="button" class="tab-button active" id="btn-tab-account" role="tab" aria-selected="true">
+              <span class="tab-icon">🔒</span>
+              <span>Account Login</span>
+            </button>
+            <button type="button" class="tab-button" id="btn-tab-quick" role="tab" aria-selected="false">
+              <span class="tab-icon">⚡</span>
+              <span>Quick Login</span>
+            </button>
           </div>
-        </section>
 
-        <!-- Right: ⚡ One-Click Role Access (All Roles & Credentials) -->
-        <section class="login-card-quick" aria-label="One-Click Role Selection">
-          <div class="login-card-header">
-            <h2>⚡ Instant Role Login (One-Click)</h2>
-            <p>Select any staff account below to log in immediately with pre-configured credentials:</p>
-          </div>
+          <!-- Alert Notification Box -->
+          <div id="login-alert-box" class="login-alert-banner" role="alert"></div>
 
-          <div id="quick-roles-list" class="quick-roles-list">
+          <!-- Main Input Form -->
+          <form id="login-form" class="login-inputs-form" onsubmit="return false;">
             
-            <!-- 1. Anandhi C (Super Admin) -->
-            <div class="quick-role-item is-admin">
-              <div class="quick-role-info">
-                <div class="quick-role-avatar" style="border-color: #e11d48; color: #e11d48;">AC</div>
-                <div class="quick-role-details">
-                  <div class="quick-role-name-row">
-                    <span class="quick-role-name">Anandhi C</span>
-                    <span class="badge-role role-super_admin" style="font-size: 0.7rem;">SUPER ADMIN</span>
-                  </div>
-                  <div class="quick-role-meta">
-                    <span>anandhi@worksense.ai</span>
-                    <span class="quick-role-cred">EMP-1001</span>
-                    <span class="quick-role-cred">admin123</span>
-                  </div>
-                </div>
+            <!-- Employee ID / Email Field -->
+            <div class="form-input-block">
+              <label for="login-username" class="form-label">Employee ID or Email</label>
+              <div class="input-icon-field">
+                <span class="input-icon-prefix" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </span>
+                <input 
+                  type="text" 
+                  id="login-username" 
+                  class="text-input-field" 
+                  placeholder="e.g., anandhi@worksense.ai or EMP-1001" 
+                  value="anandhi@worksense.ai"
+                  autocomplete="username" 
+                  required
+                >
               </div>
-              <div class="quick-role-actions">
-                <button type="button" class="btn-quick-login" data-role="SUPER_ADMIN" data-email="anandhi@worksense.ai" data-password="admin123" title="Log in as Super Admin">
-                  <span>⚡ 1-Click Login</span>
-                </button>
-                <button type="button" class="btn-quick-fill" data-email="anandhi@worksense.ai" data-password="admin123" title="Fill into form">
-                  <span>📋 Fill</span>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-input-block">
+              <label for="login-password" class="form-label">Password</label>
+              <div class="input-icon-field">
+                <span class="input-icon-prefix" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+                <input 
+                  type="password" 
+                  id="login-password" 
+                  class="text-input-field" 
+                  placeholder="Enter your password" 
+                  value="admin123"
+                  autocomplete="current-password" 
+                  required
+                >
+                <button type="button" id="login-password-toggle" class="input-suffix-action" aria-label="Toggle Password Visibility">
+                  <span id="password-toggle-icon">👁️</span>
                 </button>
               </div>
             </div>
 
-            <!-- 2. Akash A (Employee) -->
-            <div class="quick-role-item is-employee">
-              <div class="quick-role-info">
-                <div class="quick-role-avatar" style="border-color: #10b981; color: #10b981;">AA</div>
-                <div class="quick-role-details">
-                  <div class="quick-role-name-row">
-                    <span class="quick-role-name">Akash A</span>
-                    <span class="badge-role role-employee" style="font-size: 0.7rem;">EMPLOYEE</span>
-                  </div>
-                  <div class="quick-role-meta">
-                    <span>akash.a@worksense.ai</span>
-                    <span class="quick-role-cred">EMP-1002</span>
-                    <span class="quick-role-cred">akash123</span>
-                  </div>
-                </div>
-              </div>
-              <div class="quick-role-actions">
-                <button type="button" class="btn-quick-login" data-role="EMPLOYEE_AKASH" data-email="akash.a@worksense.ai" data-password="akash123" title="Log in as Akash A">
-                  <span>⚡ 1-Click Login</span>
-                </button>
-                <button type="button" class="btn-quick-fill" data-email="akash.a@worksense.ai" data-password="akash123" title="Fill into form">
-                  <span>📋 Fill</span>
-                </button>
-              </div>
+            <!-- Remember & Forgot Password Row -->
+            <div class="form-options-row">
+              <label class="custom-checkbox-wrap">
+                <input type="checkbox" id="login-remember" checked>
+                <span class="checkbox-visual"></span>
+                <span class="checkbox-label-text">Remember this device</span>
+              </label>
+              <button type="button" class="forgot-pwd-link" id="login-forgot-link">Forgot password?</button>
             </div>
 
-            <!-- 3. Kanishka Sri S (Employee) -->
-            <div class="quick-role-item is-employee">
-              <div class="quick-role-info">
-                <div class="quick-role-avatar" style="border-color: #10b981; color: #10b981;">KS</div>
-                <div class="quick-role-details">
-                  <div class="quick-role-name-row">
-                    <span class="quick-role-name">Kanishka Sri S</span>
-                    <span class="badge-role role-employee" style="font-size: 0.7rem;">EMPLOYEE</span>
-                  </div>
-                  <div class="quick-role-meta">
-                    <span>kanishka.s@worksense.ai</span>
-                    <span class="quick-role-cred">EMP-1003</span>
-                    <span class="quick-role-cred">kanishka123</span>
-                  </div>
-                </div>
-              </div>
-              <div class="quick-role-actions">
-                <button type="button" class="btn-quick-login" data-role="EMPLOYEE_KANISHKA" data-email="kanishka.s@worksense.ai" data-password="kanishka123" title="Log in as Kanishka Sri S">
-                  <span>⚡ 1-Click Login</span>
-                </button>
-                <button type="button" class="btn-quick-fill" data-email="kanishka.s@worksense.ai" data-password="kanishka123" title="Fill into form">
-                  <span>📋 Fill</span>
-                </button>
-              </div>
-            </div>
+            <!-- Submit Button -->
+            <button type="submit" id="login-submit-btn" class="btn-primary-sign-in">
+              <span id="submit-btn-text">Sign In to WorkSense AI</span>
+              <span class="btn-arrow">➔</span>
+            </button>
+          </form>
 
-            <!-- 4. Kartik Raja N (Employee) -->
-            <div class="quick-role-item is-employee">
-              <div class="quick-role-info">
-                <div class="quick-role-avatar" style="border-color: #10b981; color: #10b981;">KR</div>
-                <div class="quick-role-details">
-                  <div class="quick-role-name-row">
-                    <span class="quick-role-name">Kartik Raja N</span>
-                    <span class="badge-role role-employee" style="font-size: 0.7rem;">EMPLOYEE</span>
-                  </div>
-                  <div class="quick-role-meta">
-                    <span>kartik.r@worksense.ai</span>
-                    <span class="quick-role-cred">EMP-1004</span>
-                    <span class="quick-role-cred">kartik123</span>
-                  </div>
-                </div>
-              </div>
-              <div class="quick-role-actions">
-                <button type="button" class="btn-quick-login" data-role="EMPLOYEE_KARTIK" data-email="kartik.r@worksense.ai" data-password="kartik123" title="Log in as Kartik Raja N">
-                  <span>⚡ 1-Click Login</span>
-                </button>
-                <button type="button" class="btn-quick-fill" data-email="kartik.r@worksense.ai" data-password="kartik123" title="Fill into form">
-                  <span>📋 Fill</span>
-                </button>
-              </div>
-            </div>
-
+          <!-- Divider: "or" -->
+          <div class="login-separator">
+            <span class="separator-line"></span>
+            <span class="separator-label">or</span>
+            <span class="separator-line"></span>
           </div>
-        </section>
-      </div>
 
-      <!-- Security Notice -->
-      <footer class="login-security-footer">
-        🔒 Role-Based Access Control • MediaPipe On-Device Vision • Privacy-Preserving Telemetry
-      </footer>
+          <!-- Quick Role Access Section -->
+          <div class="quick-role-container">
+            <div class="quick-role-meta-header">
+              <h3 class="quick-role-title">Quick Role Access</h3>
+              <p class="quick-role-desc">Select a staff account to sign in instantly</p>
+            </div>
+
+            <div class="quick-staff-row" id="quick-staff-grid" role="list">
+              
+              <!-- 1. Anandhi C (Super Admin) - Active By Default -->
+              <div class="quick-staff-card is-active" 
+                   data-role="SUPER_ADMIN" 
+                   data-email="anandhi@worksense.ai" 
+                   data-password="admin123" 
+                   data-emp-id="EMP-1001"
+                   role="listitem button" 
+                   tabindex="0"
+                   aria-label="Sign in as Anandhi C, Super Admin">
+                <div class="staff-avatar-badge">AC</div>
+                <div class="staff-card-name">Anandhi C</div>
+                <div class="staff-card-role">Super Admin</div>
+                <div class="staff-card-id">EMP-1001</div>
+              </div>
+
+              <!-- 2. Akash A (Employee) -->
+              <div class="quick-staff-card" 
+                   data-role="EMPLOYEE_AKASH" 
+                   data-email="akash.a@worksense.ai" 
+                   data-password="akash123" 
+                   data-emp-id="EMP-1002"
+                   role="listitem button" 
+                   tabindex="0"
+                   aria-label="Sign in as Akash A, Employee">
+                <div class="staff-avatar-badge">AA</div>
+                <div class="staff-card-name">Akash A</div>
+                <div class="staff-card-role">Employee</div>
+                <div class="staff-card-id">EMP-1002</div>
+              </div>
+
+              <!-- 3. Kanishka Sri S (Employee) -->
+              <div class="quick-staff-card" 
+                   data-role="EMPLOYEE_KANISHKA" 
+                   data-email="kanishka.s@worksense.ai" 
+                   data-password="kanishka123" 
+                   data-emp-id="EMP-1003"
+                   role="listitem button" 
+                   tabindex="0"
+                   aria-label="Sign in as Kanishka Sri S, Employee">
+                <div class="staff-avatar-badge">KS</div>
+                <div class="staff-card-name">Kanishka Sri S</div>
+                <div class="staff-card-role">Employee</div>
+                <div class="staff-card-id">EMP-1003</div>
+              </div>
+
+              <!-- 4. Kartik Raja N (Employee) -->
+              <div class="quick-staff-card" 
+                   data-role="EMPLOYEE_KARTIK" 
+                   data-email="kartik.r@worksense.ai" 
+                   data-password="kartik123" 
+                   data-emp-id="EMP-1004"
+                   role="listitem button" 
+                   tabindex="0"
+                   aria-label="Sign in as Kartik Raja N, Employee">
+                <div class="staff-avatar-badge">KR</div>
+                <div class="staff-card-name">Kartik Raja N</div>
+                <div class="staff-card-role">Employee</div>
+                <div class="staff-card-id">EMP-1004</div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </main>
+
     </div>
   </div>
 

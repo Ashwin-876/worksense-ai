@@ -11,6 +11,21 @@ let fpsCounterValue = 0;
 let lastFpsCheck = performance.now();
 let framesThisSecond = 0;
 
+function syncLoginThemeToggle() {
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+  const moonBtn = document.getElementById('theme-btn-moon');
+  const sunBtn = document.getElementById('theme-btn-sun');
+  if (moonBtn && sunBtn) {
+    if (currentTheme === 'dark') {
+      moonBtn.classList.add('active');
+      sunBtn.classList.remove('active');
+    } else {
+      sunBtn.classList.add('active');
+      moonBtn.classList.remove('active');
+    }
+  }
+}
+
 function showLoginScreen(message = null) {
   const loginScreen = document.getElementById('login-screen');
   const appLayout = document.getElementById('app-layout');
@@ -25,11 +40,12 @@ function showLoginScreen(message = null) {
   if (alertBox) {
     if (message) {
       alertBox.textContent = message;
-      alertBox.className = 'login-alert alert-info show';
+      alertBox.className = 'login-alert-banner alert-info show';
     } else {
-      alertBox.className = 'login-alert';
+      alertBox.className = 'login-alert-banner';
     }
   }
+  syncLoginThemeToggle();
 }
 
 function showDashboard() {
@@ -72,26 +88,82 @@ function setupAuthUI() {
   const passwordInput = document.getElementById('login-password');
   const alertBox = document.getElementById('login-alert-box');
   const passwordToggle = document.getElementById('login-password-toggle');
-  const loginThemeToggle = document.getElementById('login-theme-toggle');
+  const passwordToggleIcon = document.getElementById('password-toggle-icon');
+  const submitBtn = document.getElementById('login-submit-btn');
+  const submitBtnText = document.getElementById('submit-btn-text');
+  const forgotLink = document.getElementById('login-forgot-link');
+
+  // Tab controls
+  const tabAccount = document.getElementById('btn-tab-account');
+  const tabQuick = document.getElementById('btn-tab-quick');
+  let currentLoginMode = 'account';
+
+  function setLoginTab(mode) {
+    currentLoginMode = mode;
+    if (mode === 'quick') {
+      if (tabQuick) {
+        tabQuick.classList.add('active');
+        tabQuick.setAttribute('aria-selected', 'true');
+      }
+      if (tabAccount) {
+        tabAccount.classList.remove('active');
+        tabAccount.setAttribute('aria-selected', 'false');
+      }
+      if (submitBtnText) submitBtnText.textContent = '⚡ Instant Quick Login';
+      if (alertBox) {
+        alertBox.textContent = '⚡ Quick Login Mode: Click any staff card below to sign in instantly.';
+        alertBox.className = 'login-alert-banner alert-info show';
+      }
+    } else {
+      if (tabAccount) {
+        tabAccount.classList.add('active');
+        tabAccount.setAttribute('aria-selected', 'true');
+      }
+      if (tabQuick) {
+        tabQuick.classList.remove('active');
+        tabQuick.setAttribute('aria-selected', 'false');
+      }
+      if (submitBtnText) submitBtnText.textContent = 'Sign In to WorkSense AI';
+      if (alertBox) {
+        alertBox.className = 'login-alert-banner';
+      }
+    }
+  }
+
+  if (tabAccount) tabAccount.addEventListener('click', () => setLoginTab('account'));
+  if (tabQuick) tabQuick.addEventListener('click', () => setLoginTab('quick'));
 
   // Password visibility toggle
   if (passwordToggle && passwordInput) {
     passwordToggle.addEventListener('click', () => {
       const isPassword = passwordInput.getAttribute('type') === 'password';
       passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-      passwordToggle.textContent = isPassword ? '🙈' : '👁️';
+      if (passwordToggleIcon) {
+        passwordToggleIcon.textContent = isPassword ? '🙈' : '👁️';
+      }
     });
   }
 
   // Theme toggle on login screen
-  if (loginThemeToggle) {
-    loginThemeToggle.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme');
-      const next = current === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('worksense_theme', next);
+  const moonBtn = document.getElementById('theme-btn-moon');
+  const sunBtn = document.getElementById('theme-btn-sun');
+
+  if (moonBtn) {
+    moonBtn.addEventListener('click', () => {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('worksense_theme', 'dark');
+      syncLoginThemeToggle();
     });
   }
+
+  if (sunBtn) {
+    sunBtn.addEventListener('click', () => {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('worksense_theme', 'light');
+      syncLoginThemeToggle();
+    });
+  }
+  syncLoginThemeToggle();
 
   // Form submit handler
   if (loginForm) {
@@ -102,43 +174,67 @@ function setupAuthUI() {
 
       const res = window.authManager.login(identifier, password);
       if (res.success) {
-        if (alertBox) alertBox.className = 'login-alert';
+        if (alertBox) alertBox.className = 'login-alert-banner';
         showDashboard();
       } else {
         if (alertBox) {
           alertBox.textContent = res.error;
-          alertBox.className = 'login-alert alert-error show';
+          alertBox.className = 'login-alert-banner alert-error show';
         }
       }
     });
   }
 
-  // Quick 1-Click Login buttons
-  document.querySelectorAll('.btn-quick-login').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const roleKey = btn.getAttribute('data-role');
-      const res = window.authManager.quickLogin(roleKey);
-      if (res.success) {
-        showDashboard();
+  // Quick Staff Cards (4 Cards)
+  const staffCards = document.querySelectorAll('.quick-staff-card');
+  staffCards.forEach(card => {
+    function activateStaffCard(autoSubmit = false) {
+      staffCards.forEach(c => c.classList.remove('is-active'));
+      card.classList.add('is-active');
+
+      const email = card.getAttribute('data-email');
+      const password = card.getAttribute('data-password');
+      const roleKey = card.getAttribute('data-role');
+
+      if (usernameInput) usernameInput.value = email;
+      if (passwordInput) passwordInput.value = password;
+
+      if (autoSubmit || currentLoginMode === 'quick') {
+        const res = window.authManager.quickLogin(roleKey);
+        if (res.success) {
+          showDashboard();
+          return;
+        }
+      }
+
+      if (alertBox) {
+        alertBox.textContent = `Selected: ${card.querySelector('.staff-card-name')?.textContent || email}. Click "Sign In" to enter.`;
+        alertBox.className = 'login-alert-banner alert-info show';
+      }
+    }
+
+    card.addEventListener('click', () => {
+      activateStaffCard(currentLoginMode === 'quick');
+    });
+
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        activateStaffCard(true);
       }
     });
   });
 
-  // Quick Autofill buttons
-  document.querySelectorAll('.btn-quick-fill').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const email = btn.getAttribute('data-email');
-      const password = btn.getAttribute('data-password');
-      if (usernameInput) usernameInput.value = email;
-      if (passwordInput) passwordInput.value = password;
+  // Forgot Password Link
+  if (forgotLink) {
+    forgotLink.addEventListener('click', (e) => {
+      e.preventDefault();
       if (alertBox) {
-        alertBox.textContent = `Credentials auto-filled for ${email}. Click "Sign In" or 1-Click Login.`;
-        alertBox.className = 'login-alert alert-info show';
+        alertBox.innerHTML = `<strong>Password Assistance:</strong> Contact Super Admin <strong>Anandhi C</strong> (EMP-1001) or click any staff card below to sign in with pre-configured access credentials.`;
+        alertBox.className = 'login-alert-banner alert-info show';
       }
-      const submitBtn = document.getElementById('login-submit-btn');
-      if (submitBtn) submitBtn.focus();
     });
-  });
+  }
 
   // Logout Handlers (Topbar, Sidebar nav item, Sidebar footer, User pill)
   const logoutBtn = document.getElementById('logout-btn');
@@ -247,9 +343,13 @@ function initApp() {
       const next = current === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('worksense_theme', next);
+      syncLoginThemeToggle();
     });
     const saved = localStorage.getItem('worksense_theme');
-    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+      syncLoginThemeToggle();
+    }
   }
 
   // Hook AI Engine Callbacks
